@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "539122852512",
+    "firebase_url": "https://consentcoin-32f41.firebaseio.com",
+    "project_id": "consentcoin-32f41",
+    "storage_bucket": "consentcoin-32f41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539122852512:android:242345837efecd86",
+        "android_client_info": {
+          "package_name": "com.thomosim.consentcoin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "539122852512-u7te1aq4dv3453u1k7baqmfd03753g7h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thomosim.consentcoin",
+            "certificate_hash": "d0f09a647c8d6fa58a4d93dc32cefa37e708fd88"
+          }
+        },
+        {
+          "client_id": "539122852512-fjbne3c856lik63j0n9a4kop9fe0iqso.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_TDFUYVd5RaB8zFDnewvjB8zOH-4hHow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539122852512-fjbne3c856lik63j0n9a4kop9fe0iqso.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
