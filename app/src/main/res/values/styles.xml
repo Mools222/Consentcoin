@@ -1,11 +1,23 @@
 <resources>
 
     <!-- Base application theme. -->
+    <!--Doesn't work anymore. See: https://material.io/develop/android/docs/getting-started/ under "4. Change your app theme to inherit from a Material Components theme"-->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorGreen</item>
         <item name="colorPrimaryDark">@color/colorBitterLemon</item>
         <item name="colorAccent">@color/colorRed</item>
     </style>
+
+    <!--NoActionBar is chosen, because we make our own-->
+    <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorGreen</item>
+        <item name="colorPrimaryDark">@color/colorBitterLemon</item>
+        <item name="colorAccent">@color/colorOuterSpace</item>
+    </style>
+
+    <style name="LightTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+    <style name="LightTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
 </resources>
