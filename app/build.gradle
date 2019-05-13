@@ -43,5 +43,4 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:4.3.2' // FirebaseUI (https://firebase.google.com/docs/auth)
 
 
-
 }

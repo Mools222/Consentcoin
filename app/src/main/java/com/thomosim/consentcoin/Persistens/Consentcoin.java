@@ -2,13 +2,13 @@ package com.thomosim.consentcoin.Persistens;
 
 import java.io.Serializable;
 
-public class Contract implements Serializable {
+public class Consentcoin implements Serializable {
     private String contractId;
     private String contractType;
     private String memberId;
     private String organizationId;
 
-    public Contract(String contractId, String contractType, String memberId, String organizationId) {
+    public Consentcoin(String contractId, String contractType, String memberId, String organizationId) {
         this.contractId = contractId;
         this.contractType = contractType;
         this.memberId = memberId;

@@ -1,6 +1,8 @@
 package com.thomosim.consentcoin.Persistens;
 
-public class PermissionRequest {
+import java.io.Serializable;
+
+public class PermissionRequest implements Serializable {
 
     private String id;
     private String organization;
