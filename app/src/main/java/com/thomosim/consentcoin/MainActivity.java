@@ -21,20 +21,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,7 +47,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.thomosim.consentcoin.Persistens.Contract;
+import com.thomosim.consentcoin.Persistens.Consentcoin;
 import com.thomosim.consentcoin.Persistens.ContractReference;
 import com.thomosim.consentcoin.Persistens.DAO;
 import com.thomosim.consentcoin.Persistens.PermissionRequest;
@@ -71,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ChildEventListener childEventListenerTest;
     private ChildEventListener childEventListenerContractReferences;
     private ChildEventListener childEventListenerPermissionRequests;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
 
     private TextInputEditText textInputEditText;
     private TextView textView1;
@@ -80,20 +84,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MenuItem menuItemPendingRequests;
     private MenuItem menuItemCreateRequest;
 
-    private FirebaseStorage firebaseStorage;
-    private StorageReference storageReference;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseAuth.AuthStateListener authStateListener;
     private String userEmail;
     private String uid;
     private String userType;
     private int chosenUserType;
-    private static final int REQUEST_CODE_SIGN_IN = 123;
+    private static final int REQUEST_CODE_SIGN_IN = 1;
+    private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
+    private boolean sendRequestToAllMembers;
     private ArrayList<ContractReference> contractReferences;
-    private ArrayList<Contract> contracts;
+    private ArrayList<Consentcoin> consentcoins;
     private ArrayList<PermissionRequest> pendingPermissionRequests;
     private ArrayList<User> users;
     private ArrayList<String> members;
+    private AdapterProcessRequest adapterProcessRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,14 +131,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Initialize ArrayLists
         contractReferences = new ArrayList<>();
-        contracts = new ArrayList<>();
+        consentcoins = new ArrayList<>();
         pendingPermissionRequests = new ArrayList<>();
         users = new ArrayList<>();
         members = new ArrayList<>();
 
         // Initialize Firebase components
         firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference().child("contracts");
+        storageReference = firebaseStorage.getReference().child("consentcoins");
         databaseReferenceTest = FirebaseDatabase.getInstance().getReference().child("test");
         databaseReferenceContractReferences = FirebaseDatabase.getInstance().getReference().child("ContractReferences");
         databaseReferencePermissionRequests = FirebaseDatabase.getInstance().getReference().child("PermissionRequests");
@@ -208,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_pending_requests) {
-            Toast.makeText(this, "Do something", Toast.LENGTH_SHORT).show();
+            processRequest();
         } else if (id == R.id.nav_create_request) {
             createRequest();
         } else if (id == R.id.nav_slideshow) {
@@ -266,10 +269,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String test = textInputEditText.getText().toString();
         databaseReferenceTest.push().setValue(test);
         textInputEditText.setText("");
-
     }
 
-    boolean all;
+    public void processRequest() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_process_request, null);
+        RecyclerView recyclerView = dialogView.findViewById(R.id.rv_process_request);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        adapterProcessRequest = new AdapterProcessRequest(pendingPermissionRequests, this);
+        recyclerView.setAdapter(adapterProcessRequest);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Process request(s)")
+                .setView(dialogView)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
 
     // https://www.dev2qa.com/android-custom-listview-with-checkbox-example/
     // http://android-coding.blogspot.com/2011/09/listview-with-multiple-choice.html
@@ -278,35 +299,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         final String[] emails = {"a@a.aa", "z@z.zz", "f@f.ff", "c@c.cc", "b@b.bb", "tt@t.tt"};
 
-        all = true;
+        sendRequestToAllMembers = true;
 
-        final ListView myList = dialogView.findViewById(R.id.list);
+        final ListView listView = dialogView.findViewById(R.id.list_create_request);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, emails);
-        myList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        myList.setAdapter(adapter);
-        myList.setVisibility(View.GONE);
-        final Context context = this;
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        listView.setAdapter(adapter);
+        listView.setVisibility(View.GONE);
+
         RadioGroup radioGroup = dialogView.findViewById(R.id.radio_group);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rb_first) {
-                    myList.setVisibility(View.GONE);
-                    all = true;
+                    listView.setVisibility(View.GONE);
+                    sendRequestToAllMembers = true;
                 } else if (checkedId == R.id.rb_second) {
-                    myList.setVisibility(View.VISIBLE);
-                    all = false;
+                    listView.setVisibility(View.VISIBLE);
+                    sendRequestToAllMembers = false;
                 }
             }
         });
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Choose")
+                .setTitle("Create request(s)")
                 .setView(dialogView)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (all) {
+                        if (sendRequestToAllMembers) {
                             for (int i = 0; i < emails.length; i++) {
                                 DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
                                 String firebaseId = databaseReference.getKey(); // Get the auto generated key
@@ -314,14 +335,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 databaseReference.setValue(permissionRequest);
                             }
                         } else {
-                            int cntChoice = myList.getCount();
+                            int cntChoice = listView.getCount();
                             System.out.println("cnt " + cntChoice);
-                            SparseBooleanArray sparseBooleanArray = myList.getCheckedItemPositions();
+                            SparseBooleanArray sparseBooleanArray = listView.getCheckedItemPositions();
                             for (int i = 0; i < cntChoice; i++) {
                                 if (sparseBooleanArray.get(i)) {
                                     DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
                                     String firebaseId = databaseReference.getKey(); // Get the auto generated key
-                                    PermissionRequest permissionRequest = new PermissionRequest(firebaseId, userEmail, myList.getItemAtPosition(i).toString(), "P1");
+                                    PermissionRequest permissionRequest = new PermissionRequest(firebaseId, userEmail, listView.getItemAtPosition(i).toString(), "P1");
                                     databaseReference.setValue(permissionRequest);
                                 }
                             }
@@ -366,6 +387,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // Sign in was canceled by the user, finish the activity
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
+            }
+        } else if (requestCode == REQUEST_CODE_PROCESS_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Permission decided!", Toast.LENGTH_SHORT).show();
+
+                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+                    System.out.println(data.getBooleanExtra("BOOLEAN", false));
+
+                    if (data.getBooleanExtra("BOOLEAN", false)) { // If the user chooses to give permission, do the following:
+
+                        PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
+
+                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // Create a Consentcoin
+
+                        databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
+                        pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
+                        adapterProcessRequest.updateData(pendingPermissionRequests);
+                    }
+                } else if (data.hasExtra("LATER"))
+                    System.out.println("Decide later");
+
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Permission not yet decided!", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -461,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userType = (String) dataSnapshot.getValue();
-                Toast.makeText(getApplicationContext(), userType + " type", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), userType + " type", Toast.LENGTH_SHORT).show();
 
                 if (userType == null)
                     chooseUserType();
@@ -495,10 +539,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * This method:
-     * 1) Creates a new instance of the Contract class
+     * 1) Creates a new instance of the Consentcoin class
      * 2) Creates a new file in the phone's internal storage called "contract.dat". The getFilesDir method returns the appropriate internal directory for the app
-     * 3) Open a new ObjectOutputStream object and writes the Contract object to the file. The ObjectOutputStream is then closed.
-     * 4) A new StorageReference object is created. The ensures that the file is saved in the "contracts" folder in Firebase Storage under the file name "[contractId].dat"
+     * 3) Opens a new ObjectOutputStream object and writes the Consentcoin object to the file. The ObjectOutputStream is then closed.
+     * The openFileOutput method opens a private file associated with this Context's application package for writing. By passing the argument Context.MODE_PRIVATE, the created file can only be accessed by the calling application.
+     * 4) A new StorageReference object is created. The ensures that the file is saved in the "consentcoins" folder in Firebase Storage under the file name "[contractId].dat"
      * 5) The file is persisted via the putFile method, which requires a URI object. The static fromFile method from the Uri class creates a URI from the File object.
      * 6) The putFile method returns a UploadTask object. Using the addOnSuccessListener method, an OnSuccessListener is added to the UploadTask object.
      * This is accomplished by creating an anonymous inner class, which implements the onSuccess method. Since OnSuccessListener is a generic class, the formal generic type
@@ -508,25 +553,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Task<Uri> object. This method returns a Task<Uri> containing the the download URL for the persisted file.
      * 8) A while loop with an empty body is created to keep the thread waiting until the getDownloadUrl method is successful.
      * 9) A new Uri object is created by calling the getResult method on the Task<Uri> object.
-     * 10) A new ContractReference object is created using the contract ID, member ID and organization ID of the Contract object and the download URL.
+     * 10) A new ContractReference object is created using the contract ID, member ID and organization ID of the Consentcoin object and the download URL.
      * 11) The ContractReference object is persisted to the Firebase Realtime Database using the push and setValue methods.
+     * 12) Finally the contract.dat file is deleted from the storage of the phone.
      */
 
-    public void writeObject(View view) {
-        // TODO (2) Encrypt the Contract object
-        final Contract contract = new Contract("3", "Type 1", "TestOrg", "TestMember");
+    public void createConsentcoin(String id, String contractType, String organization, String member) {
+        // TODO (2) Encrypt the Consentcoin object
+//        final Consentcoin consentcoin = new Consentcoin("5", "Type 1", "TestOrg", "TestMember");
+        final Consentcoin consentcoin = new Consentcoin(id, contractType, organization, member);
 
-        String fileName = "contract.dat";
-        File file = new File(getFilesDir(), fileName);
+        String fileName = "consentcoin.dat";
+        final File file = new File(getFilesDir(), fileName);
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(openFileOutput(fileName, Context.MODE_PRIVATE));
-            objectOutputStream.writeObject(contract);
+            objectOutputStream.writeObject(consentcoin);
             objectOutputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        StorageReference storageReference = this.storageReference.child(contract.getContractId() + ".dat");
+        StorageReference storageReference = this.storageReference.child(id);
 
         storageReference.putFile(Uri.fromFile(file)).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -534,8 +581,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 while (!urlTask.isSuccessful()) ;
                 Uri downloadUrl = urlTask.getResult();
 
-                ContractReference contractReference = new ContractReference(contract.getContractId(), contract.getMemberId(), contract.getOrganizationId(), downloadUrl.toString());
+                ContractReference contractReference = new ContractReference(consentcoin.getContractId(), consentcoin.getMemberId(), consentcoin.getOrganizationId(), downloadUrl.toString());
                 databaseReferenceContractReferences.push().setValue(contractReference);
+
+                file.delete();
             }
         });
     }
@@ -550,14 +599,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (contractReferences.size() > 0) {
             try {
-                // If we start one AsyncTask for all downloads
+                // If we start one AsyncTask for sendRequestToAllMembers downloads
                 URL[] urls = new URL[contractReferences.size()];
 
                 for (int i = 0; i < contractReferences.size(); i++) {
                     urls[i] = new URL(contractReferences.get(i).getStorageUrl());
                 }
 
-                contracts.clear();
+                consentcoins.clear();
                 new DownloadObjects().execute(urls);
 
                 // If we start one AsyncTask per download
@@ -620,9 +669,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     HttpURLConnection httpURLConnection = (HttpURLConnection) urls[i].openConnection();
                     if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[i].openStream()));
-                        // TODO (3) Decrypt the Contract object
-                        Contract contract = (Contract) objectInputStream.readObject();
-                        contracts.add(contract);
+                        // TODO (3) Decrypt the Consentcoin object
+                        Consentcoin consentcoin = (Consentcoin) objectInputStream.readObject();
+                        consentcoins.add(consentcoin);
                     }
                 }
                 objectInputStream.close();
@@ -638,9 +687,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            try {
 //                ObjectInputStream objectInputStream = null;
 //                objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[0].openStream()));
-//                // TODO (3) Decrypt the Contract object
-//                Contract contract = (Contract) objectInputStream.readObject();
-//                contracts.add(contract);
+//                // TODO (3) Decrypt the Consentcoin object
+//                Consentcoin contract = (Consentcoin) objectInputStream.readObject();
+//                consentcoins.add(contract);
 //                objectInputStream.close();
 //            } catch (FileNotFoundException e) {
 //                System.out.println("FileNotFoundException");
@@ -656,8 +705,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onPostExecute(aVoid);
 
             textView2.setText("");
-            for (Contract contract : contracts) {
-                textView2.append("ID: " + contract.getContractId() + " Type: " + contract.getContractType() + " MemID: " + contract.getMemberId() + " OrgID: " + contract.getOrganizationId() + "\n");
+            for (Consentcoin consentcoin : consentcoins) {
+                textView2.append("ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getContractType() + " MemID: " + consentcoin.getMemberId() + " OrgID: " + consentcoin.getOrganizationId() + "\n");
             }
         }
     }
