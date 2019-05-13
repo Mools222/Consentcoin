@@ -47,10 +47,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.thomosim.consentcoin.Persistens.Consentcoin;
-import com.thomosim.consentcoin.Persistens.ContractReference;
-import com.thomosim.consentcoin.Persistens.PermissionRequest;
-import com.thomosim.consentcoin.Persistens.User;
+import com.thomosim.consentcoin.Persistence.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ContractReference;
+import com.thomosim.consentcoin.Persistence.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.User;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -61,8 +61,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+// TODO (99) Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
 
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DatabaseReference databaseReferenceTest;
     private DatabaseReference databaseReferenceContractReferences;
     private DatabaseReference databaseReferencePermissionRequests;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ChildEventListener childEventListenerTest;
     private ChildEventListener childEventListenerContractReferences;
     private ChildEventListener childEventListenerPermissionRequests;
+    private ValueEventListener valueEventListenerUserTypes;
+
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
     private FirebaseAuth firebaseAuth;
@@ -268,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         RecyclerView recyclerView = dialogView.findViewById(R.id.rv_process_request);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
         recyclerView.addItemDecoration(dividerItemDecoration);
         adapterProcessRequest = new AdapterProcessRequest(pendingPermissionRequests, this);
         recyclerView.setAdapter(adapterProcessRequest);
@@ -313,6 +316,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        final Context CONTEXT = this;
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Create request(s)")
                 .setView(dialogView)
@@ -339,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             }
                         }
+                        Toast.makeText(CONTEXT, "Request(s) sent!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -355,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         firebaseAuth.addAuthStateListener(authStateListener);
     }
 
-    // onResume adds the AuthStateListener, which calls the runOnSignIn method (if the user is signed in), which adds the ChildEventListener. Therefore the onPause method should remove both the AuthStateListener and ChildEventListener, so they are not added multiple times when the onResume method is called
+    // onResume adds the AuthStateListener, which calls the runOnSignIn method (if the user is signed in), which adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
     @Override
     protected void onPause() {
         super.onPause();
@@ -382,26 +387,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         } else if (requestCode == REQUEST_CODE_PROCESS_REQUEST) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Permission decided!", Toast.LENGTH_SHORT).show();
-
                 if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
-                    System.out.println(data.getBooleanExtra("BOOLEAN", false));
 
-                    if (data.getBooleanExtra("BOOLEAN", false)) { // If the user chooses to give permission, do the following:
+                    boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
+                    PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
 
-                        PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
-
-                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // Create a Consentcoin
-
-                        databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
-                        pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
-                        adapterProcessRequest.updateData(pendingPermissionRequests);
+                    if (permissionGranted) {
+                        Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
+                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
+                    } else {
+                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                     }
-                } else if (data.hasExtra("LATER"))
-                    System.out.println("Decide later");
 
+                    databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
+                    pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
+                    adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
+                }
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Permission not yet decided!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -418,30 +421,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         removeDatabaseListener();
     }
 
-    // Bug: Every listener, except childEventListenerContractReferences, is added every time the onResume method is called
     public void addDatabaseListener() {
-        childEventListenerTest = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                textView1.append("Key: " + dataSnapshot.getKey() + "   Value: " + dataSnapshot.getValue() + "\n");
-            }
+        if (childEventListenerTest == null) {
+            textView1.setText("");
 
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
+            childEventListenerTest = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    textView1.append("Key: " + dataSnapshot.getKey() + "   Value: " + dataSnapshot.getValue() + "\n");
+                }
 
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
 
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
 
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
 
-        databaseReferenceTest.addChildEventListener(childEventListenerTest);
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+
+            databaseReferenceTest.addChildEventListener(childEventListenerTest);
+        }
 
         if (childEventListenerContractReferences == null) {
+            contractReferences = new ArrayList<>();
+
             childEventListenerContractReferences = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -465,67 +473,87 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             databaseReferenceContractReferences.addChildEventListener(childEventListenerContractReferences);
         }
 
-        childEventListenerPermissionRequests = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                PermissionRequest permissionRequest = dataSnapshot.getValue(PermissionRequest.class);
+        if (childEventListenerPermissionRequests == null) {
+            pendingPermissionRequests = new ArrayList<>();
 
-                if (permissionRequest.getMember().equals(userEmail)) {
-                    pendingPermissionRequests.add(permissionRequest);
-                    tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
-                    tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
-                    Toast.makeText(getApplicationContext(), "Pending request detected", Toast.LENGTH_SHORT).show();
+            childEventListenerPermissionRequests = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    PermissionRequest permissionRequest = dataSnapshot.getValue(PermissionRequest.class);
+
+                    if (permissionRequest.getMember().equals(userEmail)) {
+                        pendingPermissionRequests.add(permissionRequest);
+                        tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+                        tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+//                        Toast.makeText(getApplicationContext(), "Pending request detected", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
 
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
 
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
 
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
 
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
 
-        databaseReferencePermissionRequests.addChildEventListener(childEventListenerPermissionRequests);
+            databaseReferencePermissionRequests.addChildEventListener(childEventListenerPermissionRequests);
+        }
 
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userType = (String) dataSnapshot.getValue();
+        if (valueEventListenerUserTypes == null) {
+            valueEventListenerUserTypes = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    userType = (String) dataSnapshot.getValue();
 //                Toast.makeText(getApplicationContext(), userType + " type", Toast.LENGTH_SHORT).show();
 
-                if (userType == null)
-                    chooseUserType();
-                else if (userType.equals("Member")) { // Members can receive, but not create requests
-                    menuItemPendingRequests.setVisible(true);
-                    menuItemCreateRequest.setVisible(false);
-                } else if (userType.equals("Organization")) { // Organizations can create, but not receive requests
-                    menuItemPendingRequests.setVisible(false);
-                    menuItemCreateRequest.setVisible(true);
+                    if (userType == null)
+                        chooseUserType();
+                    else if (userType.equals("Member")) { // Members can receive, but not create requests
+                        menuItemPendingRequests.setVisible(true);
+                        menuItemCreateRequest.setVisible(false);
+                        tvNavigationDrawerCounter.setVisibility(View.VISIBLE);
+                    } else if (userType.equals("Organization")) { // Organizations can create, but not receive requests
+                        menuItemPendingRequests.setVisible(false);
+                        menuItemCreateRequest.setVisible(true);
+                        tvNavigationDrawerCounter.setVisibility(View.GONE);
+                    }
                 }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            };
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        databaseReferenceUserTypes.child(uid).addValueEventListener(valueEventListener);
+            databaseReferenceUserTypes.child(uid).addValueEventListener(valueEventListenerUserTypes);
+        }
 
     }
 
     private void removeDatabaseListener() {
+        if (childEventListenerTest != null) {
+            databaseReferenceTest.removeEventListener(childEventListenerTest);
+            childEventListenerTest = null;
+        }
+
         if (childEventListenerContractReferences != null) {
             databaseReferenceContractReferences.removeEventListener(childEventListenerContractReferences);
             childEventListenerContractReferences = null;
+        }
+
+        if (childEventListenerPermissionRequests != null) {
+            databaseReferencePermissionRequests.removeEventListener(childEventListenerPermissionRequests);
+            childEventListenerPermissionRequests = null;
+        }
+
+        if (valueEventListenerUserTypes != null) {
+            databaseReferenceUserTypes.removeEventListener(valueEventListenerUserTypes);
+            valueEventListenerUserTypes = null;
         }
     }
 
@@ -614,6 +642,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    // TODO Make a whole new activity which creates and adds a User object to the database. The ArrayList named associatedUsers will hold organizations if the user is member or members if the user is an organization
+    // Instead of "databaseReferenceUserTypes.child(uid).setValue(userType);", it's going to be databaseReferenceUserTypes.child(uid).setValue(new User(email, type, firstName, lastName, associatedUsers));
     public void chooseUserType() {
         final String[] array = {"Member", "Organization"};
 

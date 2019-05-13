@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin.Persistens;
+package com.thomosim.consentcoin.Persistence;
 
 import java.io.Serializable;
 

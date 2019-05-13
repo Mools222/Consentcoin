@@ -20,4 +20,13 @@
     <style name="LightTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
     <style name="LightTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
+    <!--Adds color to the ripple effect when an item displayed by the AdapterProcessRequest is clicked-->
+    <style name="SelectableItemTheme">
+        <item name="colorControlHighlight">@color/colorGreen</item>
+    </style>
+    <style name="SelectableItemBackground">
+        <item name="android:theme">@style/SelectableItemTheme</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
 </resources>

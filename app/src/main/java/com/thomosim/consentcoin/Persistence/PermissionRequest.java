@@ -1,6 +1,7 @@
-package com.thomosim.consentcoin.Persistens;
+package com.thomosim.consentcoin.Persistence;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class PermissionRequest implements Serializable {
 
@@ -8,6 +9,7 @@ public class PermissionRequest implements Serializable {
     private String organization;
     private String member;
     private String permissionType;
+    private Date date;
 
     public PermissionRequest() {
     }
@@ -17,6 +19,7 @@ public class PermissionRequest implements Serializable {
         this.organization = organization;
         this.member = member;
         this.permissionType = permissionType;
+        date = new Date();
     }
 
     public String getId() {
@@ -49,5 +52,13 @@ public class PermissionRequest implements Serializable {
 
     public void setPermissionType(String permissionType) {
         this.permissionType = permissionType;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
