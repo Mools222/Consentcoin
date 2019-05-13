@@ -19,7 +19,7 @@ public class DAO {
     public void invite(ArrayList<String> members, final String organization){
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("group");
+        databaseReference = firebaseDatabase.getReference().child("groups");
 
         for (String uid:members) {
 
