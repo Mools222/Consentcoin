@@ -49,6 +49,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.Persistens.Contract;
 import com.thomosim.consentcoin.Persistens.ContractReference;
+import com.thomosim.consentcoin.Persistens.DAO;
 import com.thomosim.consentcoin.Persistens.PermissionRequest;
 import com.thomosim.consentcoin.Persistens.User;
 
@@ -174,6 +175,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         };
+
+        DAO dao = new DAO();
+        ArrayList<String> members = new ArrayList<>();
+        members.add("bob");
+        members.add("lis");
+        String organization = firebaseAuth.getUid();
+        dao.invite(members,organization);
     }
 
     /**
