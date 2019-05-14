@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin.Persistens;
+package com.thomosim.consentcoin.Persistence;
 
 public class ContractReference {
     private String contractId;

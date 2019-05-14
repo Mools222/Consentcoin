@@ -10,9 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.thomosim.consentcoin.Persistens.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.PermissionRequest;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRequest.ViewHolderProcessRequest> {
 
@@ -32,11 +34,6 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent intent = new Intent(context, ProcessRequestActivity.class);
-//                    intent.putExtra("tv1", textView1.getText().toString());
-//                    intent.putExtra("tv2", textView2.getText().toString());
-//                    context.startActivity(intent);
-
                     PermissionRequest permissionRequest = pendingPermissionRequests.get(getAdapterPosition());
 
                     Intent intent = new Intent(context, ProcessRequestActivity.class);
@@ -64,7 +61,10 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
     @Override
     public void onBindViewHolder(@NonNull ViewHolderProcessRequest holder, int position) {
         PermissionRequest permissionRequest = pendingPermissionRequests.get(position);
-        holder.textView1.setText(permissionRequest.getId());
+        Date date = permissionRequest.getDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+
+        holder.textView1.setText(simpleDateFormat.format(date));
         holder.textView2.setText(permissionRequest.getOrganization());
     }
 
