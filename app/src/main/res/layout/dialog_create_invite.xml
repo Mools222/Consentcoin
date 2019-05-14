@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/memberEditText"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/MaterialAlertDialog.MaterialComponents.Title.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="addInviteMember"
+            android:text="+" />
+    </LinearLayout>
+
+
+    <ListView
+        android:id="@+id/list_member"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+    </ListView>
+</LinearLayout>

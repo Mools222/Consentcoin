@@ -1,12 +1,7 @@
 package com.thomosim.consentcoin.Persistens;
 
-import androidx.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -14,34 +9,25 @@ public class DAO {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private DatabaseReference inviteRequestDatabaseReference;
+
+    private String inviteID;
 
 
-    public void invite(ArrayList<String> members, final String organization){
+    public void invite(ArrayList<String> members, final String organization) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("groups");
+        databaseReference = firebaseDatabase.getReference().child("inviteRequests");
 
-        for (String uid:members) {
 
-            final String userId= uid;
+        for (String uid : members) {
 
-            databaseReference.child(organization)
-                    .child("members")
-                    .child(uid)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(!dataSnapshot.exists()){
-                                databaseReference.child(organization).child("members").push().setValue(userId);
-                            }
-                        }
+            inviteRequestDatabaseReference = databaseReference.push();
+            inviteID = inviteRequestDatabaseReference.getKey();
+            final String userId = uid;
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
+            InviteRequest inviteRequest = new InviteRequest(inviteID, organization, uid);
+            inviteRequestDatabaseReference.setValue(inviteRequest);
 
         }
 

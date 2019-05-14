@@ -5,8 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.Menu;
@@ -14,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -84,6 +87,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView tvNavigationDrawerPendingPermissionsCounter;
     private MenuItem menuItemPendingRequests;
     private MenuItem menuItemCreateRequest;
+
+    private TextInputEditText tietInviteMember;
+    private ArrayList<String> inviteMemberList;
+    private ListView listMember;
+    ArrayAdapter<String> inviteMemberAdapter;
 
     private String userEmail;
     private String uid;
@@ -179,8 +187,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         };
-
-
 
 
     }
@@ -652,17 +658,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void invite(View view) {
-        DAO dao = new DAO();
-        ArrayList<String> members = new ArrayList<>();
-        members.add("bob");
-        members.add("lis");
-        String organization;
-        if(firebaseAuth.getUid() != null) {
-            organization = firebaseAuth.getUid();
-        } else{
-            organization = "testOrg";
+
+        View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
+
+        tietInviteMember = inviteDialogView.findViewById(R.id.memberEditText);
+        inviteMemberList = new ArrayList<>();
+        listMember = inviteDialogView.findViewById(R.id.list_member);
+
+
+        inviteMemberAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, inviteMemberList);
+        listMember.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        listMember.setAdapter(inviteMemberAdapter);
+        listMember.setVisibility(View.VISIBLE);
+
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Invite member(s)")
+                .setView(inviteDialogView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!inviteMemberAdapter.isEmpty()) {
+                            DAO dao = new DAO();
+                            String organization;
+                            if (firebaseAuth.getUid() != null) {
+                                organization = firebaseAuth.getUid();
+                            } else {
+                                organization = "testOrg";
+                            }
+                            dao.invite(inviteMemberList, organization);
+
+                        }
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+
+
+    }
+
+    public void addInviteMember(View view) {
+
+        if (!tietInviteMember.getText().toString().equals("") || tietInviteMember.getText() == null) {
+            //inviteMemberList.add(tietInviteMember.getText().toString());
+            inviteMemberAdapter.add(tietInviteMember.getText().toString());
+
+            tietInviteMember.setText("");
         }
-        dao.invite(members,organization);
     }
 
     // To solve the "leaks might occur" warning: https://stackoverflow.com/questions/44309241/warning-this-asynctask-class-should-be-static-or-leaks-might-occur/46166223#46166223
