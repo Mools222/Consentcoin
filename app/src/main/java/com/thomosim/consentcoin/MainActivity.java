@@ -33,6 +33,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -179,12 +180,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-        DAO dao = new DAO();
-        ArrayList<String> members = new ArrayList<>();
-        members.add("bob");
-        members.add("lis");
-        String organization = firebaseAuth.getUid();
-        dao.invite(members,organization);
+
+
+
     }
 
     /**
@@ -651,6 +649,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    public void invite(View view) {
+        DAO dao = new DAO();
+        ArrayList<String> members = new ArrayList<>();
+        members.add("bob");
+        members.add("lis");
+        String organization;
+        if(firebaseAuth.getUid() != null) {
+            organization = firebaseAuth.getUid();
+        } else{
+            organization = "testOrg";
+        }
+        dao.invite(members,organization);
     }
 
     // To solve the "leaks might occur" warning: https://stackoverflow.com/questions/44309241/warning-this-asynctask-class-should-be-static-or-leaks-might-occur/46166223#46166223
