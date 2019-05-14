@@ -4,32 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <!--How to find icons: 1) Go to https://materialdesignicons.com/ 2) Click an icon 3) Click </> 4) Click "View Vector Drawable" 5) Add it to the "drawable" folder-->
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_pending_requests"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/icon_pending_requests"
             android:title="Pending requests"
             app:actionViewClass="android.widget.TextView" />
         <item
             android:id="@+id/nav_create_request"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/icon_create_request"
             android:title="Create request" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="My permissions" />
+            android:id="@+id/nav_my_consentcoins"
+            android:icon="@drawable/icon_my_consentcoins"
+            android:title="My Consentcoins" />
         <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
+            android:id="@+id/nav_invite"
+            android:icon="@drawable/icon_invite"
             android:title="Invite" />
+        <item
+            android:id="@+id/nav_add_organization"
+            android:icon="@drawable/icon_add"
+            android:title="Add organization" />
+        <item
+            android:id="@+id/nav_add_member"
+            android:icon="@drawable/icon_add"
+            android:title="Add member" />
     </group>
 
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_my_organizations"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Network of users" />
+                android:title="My organizations" />
+            <item
+                android:id="@+id/nav_my_members"
+                android:icon="@drawable/ic_menu_share"
+                android:title="My members" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"

@@ -1,15 +1,15 @@
 package com.thomosim.consentcoin.Persistence;
 
-public class ContractReference {
+public class ConsentcoinReference {
     private String contractId;
     private String member;
     private String organization;
     private String storageUrl;
 
-    public ContractReference() {
+    public ConsentcoinReference() {
     }
 
-    public ContractReference(String contractId, String member, String organization, String storageUrl) {
+    public ConsentcoinReference(String contractId, String member, String organization, String storageUrl) {
         this.contractId = contractId;
         this.member = member;
         this.organization = organization;
