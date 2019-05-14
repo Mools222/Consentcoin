@@ -679,15 +679,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!inviteMemberAdapter.isEmpty()) {
-                            DAO dao = new DAO();
-                            String organization;
-                            if (firebaseAuth.getUid() != null) {
-                                organization = firebaseAuth.getUid();
-                            } else {
-                                organization = "testOrg";
-                            }
-                            dao.invite(inviteMemberList, organization);
 
+                            if (validateMembers(inviteMemberList)) {
+
+                                DAO dao = new DAO();
+                                String organization;
+                                if (firebaseAuth.getUid() != null) {
+                                    organization = firebaseAuth.getUid();
+                                } else {
+                                    organization = "testOrg";
+                                }
+                                dao.invite(inviteMemberList, organization);
+                            }
                         }
 
                     }
@@ -702,6 +705,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+
     public void addInviteMember(View view) {
 
         if (!tietInviteMember.getText().toString().equals("") || tietInviteMember.getText() == null) {
@@ -710,6 +714,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             tietInviteMember.setText("");
         }
+    }
+
+    private boolean validateMembers(ArrayList<String> users) {
+        //TODO: add a check to see if users exists
+        return true;
     }
 
     // To solve the "leaks might occur" warning: https://stackoverflow.com/questions/44309241/warning-this-asynctask-class-should-be-static-or-leaks-might-occur/46166223#46166223
