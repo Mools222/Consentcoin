@@ -15,12 +15,12 @@
             android:id="@+id/rb_first"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anmod tilladelse fra alle medlemmer"/>
+            android:text="Request permission from all members"/>
         <RadioButton
             android:id="@+id/rb_second"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anmod tilladelse fra udvalgte medlemmer"/>
+            android:text="Request permission from selected members"/>
     </RadioGroup>
 
     <ListView

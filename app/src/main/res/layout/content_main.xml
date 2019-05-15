@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="?android:attr/actionBarSize"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:layout_marginTop="?android:attr/actionBarSize">
+    tools:context=".MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -47,25 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Skriv objekt til database"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="readObject"
-        android:text="Læs objekter fra database"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
