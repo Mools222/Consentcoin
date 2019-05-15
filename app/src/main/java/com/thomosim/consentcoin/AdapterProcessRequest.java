@@ -28,8 +28,8 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
 
         public ViewHolderProcessRequest(@NonNull View v) {
             super(v);
-            textView1 = v.findViewById(R.id.tv_request_id);
-            textView2 = v.findViewById(R.id.tv_request_sender);
+            textView1 = v.findViewById(R.id.tv_process_request_id);
+            textView2 = v.findViewById(R.id.tv_process_request_sender);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -54,7 +54,6 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
     @Override
     public ViewHolderProcessRequest onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_process_request_item, parent, false);
-
         return new ViewHolderProcessRequest(v);
     }
 

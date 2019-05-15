@@ -10,7 +10,7 @@
     style="@style/SelectableItemBackground">
 
     <TextView
-        android:id="@+id/tv_process_request_id"
+        android:id="@+id/tv_create_request_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -20,11 +20,11 @@
         android:fontFamily="@font/vollkorn"
         android:text="test" />
 
-    <TextView
-        android:id="@+id/tv_process_request_sender"
+    <!--clickable is set to false, since the setOnClickListener in the AdapterCreateRequest listens to clicks on the view as a whole-->
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_create_request"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/vollkorn"
-        android:text="test" />
+        android:clickable="false"/>
 
 </LinearLayout>

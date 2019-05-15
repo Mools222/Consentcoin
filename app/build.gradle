@@ -42,5 +42,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:17.0.0' // Authentication
     implementation 'com.firebaseui:firebase-ui-auth:4.3.2' // FirebaseUI (https://firebase.google.com/docs/auth)
 
+    // Lifecycle
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+
 
 }
