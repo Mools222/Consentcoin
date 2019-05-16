@@ -368,7 +368,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
                         DAO dao = new DAO();
-                        dao.acceptInvite(inviteRequest,uid);
+                        for (User user: users) {
+                            if(user.getUid().equals(inviteRequest.getOrganization())){
+                                user.getAssociatedUsersUid().add(uid);
+                                dao.acceptInvite(inviteRequest,user);
+                            }
+                        }
+
 
 
                     } else {

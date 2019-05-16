@@ -34,12 +34,12 @@ public class DAO {
 
     }
 
-    public void acceptInvite(InviteRequest inviteRequest, String uid) {
+    public void acceptInvite(InviteRequest inviteRequest, User organization) {
         databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child("Users")
-                .child(inviteRequest.getOrganization())
-                .child("associatedUsersUid");
+                .child(inviteRequest.getOrganization());
 
-        databaseReference.push().setValue(uid);
+
+        databaseReference.setValue(organization);
     }
 }
