@@ -1,6 +1,8 @@
 package com.thomosim.consentcoin.Persistence;
 
-public class ConsentcoinReference {
+import java.io.Serializable;
+
+public class ConsentcoinReference implements Serializable {
     private String contractId;
     private String member;
     private String organization;

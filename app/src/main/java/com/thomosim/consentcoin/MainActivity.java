@@ -8,6 +8,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.Menu;
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int chosenUserType;
     private static final int REQUEST_CODE_SIGN_IN = 1;
     private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
+    private static final int REQUEST_CODE_MY_CONSENTCOINS = 3;
     private boolean sendRequestToAllMembers;
     private ArrayList<ConsentcoinReference> consentcoinReferences;
     private ArrayList<Consentcoin> consentcoins;
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<User> members;
     private ArrayList<User> users;
     private AdapterProcessRequest adapterProcessRequest;
+    private AdapterCreateRequest adapterCreateRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +195,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        firebaseAuth.addAuthStateListener(authStateListener);
+    }
+
+    // onResume adds the AuthStateListener, which calls the runOnSignIn method (if the user is signed in), which adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (authStateListener != null) {
+            firebaseAuth.removeAuthStateListener(authStateListener);
+        }
+//        mMessageAdapter.clear();
+        removeDatabaseListener();
+    }
+
     /**
      * This method handles the back button
      */
@@ -202,6 +223,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    /**
+     * This method inflates the menu on the right side of the action bar
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+
+        // Notification Badge - https://www.youtube.com/watch?v=1AxVtMo7FfY
+
+        return true;
+    }
+
+    /**
+     * This method handles the inputs to the menu on the right side of the action bar
+     */
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sign_out_menu:
+                AuthUI.getInstance().signOut(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -219,7 +269,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_create_request) {
             createRequest();
         } else if (id == R.id.nav_my_consentcoins) {
-            myConsentcoins();
+//            myConsentcoins();
+            displayConsentcoins();
         } else if (id == R.id.nav_invite) {
 
         } else if (id == R.id.nav_add_organization) {
@@ -237,6 +288,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * This method handles results from other activities
+     */
+
+    // For some reason it causes an UserCancellationException when the back button is pressed at the sign in screen, but it has no effect. The "Sign in canceled" Toast still works
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                // Sign-in succeeded, set up the UI
+                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                // Sign in was canceled by the user, finish the activity
+                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else if (requestCode == REQUEST_CODE_PROCESS_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+
+                    boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
+                    PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
+
+                    if (permissionGranted) {
+                        Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
+                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
+                    } else {
+                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                    }
+
+                    databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
+                    pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
+                    adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
+                    tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+                    tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+                }
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CODE_MY_CONSENTCOINS) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void addOrganizationOrMember(final String userType) {
@@ -328,41 +429,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             ListView listView = alertDialog.getListView();
             listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
-            listView.setDividerHeight(10);
+            listView.setDividerHeight(5);
             alertDialog.show();
         } else
             Toast.makeText(this, "You have no " + userType, Toast.LENGTH_SHORT).show();
     }
-
-    /**
-     * This method inflates the menu on the right side of the action bar
-     */
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-
-        // Notification Badge - https://www.youtube.com/watch?v=1AxVtMo7FfY
-
-        return true;
-    }
-
-    /**
-     * This method handles the inputs to the menu on the right side of the action bar
-     */
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.sign_out_menu:
-                AuthUI.getInstance().signOut(this);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
 
     public void write(View view) {
         String test = textInputEditText.getText().toString();
@@ -395,43 +466,62 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // http://android-coding.blogspot.com/2011/09/listview-with-multiple-choice.html
     public void createRequest() {
         ArrayList<String> associatedUsersUids = user.getAssociatedUsersUid();
-
         if (associatedUsersUids != null) {
-            ArrayList<User> members = new ArrayList<>();
+            final ArrayList<User> members = new ArrayList<>();
             for (int i = 0; i < users.size(); i++) {
                 User user = users.get(i);
-
                 for (int j = 0; j < associatedUsersUids.size(); j++) {
                     if (user.getUid().equals(associatedUsersUids.get(j)))
                         members.add(user);
                 }
             }
 
-            final String[] emails = new String[members.size()];
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_request, null);
+            final RecyclerView recyclerView = dialogView.findViewById(R.id.et_create_request);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
+            recyclerView.addItemDecoration(dividerItemDecoration);
+            adapterCreateRequest = new AdapterCreateRequest(members);
+            recyclerView.setAdapter(adapterCreateRequest);
+            recyclerView.setVisibility(View.GONE);
 
-            for (int i = 0; i < members.size(); i++) {
-                emails[i] = members.get(i).getEmail();
-            }
+            final ArrayList<User> membersSearch = new ArrayList<>();
+            final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_create_request);
+            textInputEditText.setVisibility(View.GONE);
+            textInputEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    membersSearch.clear();
+                    for (int i = 0; i < members.size(); i++) {
+                        User member = members.get(i);
+                        if (member.getEmail().contains(s))
+                            membersSearch.add(member);
+                        adapterCreateRequest.updateData(membersSearch);
+                    }
+                }
+            });
 
             sendRequestToAllMembers = true;
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, emails);
-
-            View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_request, null);
-            final ListView listView = dialogView.findViewById(R.id.list_create_request);
-            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-            listView.setAdapter(adapter);
-            listView.setVisibility(View.GONE);
-
             RadioGroup radioGroup = dialogView.findViewById(R.id.radio_group);
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
                     if (checkedId == R.id.rb_first) {
-                        listView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
+                        textInputEditText.setVisibility(View.GONE);
                         sendRequestToAllMembers = true;
                     } else if (checkedId == R.id.rb_second) {
-                        listView.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        textInputEditText.setVisibility(View.VISIBLE);
                         sendRequestToAllMembers = false;
                     }
                 }
@@ -444,24 +534,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (sendRequestToAllMembers) {
-                                for (int i = 0; i < emails.length; i++) {
+                            if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members
+                                for (int i = 0; i < members.size(); i++) {
                                     DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
                                     String firebaseId = databaseReference.getKey(); // Get the auto generated key
-                                    PermissionRequest permissionRequest = new PermissionRequest(firebaseId, userEmail, emails[i], "P1");
+                                    PermissionRequest permissionRequest = new PermissionRequest(firebaseId, userEmail, members.get(i).getEmail(), "P1");
                                     databaseReference.setValue(permissionRequest);
                                 }
-                            } else {
-                                int cntChoice = listView.getCount();
-                                System.out.println("cnt " + cntChoice);
-                                SparseBooleanArray sparseBooleanArray = listView.getCheckedItemPositions();
-                                for (int i = 0; i < cntChoice; i++) {
-                                    if (sparseBooleanArray.get(i)) {
-                                        DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
-                                        String firebaseId = databaseReference.getKey(); // Get the auto generated key
-                                        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, userEmail, listView.getItemAtPosition(i).toString(), "P1");
-                                        databaseReference.setValue(permissionRequest);
-                                    }
+                            } else { // If the organization wishes to send requests out to a select number of its associated members
+                                ArrayList<User> checkedUsers = adapterCreateRequest.getCheckedUsers();
+
+                                for (int i = 0; i < checkedUsers.size(); i++) {
+                                    DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
+                                    String firebaseId = databaseReference.getKey(); // Get the auto generated key
+                                    PermissionRequest permissionRequest = new PermissionRequest(firebaseId, userEmail, checkedUsers.get(i).getEmail(), "P1");
+                                    databaseReference.setValue(permissionRequest);
                                 }
                             }
                             Toast.makeText(CONTEXT, "Request(s) sent!", Toast.LENGTH_SHORT).show();
@@ -475,63 +562,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .show();
         } else
             Toast.makeText(this, "Add members before creating a request", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        firebaseAuth.addAuthStateListener(authStateListener);
-    }
-
-    // onResume adds the AuthStateListener, which calls the runOnSignIn method (if the user is signed in), which adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (authStateListener != null) {
-            firebaseAuth.removeAuthStateListener(authStateListener);
-        }
-//        mMessageAdapter.clear();
-        removeDatabaseListener();
-    }
-
-    // For some reason it causes an UserCancellationException when the back button is pressed at the sign in screen, but it has no effect. The "Sign in canceled" Toast still works
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // Sign-in succeeded, set up the UI
-                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                // Sign in was canceled by the user, finish the activity
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        } else if (requestCode == REQUEST_CODE_PROCESS_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
-
-                    boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
-                    PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
-
-                    if (permissionGranted) {
-                        Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
-                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
-                    } else {
-                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                    }
-
-                    databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
-                    pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
-                    adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
-                    tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
-                    tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
-                }
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void runOnSignIn() {
@@ -638,7 +668,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     ConsentcoinReference consentcoinReference = dataSnapshot.getValue(ConsentcoinReference.class);
-                    consentcoinReferences.add(consentcoinReference);
+
+                    if (user.getType().equals("Member") && consentcoinReference.getMember().equals(userEmail))
+                        consentcoinReferences.add(consentcoinReference);
+                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(userEmail))
+                        consentcoinReferences.add(consentcoinReference);
                 }
 
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -772,7 +806,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void createConsentcoin(String id, String contractType, String organization, String member) {
         // TODO (2) Encrypt the Consentcoin object
-        final Consentcoin consentcoin = new Consentcoin(id, contractType, organization, member);
+        final Consentcoin consentcoin = new Consentcoin(id, contractType, member, organization);
 
         String fileName = "consentcoin";
         final File file = new File(getFilesDir(), fileName);
@@ -812,7 +846,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 URL[] urls = new URL[consentcoinReferences.size()];
 
                 for (int i = 0; i < consentcoinReferences.size(); i++) {
-                    urls[i] = new URL(consentcoinReferences.get(i).getStorageUrl());
+                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
+                    if (consentcoinReference.getMember().equals(userEmail))
+                        urls[i] = new URL(consentcoinReference.getStorageUrl());
                 }
 
                 consentcoins.clear();
@@ -829,6 +865,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 e.printStackTrace();
             }
         }
+    }
+
+    public void displayConsentcoins() {
+        if (consentcoinReferences != null) {
+            final ArrayList<ConsentcoinReference> myConsentcoinReferences = new ArrayList<>();
+
+            if (user.getType().equals("Member"))
+                for (int i = 0; i < consentcoinReferences.size(); i++) {
+                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
+                    if (consentcoinReference.getMember().equals(userEmail))
+                        myConsentcoinReferences.add(consentcoinReference);
+                }
+            else if (user.getType().equals("Organization"))
+                for (int i = 0; i < consentcoinReferences.size(); i++) {
+                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
+                    if (consentcoinReference.getOrganization().equals(userEmail))
+                        myConsentcoinReferences.add(consentcoinReference);
+                }
+
+            String[] array = new String[myConsentcoinReferences.size()];
+
+            for (int i = 0; i < myConsentcoinReferences.size(); i++) {
+                ConsentcoinReference consentcoinReference = myConsentcoinReferences.get(i);
+                array[i] = "ID: " + consentcoinReference.getContractId() + " Member: " + consentcoinReference.getMember() + " Org: " + consentcoinReference.getOrganization();
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
+
+            final Context CONTEXT = this;
+
+            AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
+                    .setTitle("My Consenscoins")
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(CONTEXT, MyConsentcoinsActivity.class);
+                            intent.putExtra("CR", myConsentcoinReferences.get(which));
+                            intent.putExtra("POS", which);
+                            startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
+                        }
+                    })
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .create();
+
+            ListView listView = alertDialog.getListView();
+            listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
+            listView.setDividerHeight(5);
+            alertDialog.show();
+        } else
+            Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();
     }
 
     public void displayConsentcoin() {
@@ -858,7 +948,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             ListView listView = alertDialog.getListView();
             listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
-            listView.setDividerHeight(10);
+            listView.setDividerHeight(5);
             alertDialog.show();
         } else
             Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();

@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ProcessRequestActivity">
+    tools:context=".MyConsentcoinsActivity">
 
     <TextView
-        android:id="@+id/tv_process_request"
+        android:id="@+id/tv_my_consentcoins"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/vollkorn"
@@ -17,24 +17,16 @@
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="accept"
-        android:text="Accept"
+        android:onClick="back"
+        android:text="Back"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="deny"
-        android:text="Deny"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="later"
-        android:text="Decide later"
+        android:onClick="cancel"
+        android:text="CancelTest"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </LinearLayout>
