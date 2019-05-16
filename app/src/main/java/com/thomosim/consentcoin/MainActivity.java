@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +47,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -53,6 +55,7 @@ import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.DAO;
+import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
 
@@ -61,6 +64,7 @@ import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -68,13 +72,16 @@ import java.util.Arrays;
 // TODO (98) Make all named constants (keyword final) uppercase
 // TODO (50) Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607)
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     private DatabaseReference databaseReferenceTest;
     private DatabaseReference databaseReferenceContractReferences;
     private DatabaseReference databaseReferencePermissionRequests;
+    private DatabaseReference databaseReferenceInviteRequests;
     private DatabaseReference databaseReferenceUsers;
     private ChildEventListener childEventListenerTest;
     private ChildEventListener childEventListenerContractReferences;
     private ChildEventListener childEventListenerPermissionRequests;
+    private ChildEventListener childEventListenerInviteRequests;
     private ValueEventListener valueEventListenerCurrentUser;
     private ValueEventListener valueEventListenerAllUsers;
 
@@ -87,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail;
     private TextView tvNavigationDrawerCounter;
     private TextView tvNavigationDrawerPendingPermissionsCounter;
+    private TextView tvNavigationDrawerPendingInviteCounter;
     private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemMyPermissions, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
 
     private TextInputEditText tietInviteMember;
@@ -102,15 +110,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int REQUEST_CODE_SIGN_IN = 1;
     private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
     private static final int REQUEST_CODE_MY_CONSENTCOINS = 3;
+    private static final int REQUEST_CODE_PROCESS_INVITE = 4;
     private boolean sendRequestToAllMembers;
     private ArrayList<ConsentcoinReference> consentcoinReferences;
     private ArrayList<Consentcoin> consentcoins;
     private ArrayList<PermissionRequest> pendingPermissionRequests;
+    private ArrayList<InviteRequest> pendingInviteRequests;
     private ArrayList<User> organizations;
     private ArrayList<User> members;
     private ArrayList<User> users;
     private AdapterProcessRequest adapterProcessRequest;
     private AdapterCreateRequest adapterCreateRequest;
+    private AdapterProcessInvite adapterProcessInvite;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +153,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingPermissionsCounter.setText("0");
         tvNavigationHeaderName = navigationDrawerHeader.findViewById(R.id.tv_navigation_header_name);
         tvNavigationHeaderEmail = navigationDrawerHeader.findViewById(R.id.tv_navigation_header_email);
+        tvNavigationDrawerPendingInviteCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_invites).getActionView();
+        tvNavigationDrawerPendingInviteCounter.setGravity(Gravity.CENTER_VERTICAL);
+        tvNavigationDrawerPendingInviteCounter.setTypeface(null, Typeface.BOLD);
+        tvNavigationDrawerPendingInviteCounter.setTextColor(getResources().getColor(R.color.colorRed));
+        tvNavigationDrawerPendingInviteCounter.setText("0");
 
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
         menuItemCreateRequest = navigationView.getMenu().findItem(R.id.nav_create_request);
@@ -161,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         databaseReferenceTest = FirebaseDatabase.getInstance().getReference().child("test");
         databaseReferenceContractReferences = FirebaseDatabase.getInstance().getReference().child("ConsentcoinReferences");
         databaseReferencePermissionRequests = FirebaseDatabase.getInstance().getReference().child("PermissionRequests");
+        databaseReferenceInviteRequests = FirebaseDatabase.getInstance().getReference().child("InviteRequests");
         databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -271,8 +289,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_my_consentcoins) {
 //            myConsentcoins();
             displayConsentcoins();
+        } else if (id == R.id.nav_pending_invites) {
+            processInvites();
         } else if (id == R.id.nav_invite) {
-
+            invite();
         } else if (id == R.id.nav_add_organization) {
             addOrganizationOrMember("organization");
         } else if (id == R.id.nav_add_member) {
@@ -336,6 +356,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CODE_PROCESS_INVITE) {
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+                    InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS",-1));
+
+                    boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
+
+                    if(inviteAccepted){
+
+                        Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
+                        DAO dao = new DAO();
+                        dao.acceptInvite(inviteRequest);
+
+
+                    } else {
+                        Toast.makeText(this,"Invite declined", Toast.LENGTH_SHORT).show();
+                    }
+
+                    databaseReferenceInviteRequests.child(inviteRequest.getId()).removeValue();
+                    pendingInviteRequests.remove(inviteRequest);
+                    adapterProcessInvite.updateData(pendingInviteRequests);
+                    tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
+
+                }
             }
         }
     }
@@ -597,6 +642,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             menuItemAddMember.setVisible(false);
                             menuItemMyOrganizations.setVisible(true);
                             menuItemMyMembers.setVisible(false);
+                            menuItemInvite.setVisible(false);
+                            tvNavigationDrawerPendingInviteCounter.setVisibility(View.VISIBLE);
                         } else if (user.getType().equals("Organization")) {
                             menuItemPendingRequests.setVisible(false); // Organizations can create, but not receive requests
                             menuItemCreateRequest.setVisible(true);
@@ -605,6 +652,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             menuItemAddMember.setVisible(true);
                             menuItemMyOrganizations.setVisible(false);
                             menuItemMyMembers.setVisible(true);
+                            menuItemInvite.setVisible(true);
+                            tvNavigationDrawerPendingInviteCounter.setVisibility(View.INVISIBLE);
                         }
                     }
                 }
@@ -722,6 +771,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             databaseReferencePermissionRequests.addChildEventListener(childEventListenerPermissionRequests);
         }
+
+        if (childEventListenerInviteRequests == null) {
+            pendingInviteRequests = new ArrayList<>();
+
+            childEventListenerInviteRequests = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    InviteRequest inviteRequest = dataSnapshot.getValue(InviteRequest.class);
+
+                    if (inviteRequest.getMember().equals(userEmail)) {
+                        pendingInviteRequests.add(inviteRequest);
+                        tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
+                    }
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+
+            databaseReferenceInviteRequests.addChildEventListener(childEventListenerInviteRequests);
+        }
+
     }
 
     private void removeDatabaseListener() {
@@ -748,6 +837,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (valueEventListenerAllUsers != null) {
             databaseReferenceUsers.removeEventListener(valueEventListenerAllUsers);
             valueEventListenerAllUsers = null;
+        }
+
+        if (childEventListenerInviteRequests != null) {
+            databaseReferenceInviteRequests.removeEventListener(childEventListenerInviteRequests);
+            childEventListenerInviteRequests = null;
         }
     }
 
@@ -955,7 +1049,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void invite(View view) {
+    public void invite() {
 
         View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
 
@@ -1018,6 +1112,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //TODO: add a check to see if users exists
         return true;
     }
+
+    private void processInvites() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_process_invite, null);
+        RecyclerView recyclerView = dialogView.findViewById(R.id.rv_process_invite);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        adapterProcessInvite = new AdapterProcessInvite(pendingInviteRequests, this);
+        recyclerView.setAdapter(adapterProcessInvite);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Process invite(s)")
+                .setView(dialogView)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
+
 
     // To solve the "leaks might occur" warning: https://stackoverflow.com/questions/44309241/warning-this-asynctask-class-should-be-static-or-leaks-might-occur/46166223#46166223
     private class DownloadObjects extends AsyncTask<URL, Void, Void> {

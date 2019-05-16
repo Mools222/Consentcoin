@@ -17,7 +17,7 @@ public class DAO {
     public void invite(ArrayList<String> members, final String organization) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("inviteRequests");
+        databaseReference = firebaseDatabase.getReference().child("InviteRequests");
 
 
         for (String uid : members) {
@@ -32,5 +32,14 @@ public class DAO {
         }
 
 
+    }
+
+    public void acceptInvite(InviteRequest inviteRequest) {
+        databaseReference = FirebaseDatabase.getInstance().getReference()
+                .child("Users")
+                .child(inviteRequest.getOrganization())
+                .child("associatedUsersUid");
+
+        databaseReference.push().setValue(inviteRequest.getMember());
     }
 }

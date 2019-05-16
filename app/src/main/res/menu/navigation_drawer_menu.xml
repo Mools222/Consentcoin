@@ -21,6 +21,11 @@
             android:icon="@drawable/icon_my_consentcoins"
             android:title="My Consentcoins" />
         <item
+            android:id="@+id/nav_pending_invites"
+            android:icon="@drawable/icon_pending_requests"
+            android:title="Pending Invites"
+            app:actionViewClass="android.widget.TextView"/>
+        <item
             android:id="@+id/nav_invite"
             android:icon="@drawable/icon_invite"
             android:title="Invite" />

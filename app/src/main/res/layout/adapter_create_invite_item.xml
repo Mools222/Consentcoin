@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="horizontal"
+    style="@style/SelectableItemBackground">
+
+    <TextView
+        android:id="@+id/tv_create_invite_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:fontFamily="@font/vollkorn"
+        android:text="test" />
+
+    <!--clickable is set to false, since the setOnClickListener in the AdapterCreateRequest listens to clicks on the view as a whole-->
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_create_invite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"/>
+</LinearLayout>

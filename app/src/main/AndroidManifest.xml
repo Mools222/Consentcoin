@@ -26,6 +26,7 @@
         <!--</activity>-->
         <activity android:name=".ProcessRequestActivity" />
         <activity android:name=".MyConsentcoinsActivity"></activity>
+        <activity android:name=".ProcessInviteActivity"/>
     </application>
 
 </manifest>
