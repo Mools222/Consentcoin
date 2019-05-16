@@ -9,11 +9,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.thomosim.consentcoin.Persistence.User;
 
-public class FirebaseLiveDataUser extends LiveData<User> {
+import java.util.ArrayList;
+
+public class FirebaseLiveDataUsers extends LiveData<ArrayList<User>> {
     private DatabaseReference databaseReference;
     private MyValueEventListener myValueEventListener;
 
-    public void setDatabaseReference(DatabaseReference databaseReference) {
+    public FirebaseLiveDataUsers(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
@@ -34,7 +36,11 @@ public class FirebaseLiveDataUser extends LiveData<User> {
     private class MyValueEventListener implements ValueEventListener {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            setValue(dataSnapshot.getValue(User.class));
+            ArrayList<User> users = new ArrayList<>();
+            for (DataSnapshot dataSnapshotChild : dataSnapshot.getChildren()) {
+                users.add(dataSnapshotChild.getValue(User.class));
+            }
+            setValue(users);
         }
 
         @Override

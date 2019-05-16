@@ -1,339 +1,82 @@
 package com.thomosim.consentcoin.Testing;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
+import android.net.Uri;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.thomosim.consentcoin.AdapterCreateRequest;
-import com.thomosim.consentcoin.AdapterProcessRequest;
+import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
-import com.thomosim.consentcoin.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import java.io.File;
+import java.io.ObjectOutputStream;
 
 public class FirebaseUtilities {
-    private DatabaseReference databaseReferenceTest;
-    private DatabaseReference databaseReferenceContractReferences;
-    private DatabaseReference databaseReferencePermissionRequests;
-    private DatabaseReference databaseReferenceUsers;
-    private ChildEventListener childEventListenerTest;
-    private ChildEventListener childEventListenerContractReferences;
-    private ChildEventListener childEventListenerPermissionRequests;
-    private ValueEventListener valueEventListenerCurrentUser;
-    private ValueEventListener valueEventListenerAllUsers;
-    private StorageReference storageReference;
     private FirebaseAuth firebaseAuth;
-    private FirebaseAuth.AuthStateListener authStateListener;
-
-    private String userDisplayName;
-    private String userEmail;
-    private String uid;
-    private User user;
-    private int chosenUserType;
-    private static final int REQUEST_CODE_SIGN_IN = 1;
-    private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
-    private boolean sendRequestToAllMembers;
-    private ArrayList<ConsentcoinReference> consentcoinReferences;
-    private ArrayList<Consentcoin> consentcoins;
-    private ArrayList<PermissionRequest> pendingPermissionRequests;
-    private ArrayList<User> organizations;
-    private ArrayList<User> members;
-    private ArrayList<User> users;
-    private AdapterProcessRequest adapterProcessRequest;
-    private AdapterCreateRequest adapterCreateRequest;
-
-    private final Context CONTEXT;
+    private DatabaseReference databaseReferenceUsers;
+    private DatabaseReference databaseReferencePermissionRequests;
+    private DatabaseReference databaseReferenceConsentcoinReferences;
+    private StorageReference storageReference;
 
     private static final Object LOCK = new Object();
     private static FirebaseUtilities instance;
 
-    public static FirebaseUtilities getInstance(Context context) {
+    public static FirebaseUtilities getInstance() {
         if (instance == null) {
             synchronized (LOCK) {
-                instance = new FirebaseUtilities(context);
+                instance = new FirebaseUtilities();
             }
         }
         return instance;
     }
 
-    public FirebaseUtilities(Context context) {
-        CONTEXT = context;
-        storageReference = FirebaseStorage.getInstance().getReference().child("consentcoins");
-        databaseReferenceTest = FirebaseDatabase.getInstance().getReference().child("test");
-        databaseReferenceContractReferences = FirebaseDatabase.getInstance().getReference().child("ConsentcoinReferences");
-        databaseReferencePermissionRequests = FirebaseDatabase.getInstance().getReference().child("PermissionRequests");
-        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+    public FirebaseUtilities() {
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        databaseReferencePermissionRequests = FirebaseDatabase.getInstance().getReference().child("PermissionRequests");
+        databaseReferenceConsentcoinReferences = FirebaseDatabase.getInstance().getReference().child("ConsentcoinReferences");
+        storageReference = FirebaseStorage.getInstance().getReference().child("consentcoins");
+    }
 
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser != null) { // User is signed in
-                    user = null; // Set the user to null to avoid using the user details of a different user, who was logged in on the same device
-
-                    userDisplayName = firebaseUser.getDisplayName();
-                    userEmail = firebaseUser.getEmail();
-                    uid = firebaseUser.getUid();
-
-                    addDatabaseListener();
-                } else { // User is signed out
-                    removeDatabaseListener();
-                    userEmail = null;
-                    uid = null; // This value is used in removeDatabaseListener(), so it is set to null after this method is done
-                    userDisplayName = null;
-
-                    ((MainActivity2) CONTEXT).startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-//                                    .setIsSmartLockEnabled(false) // Doesn't seem to do anything
-                                    .setTheme(R.style.LightTheme)
-                                    .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build())) // Additional sign-in providers can be added here. See: https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
-                                    .build(),
-                            REQUEST_CODE_SIGN_IN);
-                }
-            }
-        };
+    public FirebaseAuth getFirebaseAuth() {
+        return firebaseAuth;
     }
 
     public DatabaseReference getDatabaseReferenceCurrentUser() {
         return databaseReferenceUsers.child(firebaseAuth.getCurrentUser().getUid());
     }
 
-    public void changeUser() {
-        Random random = new Random();
-        user.setFirstName(String.valueOf(random.nextInt(500)));
-        databaseReferenceUsers.child(uid).setValue(user);
+    public DatabaseReference getDatabaseReferenceUsers() {
+        return databaseReferenceUsers;
     }
 
-    public void addAuthStateListener() {
-        firebaseAuth.addAuthStateListener(authStateListener);
+    public DatabaseReference getDatabaseReferencePermissionRequests() {
+        return databaseReferencePermissionRequests;
     }
 
-    public void removeAuthStateListener() {
-        if (authStateListener != null) {
-            firebaseAuth.removeAuthStateListener(authStateListener);
-        }
+    public DatabaseReference getDatabaseReferenceConsentcoinReferences() {
+        return databaseReferenceConsentcoinReferences;
     }
 
-    public void addDatabaseListener() {
-        if (valueEventListenerCurrentUser == null) {
-            valueEventListenerCurrentUser = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    user = dataSnapshot.getValue(User.class);
-
-//                    if (user == null) {
-//                        chooseUserType();
-//                    } else {
-//                        tvNavigationHeaderName.setText(userDisplayName);
-//                        tvNavigationHeaderEmail.setText(userEmail);
-//
-//                        if (user.getType().equals("Member")) {
-//                            menuItemPendingRequests.setVisible(true); // Members can receive, but not create requests
-//                            menuItemCreateRequest.setVisible(false);
-//                            tvNavigationDrawerCounter.setVisibility(View.VISIBLE);
-//                            menuItemAddOrganization.setVisible(true); // Members can only add and view their organizations
-//                            menuItemAddMember.setVisible(false);
-//                            menuItemMyOrganizations.setVisible(true);
-//                            menuItemMyMembers.setVisible(false);
-//                        } else if (user.getType().equals("Organization")) {
-//                            menuItemPendingRequests.setVisible(false); // Organizations can create, but not receive requests
-//                            menuItemCreateRequest.setVisible(true);
-//                            tvNavigationDrawerCounter.setVisibility(View.GONE);
-//                            menuItemAddOrganization.setVisible(false); // Organizations can only add and view their members
-//                            menuItemAddMember.setVisible(true);
-//                            menuItemMyOrganizations.setVisible(false);
-//                            menuItemMyMembers.setVisible(true);
-//                        }
-//                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            };
-
-            databaseReferenceUsers.child(uid).addValueEventListener(valueEventListenerCurrentUser);
-        }
-
-        if (valueEventListenerAllUsers == null) {
-            valueEventListenerAllUsers = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    users = new ArrayList<>();
-
-                    for (DataSnapshot dataSnapshotChild : dataSnapshot.getChildren()) {
-                        users.add(dataSnapshotChild.getValue(User.class));
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            };
-
-            databaseReferenceUsers.addValueEventListener(valueEventListenerAllUsers);
-        }
-
-//        if (childEventListenerTest == null) {
-//            textView1.setText("");
-//
-//            childEventListenerTest = new ChildEventListener() {
-//                @Override
-//                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                    textView1.append("Key: " + dataSnapshot.getKey() + "   Value: " + dataSnapshot.getValue() + "\n");
-//                }
-//
-//                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                }
-//
-//                public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                }
-//
-//                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//                }
-//
-//                public void onCancelled(DatabaseError databaseError) {
-//                }
-//            };
-//
-//            databaseReferenceTest.addChildEventListener(childEventListenerTest);
-//        }
-
-        if (childEventListenerContractReferences == null) {
-            consentcoinReferences = new ArrayList<>();
-
-            childEventListenerContractReferences = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    ConsentcoinReference consentcoinReference = dataSnapshot.getValue(ConsentcoinReference.class);
-                    consentcoinReferences.add(consentcoinReference);
-                }
-
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                }
-
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                }
-
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                }
-
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            };
-
-            databaseReferenceContractReferences.addChildEventListener(childEventListenerContractReferences);
-        }
-
-//        if (childEventListenerPermissionRequests == null) {
-//            pendingPermissionRequests = new ArrayList<>();
-//
-//            childEventListenerPermissionRequests = new ChildEventListener() {
-//                @Override
-//                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                    PermissionRequest permissionRequest = dataSnapshot.getValue(PermissionRequest.class);
-//
-//                    if (permissionRequest.getMember().equals(userEmail)) {
-//                        pendingPermissionRequests.add(permissionRequest);
-//                        tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
-//                        tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
-////                        Toast.makeText(getApplicationContext(), "Pending request detected", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//
-//                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                }
-//
-//                public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                }
-//
-//                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//                }
-//
-//                public void onCancelled(DatabaseError databaseError) {
-//                }
-//            };
-//
-//            databaseReferencePermissionRequests.addChildEventListener(childEventListenerPermissionRequests);
-//        }
-
+    public StorageReference getStorageReference() {
+        return storageReference;
     }
 
-//    public class FirebaseLiveDataUser extends LiveData<User> {
-//        public FirebaseLiveDataUser() {
-//            MyValueEventListener listener = new MyValueEventListener();
-//            databaseReferenceUsers.child(uid).addValueEventListener(listener);
-//        }
-//
-//        private class MyValueEventListener implements ValueEventListener {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                user = dataSnapshot.getValue(User.class);
-//                setValue(user);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//            }
-//        }
-//    }
-
-    public void removeDatabaseListener() {
-        if (childEventListenerTest != null) {
-            databaseReferenceTest.removeEventListener(childEventListenerTest);
-            childEventListenerTest = null;
-        }
-
-        if (childEventListenerContractReferences != null) {
-            databaseReferenceContractReferences.removeEventListener(childEventListenerContractReferences);
-            childEventListenerContractReferences = null;
-        }
-
-        if (childEventListenerPermissionRequests != null) {
-            databaseReferencePermissionRequests.removeEventListener(childEventListenerPermissionRequests);
-            childEventListenerPermissionRequests = null;
-        }
-
-        if (valueEventListenerCurrentUser != null) {
-            databaseReferenceUsers.child(uid).removeEventListener(valueEventListenerCurrentUser);
-            valueEventListenerCurrentUser = null;
-        }
-
-        if (valueEventListenerAllUsers != null) {
-            databaseReferenceUsers.removeEventListener(valueEventListenerAllUsers);
-            valueEventListenerAllUsers = null;
-        }
+    public void signOut(Context context) {
+        AuthUI.getInstance().signOut(context);
     }
 
-    public void write(String test) {
-        databaseReferenceTest.push().setValue(test);
-    }
-
-
-    public void signOut() {
-        AuthUI.getInstance().signOut(CONTEXT);
-    }
-
-    public void chooseUserType(String userType) {
-        user = new User(uid, userEmail, userType, "FirstName", null, "LastName", null);
+    public void addUser(String userType, String uid, String userEmail, String userDisplayName) {
+        User user = new User(uid, userEmail, userType, "FirstName", null, "LastName", null);
         if (userDisplayName != null) {
             String[] userNameSplit = userDisplayName.split("\\s");
             if (userNameSplit.length == 2)
@@ -342,7 +85,73 @@ public class FirebaseUtilities {
                 user = new User(uid, userEmail, userType, userNameSplit[0], userNameSplit[1], userNameSplit[2], null);
         }
         databaseReferenceUsers.child(uid).setValue(user);
-
     }
 
+    public void updateUser(String uid, User user) {
+        databaseReferenceUsers.child(uid).setValue(user);
+    }
+
+    public void addPermissionRequest(String organizationEmail, String memberEmail, String permissionType) {
+        DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
+        String firebaseId = databaseReference.getKey(); // Get the auto generated key
+        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationEmail, memberEmail, permissionType);
+        databaseReference.setValue(permissionRequest);
+    }
+
+    public void removePermissionRequest(String id) {
+        databaseReferencePermissionRequests.child(id).removeValue(); // Remove the permission request from the database
+    }
+
+    /**
+     * This method:
+     * 1) Creates a new instance of the Consentcoin class
+     * 2) Creates a new file in the phone's internal storage called "contract.dat". The getFilesDir method returns the appropriate internal directory for the app
+     * 3) Opens a new ObjectOutputStream object and writes the Consentcoin object to the file. The ObjectOutputStream is then closed.
+     * The openFileOutput method opens a private file associated with this Context's application package for writing. By passing the argument Context.MODE_PRIVATE, the created file can only be accessed by the calling application.
+     * 4) A new StorageReference object is created. The ensures that the file is saved in the "consentcoins" folder in Firebase Storage under the file name "[contractId].dat"
+     * 5) The file is persisted via the putFile method, which requires a URI object. The static fromFile method from the Uri class creates a URI from the File object.
+     * 6) The putFile method returns a UploadTask object. Using the addOnSuccessListener method, an OnSuccessListener is added to the UploadTask object.
+     * This is accomplished by creating an anonymous inner class, which implements the onSuccess method. Since OnSuccessListener is a generic class, the formal generic type
+     * "TResult" is replaced by the inner class TaskSnapshot, which is found in the UploadTask class.
+     * 7) A new Task object is created. The formal generic type "TResult" is replaced by the Uri class. Since TaskSnapshot extends the StorageTask class, it inherits the getStorage method.
+     * The method returns a StorageReference object upon which the getDownloadUrl method is called. This method returns a Task<Uri> object. The getDownloadUrl method is called on the
+     * Task<Uri> object. This method returns a Task<Uri> containing the the download URL for the persisted file.
+     * 8) A while loop with an empty body is created to keep the thread waiting until the getDownloadUrl method is successful.
+     * 9) A new Uri object is created by calling the getResult method on the Task<Uri> object.
+     * 10) A new ConsentcoinReference object is created using the contract ID, member ID and organization ID of the Consentcoin object and the download URL.
+     * 11) The ConsentcoinReference object is persisted to the Firebase Realtime Database using the push and setValue methods.
+     * 12) Finally the contract.dat file is deleted from the storage of the phone.
+     */
+
+    public void addConsentcoin(Context context, String id, String contractType, String organization, String member) {
+        // TODO (2) Encrypt the Consentcoin object
+        final Consentcoin consentcoin = new Consentcoin(id, contractType, member, organization);
+
+        String fileName = "consentcoin";
+        final File file = new File(context.getFilesDir(), fileName);
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+            objectOutputStream.writeObject(consentcoin);
+            objectOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        StorageReference storageReference = this.storageReference.child(id);
+
+        storageReference.putFile(Uri.fromFile(file)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
+                while (!urlTask.isSuccessful()) ;
+                Uri downloadUrl = urlTask.getResult();
+
+                ConsentcoinReference consentcoinReference = new ConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberId(), consentcoin.getOrganizationId(), downloadUrl.toString());
+                databaseReferenceConsentcoinReferences.push().setValue(consentcoinReference);
+
+                file.delete();
+
+            }
+        });
+    }
 }
