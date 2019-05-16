@@ -7,13 +7,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.thomosim.consentcoin.Persistence.User;
+import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 
-public class FirebaseLiveDataUser extends LiveData<User> {
+import java.util.ArrayList;
+
+public class FirebaseLiveDataConsentcoinReferences extends LiveData<ArrayList<ConsentcoinReference>> {
     private DatabaseReference databaseReference;
     private MyValueEventListener myValueEventListener;
 
-    public void setDatabaseReference(DatabaseReference databaseReference) {
+    public FirebaseLiveDataConsentcoinReferences(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
@@ -34,7 +36,11 @@ public class FirebaseLiveDataUser extends LiveData<User> {
     private class MyValueEventListener implements ValueEventListener {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            setValue(dataSnapshot.getValue(User.class));
+            ArrayList<ConsentcoinReference> consentcoinReferences = new ArrayList<>();
+            for (DataSnapshot dataSnapshotChild : dataSnapshot.getChildren()) {
+                consentcoinReferences.add(dataSnapshotChild.getValue(ConsentcoinReference.class));
+            }
+            setValue(consentcoinReferences);
         }
 
         @Override
