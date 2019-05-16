@@ -431,6 +431,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 if (organizationOrMember.getEmail().equals(email)) {
                                     existingOrganizationOrMember = true;
                                     break;
+
                                 }
                             }
 
