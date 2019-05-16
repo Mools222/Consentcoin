@@ -26,8 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -125,9 +123,9 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
     }
 
     public void setupViewModel() {
-        myViewModel = ViewModelProviders.of(this).get(MyViewModel.class);
+        myViewModel = new MyViewModel();
 
-        myViewModel.getLiveDataFirebaseAuth().observe(this, new Observer<FirebaseAuth>() {
+        myViewModel.getObservableDataFirebaseAuth().observe(new MyObserver<FirebaseAuth>() {
             @Override
             public void onChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -142,7 +140,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     tvNavigationHeaderName.setText(userDisplayName);
                     tvNavigationHeaderEmail.setText(userEmail);
 
-                    myViewModel.getFirebaseLiveDataUser().setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser()); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
+                    myViewModel.getObservableDataUser().setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser()); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
                     myViewModel.addDatabaseListener();
                 } else { // User is signed out
                     Log.i("ZZZ", "logged out ");
@@ -165,7 +163,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        myViewModel.getLiveDataUser().observe(this, new Observer<User>() {
+        myViewModel.getObservableDataUser().observe(new MyObserver<User>() {
             @Override
             public void onChanged(User currentUser) {
                 user = currentUser;
@@ -194,18 +192,18 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        myViewModel.getLiveDataUsers().observe(this, new Observer<ArrayList<User>>() {
+        myViewModel.getObservableDataDataUsers().observe(new MyObserver<ArrayList<User>>() {
             @Override
             public void onChanged(ArrayList<User> allUsers) {
                 users = allUsers;
             }
         });
 
-        myViewModel.getLiveDataPermissionRequests().observe(this, new Observer<ArrayList<PermissionRequest>>() {
+        myViewModel.getObservableDataPermissionRequests().observe(new MyObserver<ArrayList<PermissionRequest>>() {
             @Override
             public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
                 pendingPermissionRequests = new ArrayList<>();
-                for (PermissionRequest permissionRequest: permissionRequests) {
+                for (PermissionRequest permissionRequest : permissionRequests) {
                     if (permissionRequest.getMember().equals(userEmail)) {
                         pendingPermissionRequests.add(permissionRequest);
                     }
@@ -215,11 +213,11 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        myViewModel.getLiveDataConsentcoinReferences().observe(this, new Observer<ArrayList<ConsentcoinReference>>() {
+        myViewModel.getObservableDataConsentcoinReferences().observe(new MyObserver<ArrayList<ConsentcoinReference>>() {
             @Override
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
-                for (ConsentcoinReference consentcoinReference: newConsentcoinReferences) {
+                for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
                     if (user.getType().equals("Member") && consentcoinReference.getMember().equals(userEmail))
                         consentcoinReferences.add(consentcoinReference);
                     else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(userEmail))
@@ -234,6 +232,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         super.onResume();
 //        firebaseUtilities.addAuthStateListener();
         myViewModel.addAuthStateListener();
+//        myViewModel2.addAuthStateListener();
     }
 
     // onResume adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
@@ -242,6 +241,8 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         super.onPause();
 //        firebaseUtilities.removeAuthStateListener();
         myViewModel.removeAuthStateListener();
+//        myViewModel2.removeAuthStateListener();
+
 //        firebaseUtilities.removeDatabaseListener();
         myViewModel.removeDatabaseListener();
     }

@@ -1,15 +1,14 @@
 package com.thomosim.consentcoin.Testing;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class FirebaseLiveDataFirebaseAuth extends LiveData<FirebaseAuth> {
+public class ObservableDataFirebaseAuth extends MyObservable<FirebaseAuth> {
     private MyAuthStateListener myAuthStateListener;
     private FirebaseAuth firebaseAuth;
 
-    public FirebaseLiveDataFirebaseAuth(FirebaseAuth firebaseAuth) {
+    public ObservableDataFirebaseAuth(FirebaseAuth firebaseAuth) {
         this.firebaseAuth = firebaseAuth;
         myAuthStateListener = new MyAuthStateListener();
     }

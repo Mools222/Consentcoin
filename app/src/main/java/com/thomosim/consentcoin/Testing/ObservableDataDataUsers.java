@@ -1,7 +1,6 @@
 package com.thomosim.consentcoin.Testing;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -11,11 +10,11 @@ import com.thomosim.consentcoin.Persistence.User;
 
 import java.util.ArrayList;
 
-public class FirebaseLiveDataUsers extends LiveData<ArrayList<User>> {
+public class ObservableDataDataUsers extends MyObservable<ArrayList<User>> {
     private DatabaseReference databaseReference;
     private MyValueEventListener myValueEventListener;
 
-    public FirebaseLiveDataUsers(DatabaseReference databaseReference) {
+    public ObservableDataDataUsers(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
