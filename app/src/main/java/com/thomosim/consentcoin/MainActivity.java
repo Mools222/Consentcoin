@@ -1050,19 +1050,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void invite() {
-
         View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
 
         tietInviteMember = inviteDialogView.findViewById(R.id.memberEditText);
         inviteMemberList = new ArrayList<>();
         listMember = inviteDialogView.findViewById(R.id.list_member);
 
-
         inviteMemberAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, inviteMemberList);
         listMember.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listMember.setAdapter(inviteMemberAdapter);
         listMember.setVisibility(View.VISIBLE);
-
 
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Invite member(s)")
@@ -1093,10 +1090,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 })
                 .show();
-
-
     }
-
 
     public void addInviteMember(View view) {
 

@@ -6,6 +6,7 @@ public class MyViewModel extends MyObservable {
     private ObservableDataDataUsers observableDataDataUsers;
     private ObservableDataPermissionRequests observableDataPermissionRequests;
     private ObservableDataConsentcoinReferences observableDataConsentcoinReferences;
+    private ObservableDataInviteRequests observableDataInviteRequests;
 
     public MyViewModel() {
         FirebaseUtilities firebaseUtilities = FirebaseUtilities.getInstance();
@@ -14,6 +15,7 @@ public class MyViewModel extends MyObservable {
         observableDataDataUsers = new ObservableDataDataUsers(firebaseUtilities.getDatabaseReferenceUsers());
         observableDataPermissionRequests = new ObservableDataPermissionRequests(firebaseUtilities.getDatabaseReferencePermissionRequests());
         observableDataConsentcoinReferences = new ObservableDataConsentcoinReferences(firebaseUtilities.getDatabaseReferenceConsentcoinReferences());
+        observableDataInviteRequests = new ObservableDataInviteRequests(firebaseUtilities.getDatabaseReferenceInviteRequests());
     }
 
     public ObservableDataFirebaseAuth getObservableDataFirebaseAuth() {
@@ -44,11 +46,16 @@ public class MyViewModel extends MyObservable {
         return observableDataConsentcoinReferences;
     }
 
+    public ObservableDataInviteRequests getObservableDataInviteRequests() {
+        return observableDataInviteRequests;
+    }
+
     public void addDatabaseListener() {
         observableDataUser.addDatabaseListener();
         observableDataDataUsers.addDatabaseListener();
         observableDataPermissionRequests.addDatabaseListener();
         observableDataConsentcoinReferences.addDatabaseListener();
+        observableDataInviteRequests.addDatabaseListener();
     }
 
     public void removeDatabaseListener() {
@@ -56,6 +63,7 @@ public class MyViewModel extends MyObservable {
         observableDataDataUsers.removeDatabaseListener();
         observableDataPermissionRequests.removeDatabaseListener();
         observableDataConsentcoinReferences.removeDatabaseListener();
+        observableDataInviteRequests.removeDatabaseListener();
     }
 
 

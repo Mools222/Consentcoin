@@ -13,32 +13,23 @@ public class DAO {
 
     private String inviteID;
 
-
     public void invite(ArrayList<String> members, final String organization) {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("InviteRequests");
 
-
         for (String uid : members) {
-
             inviteRequestDatabaseReference = databaseReference.push();
             inviteID = inviteRequestDatabaseReference.getKey();
-            final String userId = uid;
-
             InviteRequest inviteRequest = new InviteRequest(inviteID, organization, uid);
             inviteRequestDatabaseReference.setValue(inviteRequest);
-
         }
-
-
     }
 
     public void acceptInvite(InviteRequest inviteRequest, User organization) {
         databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child("Users")
                 .child(inviteRequest.getOrganization());
-
 
         databaseReference.setValue(organization);
     }

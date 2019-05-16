@@ -37,10 +37,15 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.AdapterCreateRequest;
+import com.thomosim.consentcoin.AdapterProcessInvite;
 import com.thomosim.consentcoin.AdapterProcessRequest;
 import com.thomosim.consentcoin.MyConsentcoinsActivity;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.DAO;
+import com.thomosim.consentcoin.Persistence.DAOFirebase;
+import com.thomosim.consentcoin.Persistence.DAOInterface;
+import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
 import com.thomosim.consentcoin.R;
@@ -54,9 +59,16 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail;
     private TextView tvNavigationDrawerCounter;
     private TextView tvNavigationDrawerPendingPermissionsCounter;
-    private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemMyPermissions, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
+    private TextView tvNavigationDrawerPendingInviteCounter;
+    private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
     private AdapterProcessRequest adapterProcessRequest;
     private AdapterCreateRequest adapterCreateRequest;
+    private AdapterProcessInvite adapterProcessInvite;
+
+    private TextInputEditText tietInviteMember;
+    private ArrayList<String> inviteMemberList;
+    private ArrayAdapter<String> inviteMemberAdapter;
+    private ListView listMember;
 
     private String userDisplayName, userEmail, uid;
     private User user;
@@ -64,17 +76,20 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
     private static final int REQUEST_CODE_SIGN_IN = 1;
     private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
     private static final int REQUEST_CODE_MY_CONSENTCOINS = 3;
+    private static final int REQUEST_CODE_PROCESS_INVITE = 4;
     private boolean sendRequestToAllMembers;
 
     private ArrayList<ConsentcoinReference> consentcoinReferences;
     private ArrayList<Consentcoin> consentcoins;
     private ArrayList<PermissionRequest> pendingPermissionRequests;
+    private ArrayList<InviteRequest> pendingInviteRequests;
     private ArrayList<User> organizations;
     private ArrayList<User> members;
     private ArrayList<User> users;
 
     private FirebaseUtilities firebaseUtilities;
     private MyViewModel myViewModel;
+    private DAOInterface dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +120,16 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         tvNavigationDrawerPendingPermissionsCounter.setText("0");
         tvNavigationHeaderName = navigationDrawerHeader.findViewById(R.id.tv_navigation_header_name);
         tvNavigationHeaderEmail = navigationDrawerHeader.findViewById(R.id.tv_navigation_header_email);
+        tvNavigationDrawerPendingInviteCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_invites).getActionView();
+        tvNavigationDrawerPendingInviteCounter.setGravity(Gravity.CENTER_VERTICAL);
+        tvNavigationDrawerPendingInviteCounter.setTypeface(null, Typeface.BOLD);
+        tvNavigationDrawerPendingInviteCounter.setTextColor(getResources().getColor(R.color.colorRed));
+        tvNavigationDrawerPendingInviteCounter.setText("0");
 
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
         menuItemCreateRequest = navigationView.getMenu().findItem(R.id.nav_create_request);
         menuItemMyPermissions = navigationView.getMenu().findItem(R.id.nav_my_consentcoins);
+        menuItemPendingInvites = navigationView.getMenu().findItem(R.id.nav_pending_invites);
         menuItemInvite = navigationView.getMenu().findItem(R.id.nav_invite);
         menuItemAddOrganization = navigationView.getMenu().findItem(R.id.nav_add_organization);
         menuItemAddMember = navigationView.getMenu().findItem(R.id.nav_add_member);
@@ -116,7 +137,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         menuItemMyMembers = navigationView.getMenu().findItem(R.id.nav_my_members);
 
         firebaseUtilities = FirebaseUtilities.getInstance();
-
+        dao = new DAOFirebase(this);
         setupViewModel();
 
         Log.i("ZZZ", "onCreate");
@@ -179,6 +200,9 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                         menuItemAddMember.setVisible(false);
                         menuItemMyOrganizations.setVisible(true);
                         menuItemMyMembers.setVisible(false);
+                        menuItemInvite.setVisible(false);
+                        menuItemPendingInvites.setVisible(true);
+                        tvNavigationDrawerPendingInviteCounter.setVisibility(View.VISIBLE);
                     } else if (currentUser.getType().equals("Organization")) {
                         menuItemPendingRequests.setVisible(false); // Organizations can create, but not receive requests
                         menuItemCreateRequest.setVisible(true);
@@ -187,6 +211,9 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                         menuItemAddMember.setVisible(true);
                         menuItemMyOrganizations.setVisible(false);
                         menuItemMyMembers.setVisible(true);
+                        menuItemInvite.setVisible(true);
+                        menuItemPendingInvites.setVisible(false);
+                        tvNavigationDrawerPendingInviteCounter.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -223,6 +250,19 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(userEmail))
                         consentcoinReferences.add(consentcoinReference);
                 }
+            }
+        });
+
+        myViewModel.getObservableDataInviteRequests().observe(new MyObserver<ArrayList<InviteRequest>>() {
+            @Override
+            public void onChanged(ArrayList<InviteRequest> inviteRequests) {
+                pendingInviteRequests = new ArrayList<>();
+                for (InviteRequest inviteRequest : inviteRequests) {
+                    if (inviteRequest.getMember().equals(userEmail)) {
+                        pendingInviteRequests.add(inviteRequest);
+                    }
+                }
+                tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
             }
         });
     }
@@ -303,8 +343,10 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         } else if (id == R.id.nav_my_consentcoins) {
 //            myConsentcoins();
             displayConsentcoins();
+        } else if (id == R.id.nav_pending_invites) {
+            processInvites();
         } else if (id == R.id.nav_invite) {
-
+            invite();
         } else if (id == R.id.nav_add_organization) {
             addOrganizationOrMember("organization");
         } else if (id == R.id.nav_add_member) {
@@ -349,13 +391,13 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     if (permissionGranted) {
                         Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
 //                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
-                        firebaseUtilities.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
+                        dao.addConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
                     } else {
                         Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                     }
 
 //                    databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
-                    firebaseUtilities.removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
+                    dao.removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
                     pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
                     adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
                 }
@@ -367,6 +409,41 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                 Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CODE_PROCESS_INVITE) {
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+                    InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
+
+                    boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
+
+                    if (inviteAccepted) {
+                        Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
+
+                        for (User user : users) {
+                            if (user.getUid().equals(inviteRequest.getOrganization())) {
+                                ArrayList<String> associatedUsersUids = user.getAssociatedUsersUid();
+                                if (associatedUsersUids == null)
+                                    associatedUsersUids = new ArrayList<>();
+                                if (!associatedUsersUids.contains(uid))
+                                    associatedUsersUids.add(uid);
+
+                                user.setAssociatedUsersUid(associatedUsersUids);
+
+                                Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
+
+                                dao.updateUser(inviteRequest.getOrganization(), user);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
+                    }
+
+//                    databaseReferenceInviteRequests.child(inviteRequest.getId()).removeValue();
+                    dao.removeInviteRequest(inviteRequest.getId());
+                    pendingInviteRequests.remove(inviteRequest);
+                    adapterProcessInvite.updateData(pendingInviteRequests);
+                }
             }
         }
     }
@@ -387,7 +464,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String userType = array[chosenUserType];
-                        firebaseUtilities.addUser(userType, uid, userEmail, userDisplayName);
+                        dao.addUser(userType, uid, userEmail, userDisplayName);
                     }
                 })
                 .setCancelable(false)
@@ -468,12 +545,12 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                         public void onClick(DialogInterface dialog, int which) {
                             if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members
                                 for (int i = 0; i < members.size(); i++) {
-                                    firebaseUtilities.addPermissionRequest(userEmail, members.get(i).getEmail(), "P1");
+                                    dao.addPermissionRequest(userEmail, members.get(i).getEmail(), "P1");
                                 }
                             } else { // If the organization wishes to send requests out to a select number of its associated members
                                 ArrayList<User> checkedUsers = adapterCreateRequest.getCheckedUsers();
                                 for (int i = 0; i < checkedUsers.size(); i++) {
-                                    firebaseUtilities.addPermissionRequest(userEmail, checkedUsers.get(i).getEmail(), "P1");
+                                    dao.addPermissionRequest(userEmail, checkedUsers.get(i).getEmail(), "P1");
                                 }
                             }
                             Toast.makeText(CONTEXT, "Request(s) sent!", Toast.LENGTH_SHORT).show();
@@ -596,7 +673,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                             if (!associatedUsersUids.contains(organizationOrMember.getUid()))
                                 associatedUsersUids.add(organizationOrMember.getUid());
                             user.setAssociatedUsersUid(associatedUsersUids);
-                            firebaseUtilities.updateUser(uid, user);
+                            dao.updateUser(uid, user);
                             Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " added", Toast.LENGTH_SHORT).show();
                         } else // If the organization or member does not exist, display a toast
                             Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
@@ -640,11 +717,89 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             Toast.makeText(this, "You have no " + userType, Toast.LENGTH_SHORT).show();
     }
 
+    public void invite() {
+        View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
+
+        tietInviteMember = inviteDialogView.findViewById(R.id.memberEditText);
+        inviteMemberList = new ArrayList<>();
+        listMember = inviteDialogView.findViewById(R.id.list_member);
+
+        inviteMemberAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, inviteMemberList);
+        listMember.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        listMember.setAdapter(inviteMemberAdapter);
+        listMember.setVisibility(View.VISIBLE);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Invite member(s)")
+                .setView(inviteDialogView)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!inviteMemberAdapter.isEmpty()) {
+                            if (validateMembers(inviteMemberList)) {
+                                String organization;
+                                if (uid != null) {
+                                    organization = uid;
+                                } else {
+                                    organization = "testOrg";
+                                }
+                                dao.addInviteRequest(inviteMemberList, organization);
+
+                            }
+                        }
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
+
+    public void addInviteMember(View view) {
+
+        if (!tietInviteMember.getText().toString().equals("") || tietInviteMember.getText() == null) {
+            //inviteMemberList.add(tietInviteMember.getText().toString());
+            inviteMemberAdapter.add(tietInviteMember.getText().toString());
+
+            tietInviteMember.setText("");
+        }
+    }
+
+    private boolean validateMembers(ArrayList<String> users) {
+        //TODO: add a check to see if users exists
+        return true;
+    }
+
+    private void processInvites() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_process_invite, null);
+        RecyclerView recyclerView = dialogView.findViewById(R.id.rv_process_invite);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        adapterProcessInvite = new AdapterProcessInvite(pendingInviteRequests, this);
+        recyclerView.setAdapter(adapterProcessInvite);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Process invite(s)")
+                .setView(dialogView)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
+
     public void write(View view) {
 //        String test = textInputEditText.getText().toString();
 //        firebaseUtilities.write(test);
 //        textInputEditText.setText("");
 
         Toast.makeText(this, user.getType(), Toast.LENGTH_SHORT).show();
+
     }
 }
