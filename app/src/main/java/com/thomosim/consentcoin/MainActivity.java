@@ -368,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
                         DAO dao = new DAO();
-                        dao.acceptInvite(inviteRequest);
+                        dao.acceptInvite(inviteRequest,uid);
 
 
                     } else {
@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_request, null);
-            final RecyclerView recyclerView = dialogView.findViewById(R.id.et_create_request);
+            final RecyclerView recyclerView = dialogView.findViewById(R.id.rv_create_request);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items

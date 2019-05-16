@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.thomosim.consentcoin.Persistence.InviteRequest;
-import com.thomosim.consentcoin.Persistence.PermissionRequest;
 
 public class ProcessInviteActivity extends AppCompatActivity {
     private Intent returnIntent;
@@ -24,8 +23,8 @@ public class ProcessInviteActivity extends AppCompatActivity {
 
         // The getIntent method returns the intent that started this activity. This intent was created in the constructor of the ViewHolderProcessRequest class found in the AdapterProcessRequest. The processRequest method of the MainActivity class creates an instance of the AdapterProcessRequest class
         Intent startIntent = getIntent();
-        if (startIntent.hasExtra("PR") && startIntent.hasExtra("POS")) {
-            InviteRequest inviteRequest = (InviteRequest) startIntent.getSerializableExtra("PR");
+        if (startIntent.hasExtra("PI") && startIntent.hasExtra("POS")) {
+            InviteRequest inviteRequest = (InviteRequest) startIntent.getSerializableExtra("PI");
             position = startIntent.getIntExtra("POS", -1);
             textView.setText("ID: " + inviteRequest.getId());
         }
