@@ -94,7 +94,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
 //    private MyViewModel myViewModel;
     private MyViewModel2 myViewModel2;
 //    private DAOInterface dao;
-    private DAOInterface2 dao2;
+    private DAOFirebase2 dao2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,7 +180,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                 } else { // User is signed out
                     Log.i("ZZZ", "logged out ");
 
-                    myViewModel2.removeDatabaseListener();
+                    dao2.removeDatabaseListener();
 
                     userEmail = null;
                     uid = null; // This value is used in removeDatabaseListener(), so it is set to null after this method is done
@@ -410,7 +410,8 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         super.onResume();
 //        firebaseUtilities.addAuthStateListener();
 //        myViewModel.addAuthStateListener();
-        myViewModel2.addAuthStateListener();
+//        myViewModel2.addAuthStateListener();
+        dao2.addAuthStateListener();
     }
 
     // onResume adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
@@ -418,11 +419,13 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
     protected void onPause() {
         super.onPause();
 //        firebaseUtilities.removeAuthStateListener();
-        myViewModel.removeAuthStateListener();
+//        myViewModel.removeAuthStateListener();
 //        myViewModel2.removeAuthStateListener();
+        dao2.removeAuthStateListener();
 
 //        firebaseUtilities.removeDatabaseListener();
-        myViewModel.removeDatabaseListener();
+//        myViewModel.removeDatabaseListener();
+        dao2.removeDatabaseListener();
     }
 
     /**
@@ -529,13 +532,13 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     if (permissionGranted) {
                         Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
 //                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
-                        dao.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
+                        dao2.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
                     } else {
                         Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                     }
 
 //                    databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
-                    dao.removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
+                    dao2.removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
                     pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
                     adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
                 }
@@ -570,7 +573,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
 
                                 Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
 
-                                dao.updateUser(inviteRequest.getOrganization(), user);
+                                dao2.updateUser(inviteRequest.getOrganization(), user);
                             }
                         }
                     } else {
@@ -578,7 +581,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     }
 
 //                    databaseReferenceInviteRequests.child(inviteRequest.getId()).removeValue();
-                    dao.removeInviteRequest(inviteRequest.getId());
+                    dao2.removeInviteRequest(inviteRequest.getId());
                     pendingInviteRequests.remove(inviteRequest);
                     adapterProcessInvite.updateData(pendingInviteRequests);
                 }
@@ -602,7 +605,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String userType = array[chosenUserType];
-                        dao.addUser(userType, uid, userEmail, userDisplayName);
+                        dao2.addUser(userType, uid, userEmail, userDisplayName);
                     }
                 })
                 .setCancelable(false)
@@ -683,12 +686,12 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                         public void onClick(DialogInterface dialog, int which) {
                             if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members
                                 for (int i = 0; i < members.size(); i++) {
-                                    dao.addPermissionRequest(userEmail, members.get(i).getEmail(), "P1");
+                                    dao2.addPermissionRequest(userEmail, members.get(i).getEmail(), "P1");
                                 }
                             } else { // If the organization wishes to send requests out to a select number of its associated members
                                 ArrayList<User> checkedUsers = adapterCreateRequest.getCheckedUsers();
                                 for (int i = 0; i < checkedUsers.size(); i++) {
-                                    dao.addPermissionRequest(userEmail, checkedUsers.get(i).getEmail(), "P1");
+                                    dao2.addPermissionRequest(userEmail, checkedUsers.get(i).getEmail(), "P1");
                                 }
                             }
                             Toast.makeText(CONTEXT, "Request(s) sent!", Toast.LENGTH_SHORT).show();
@@ -811,7 +814,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                             if (!associatedUsersUids.contains(organizationOrMember.getUid()))
                                 associatedUsersUids.add(organizationOrMember.getUid());
                             user.setAssociatedUsersUid(associatedUsersUids);
-                            dao.updateUser(uid, user);
+                            dao2.updateUser(uid, user);
                             Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " added", Toast.LENGTH_SHORT).show();
                         } else // If the organization or member does not exist, display a toast
                             Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
@@ -881,7 +884,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                                 } else {
                                     organization = "testOrg";
                                 }
-                                dao.addInviteRequest(inviteMemberList, organization);
+                                dao2.addInviteRequest(inviteMemberList, organization);
 
                             }
                         }
