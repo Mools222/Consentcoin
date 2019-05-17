@@ -26,68 +26,68 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class DAOFirebase implements DAOInterface {
+public class DAOFirebase2 implements DAOInterface2 {
     private FirebaseUtilities firebaseUtilities;
 
-//    private ObservableDataFirebaseAuth observableDataFirebaseAuth;
-//    private ObservableDataUser observableDataUser;
-//    private ObservableDataDataUsers observableDataDataUsers;
-//    private ObservableDataPermissionRequests observableDataPermissionRequests;
-//    private ObservableDataConsentcoinReferences observableDataConsentcoinReferences;
-//    private ObservableDataInviteRequests observableDataInviteRequests;
+    private ObservableDataFirebaseAuth observableDataFirebaseAuth;
+    private ObservableDataUser observableDataUser;
+    private ObservableDataDataUsers observableDataDataUsers;
+    private ObservableDataPermissionRequests observableDataPermissionRequests;
+    private ObservableDataConsentcoinReferences observableDataConsentcoinReferences;
+    private ObservableDataInviteRequests observableDataInviteRequests;
 
-//    private static final Object LOCK = new Object();
-//    private static DAOFirebase instance;
+    private static final Object LOCK = new Object();
+    private static DAOFirebase2 instance;
 
     // Singleton pattern
-//    public static DAOFirebase getInstance() {
-//        if (instance == null) {
-//            synchronized (LOCK) {
-//                instance = new DAOFirebase();
-//            }
-//        }
-//        return instance;
-//    }
-
-    public DAOFirebase() {
-        firebaseUtilities = FirebaseUtilities.getInstance();
-//        observableDataFirebaseAuth = new ObservableDataFirebaseAuth(firebaseUtilities.getFirebaseAuth());
-//        observableDataUser = new ObservableDataUser();
-//        observableDataDataUsers = new ObservableDataDataUsers(firebaseUtilities.getDatabaseReferenceUsers());
-//        observableDataPermissionRequests = new ObservableDataPermissionRequests(firebaseUtilities.getDatabaseReferencePermissionRequests());
-//        observableDataConsentcoinReferences = new ObservableDataConsentcoinReferences(firebaseUtilities.getDatabaseReferenceConsentcoinReferences());
-//        observableDataInviteRequests = new ObservableDataInviteRequests(firebaseUtilities.getDatabaseReferenceInviteRequests());
+    public static DAOFirebase2 getInstance() {
+        if (instance == null) {
+            synchronized (LOCK) {
+                instance = new DAOFirebase2();
+            }
+        }
+        return instance;
     }
 
-//    public void addAuthStateListener() {
-//        observableDataFirebaseAuth.addAuthStateListener();
-//    }
-//
-//    public void removeAuthStateListener() {
-//        observableDataFirebaseAuth.removeAuthStateListener();
-//    }
-//
-//    public void addDatabaseListener() {
-//        observableDataUser.addDatabaseListener();
-//        observableDataDataUsers.addDatabaseListener();
-//        observableDataPermissionRequests.addDatabaseListener();
-//        observableDataConsentcoinReferences.addDatabaseListener();
-//        observableDataInviteRequests.addDatabaseListener();
-//    }
-//
-//    public void removeDatabaseListener() {
-//        observableDataUser.removeDatabaseListener();
-//        observableDataDataUsers.removeDatabaseListener();
-//        observableDataPermissionRequests.removeDatabaseListener();
-//        observableDataConsentcoinReferences.removeDatabaseListener();
-//        observableDataInviteRequests.removeDatabaseListener();
-//    }
+    public DAOFirebase2() {
+        firebaseUtilities = FirebaseUtilities.getInstance();
+        observableDataFirebaseAuth = new ObservableDataFirebaseAuth(firebaseUtilities.getFirebaseAuth());
+        observableDataUser = new ObservableDataUser();
+        observableDataDataUsers = new ObservableDataDataUsers(firebaseUtilities.getDatabaseReferenceUsers());
+        observableDataPermissionRequests = new ObservableDataPermissionRequests(firebaseUtilities.getDatabaseReferencePermissionRequests());
+        observableDataConsentcoinReferences = new ObservableDataConsentcoinReferences(firebaseUtilities.getDatabaseReferenceConsentcoinReferences());
+        observableDataInviteRequests = new ObservableDataInviteRequests(firebaseUtilities.getDatabaseReferenceInviteRequests());
+    }
+
+    public void addAuthStateListener() {
+        observableDataFirebaseAuth.addAuthStateListener();
+    }
+
+    public void removeAuthStateListener() {
+        observableDataFirebaseAuth.removeAuthStateListener();
+    }
+
+    public void addDatabaseListener() {
+        observableDataUser.addDatabaseListener();
+        observableDataDataUsers.addDatabaseListener();
+        observableDataPermissionRequests.addDatabaseListener();
+        observableDataConsentcoinReferences.addDatabaseListener();
+        observableDataInviteRequests.addDatabaseListener();
+    }
+
+    public void removeDatabaseListener() {
+        observableDataUser.removeDatabaseListener();
+        observableDataDataUsers.removeDatabaseListener();
+        observableDataPermissionRequests.removeDatabaseListener();
+        observableDataConsentcoinReferences.removeDatabaseListener();
+        observableDataInviteRequests.removeDatabaseListener();
+    }
 
 
-//    @Override
-//    public <T> MyObservable<T> getLogin() {
-//        return (MyObservable<T>)observableDataFirebaseAuth;
-//    }
+    @Override
+    public <T> MyObservable<T> getLogin() {
+        return (MyObservable<T>)observableDataFirebaseAuth;
+    }
 
     @Override
     public void addUser(String userType, String uid, String userEmail, String userDisplayName) {
@@ -102,15 +102,15 @@ public class DAOFirebase implements DAOInterface {
         firebaseUtilities.getDatabaseReferenceUsers().child(uid).setValue(user);
     }
 
-//    @Override
-//    public MyObservable<User> getUser() {
-//        return observableDataUser;
-//    }
-//
-//    @Override
-//    public MyObservable<ArrayList<User>> getUsers() {
-//        return observableDataDataUsers;
-//    }
+    @Override
+    public MyObservable<User> getUser() {
+        return observableDataUser;
+    }
+
+    @Override
+    public MyObservable<ArrayList<User>> getUsers() {
+        return observableDataDataUsers;
+    }
 
 
     @Override
@@ -131,10 +131,10 @@ public class DAOFirebase implements DAOInterface {
         databaseReference.setValue(permissionRequest);
     }
 
-//    @Override
-//    public MyObservable<ArrayList<PermissionRequest>> getPermissionRequests() {
-//        return observableDataPermissionRequests;
-//    }
+    @Override
+    public MyObservable<ArrayList<PermissionRequest>> getPermissionRequests() {
+        return observableDataPermissionRequests;
+    }
 
 
     @Override
@@ -142,10 +142,10 @@ public class DAOFirebase implements DAOInterface {
         firebaseUtilities.getDatabaseReferencePermissionRequests().child(id).removeValue(); // Remove the permission request from the database
     }
 
-//    @Override
-//    public MyObservable<ArrayList<ConsentcoinReference>> getConsentcoinReferences() {
-//        return observableDataConsentcoinReferences;
-//    }
+    @Override
+    public MyObservable<ArrayList<ConsentcoinReference>> getConsentcoinReferences() {
+        return observableDataConsentcoinReferences;
+    }
 
     @Override
     public void addConsentcoinReference(String id, String member, String organization, String storageUrl) {
@@ -221,10 +221,10 @@ public class DAOFirebase implements DAOInterface {
 
     }
 
-//    @Override
-//    public MyObservable<ArrayList<InviteRequest>> getInviteRequests() {
-//        return observableDataInviteRequests;
-//    }
+    @Override
+    public MyObservable<ArrayList<InviteRequest>> getInviteRequests() {
+        return observableDataInviteRequests;
+    }
 
     @Override
     public void addInviteRequest(ArrayList<String> members, String organization) {

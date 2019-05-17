@@ -8,44 +8,49 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/noto_sans"
-        android:text="Skriv noget til databasen"
-        android:textSize="30dp" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_main_activity"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Skriv noget her">
+        android:layout_height="match_parent" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textInputEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:fontFamily="@font/noto_sans"-->
+        <!--android:text="Skriv noget til databasen"-->
+        <!--android:textSize="30dp" />-->
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="write"
-        android:text="Skriv til databasen"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+    <!--<com.google.android.material.textfield.TextInputLayout-->
+        <!--style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="Skriv noget her">-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/vollkorn"
-        android:text="Læs fra databasen"
-        android:textSize="30dp" />
+        <!--<com.google.android.material.textfield.TextInputEditText-->
+            <!--android:id="@+id/textInputEditText"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
+    <!--</com.google.android.material.textfield.TextInputLayout>-->
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!--<com.google.android.material.button.MaterialButton-->
+        <!--style="@style/Widget.MaterialComponents.Button.UnelevatedButton"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:onClick="write"-->
+        <!--android:text="Skriv til databasen"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Large" />-->
+
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:fontFamily="@font/vollkorn"-->
+        <!--android:text="Læs fra databasen"-->
+        <!--android:textSize="30dp" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView1"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
 
 
 </LinearLayout>

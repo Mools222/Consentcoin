@@ -51,7 +51,7 @@ public class AdapterCreateRequest extends RecyclerView.Adapter<AdapterCreateRequ
     @Override
     public ViewHolderCreateRequest onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_create_request_item, parent, false);
-        return new AdapterCreateRequest.ViewHolderCreateRequest(v);
+        return new ViewHolderCreateRequest(v);
     }
 
     @Override

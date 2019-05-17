@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         // Initialize references to views
-        textView1 = findViewById(R.id.textView1);
-        textInputEditText = findViewById(R.id.textInputEditText);
+//        textView1 = findViewById(R.id.textView1);
+//        textInputEditText = findViewById(R.id.textInputEditText);
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);

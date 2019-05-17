@@ -54,7 +54,7 @@ public class AdapterProcessInvite extends RecyclerView.Adapter<AdapterProcessInv
     @Override
     public AdapterProcessInvite.ViewHolderProcessInvite onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_process_invite_item, parent, false);
-        return new AdapterProcessInvite.ViewHolderProcessInvite(v);
+        return new ViewHolderProcessInvite(v);
     }
 
     @Override

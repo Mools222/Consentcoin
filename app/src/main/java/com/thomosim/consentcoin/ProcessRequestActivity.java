@@ -49,7 +49,7 @@ public class ProcessRequestActivity extends AppCompatActivity {
         finish();
     }
 
-    public void later(View view) {
+    public void back(View view) {
         setResult(Activity.RESULT_CANCELED, returnIntent);
         finish();
     }
@@ -58,5 +58,8 @@ public class ProcessRequestActivity extends AppCompatActivity {
     public void onBackPressed() {
         setResult(Activity.RESULT_CANCELED, returnIntent);
         finish();
+    }
+
+    public void readMore(View view) {
     }
 }

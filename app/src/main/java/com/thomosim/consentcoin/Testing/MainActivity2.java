@@ -44,7 +44,9 @@ import com.thomosim.consentcoin.MyConsentcoinsActivity;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
+import com.thomosim.consentcoin.Persistence.DAOFirebase2;
 import com.thomosim.consentcoin.Persistence.DAOInterface;
+import com.thomosim.consentcoin.Persistence.DAOInterface2;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
@@ -57,8 +59,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity2 extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private TextInputEditText textInputEditText;
-    private TextView textView1;
+    private RecyclerView recyclerView;
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail;
     private TextView tvNavigationDrawerCounter;
     private TextView tvNavigationDrawerPendingPermissionsCounter;
@@ -71,7 +72,6 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
     private TextInputEditText tietInviteMember;
     private ArrayList<String> inviteMemberList;
     private ArrayAdapter<String> inviteMemberAdapter;
-    private ListView listMember;
 
     private String userDisplayName, userEmail, uid;
     private User user;
@@ -91,8 +91,10 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
     private ArrayList<User> users;
 
     private FirebaseUtilities firebaseUtilities;
-    private MyViewModel myViewModel;
-    private DAOInterface dao;
+//    private MyViewModel myViewModel;
+    private MyViewModel2 myViewModel2;
+//    private DAOInterface dao;
+    private DAOInterface2 dao2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +114,15 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         navigationView.setNavigationItemSelectedListener(this);
 
         // Initialize references to views
-        textView1 = findViewById(R.id.textView1);
-        textInputEditText = findViewById(R.id.textInputEditText);
+        recyclerView = findViewById(R.id.rv_main_activity);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
+//        recyclerView.addItemDecoration(dividerItemDecoration);
+        adapterCreateRequest = new AdapterCreateRequest(members);
+        recyclerView.setAdapter(adapterCreateRequest);
+        recyclerView.setVisibility(View.GONE);
+
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);
@@ -140,16 +149,18 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         menuItemMyMembers = navigationView.getMenu().findItem(R.id.nav_my_members);
 
         firebaseUtilities = FirebaseUtilities.getInstance();
-        dao = new DAOFirebase(this);
-        setupViewModel();
+//        dao = new DAOFirebase();
+        dao2 = DAOFirebase2.getInstance();
+//        setupViewModel();
+        setupViewModel2();
 
         Log.i("ZZZ", "onCreate");
     }
 
-    public void setupViewModel() {
-        myViewModel = new MyViewModel();
+    public void setupViewModel2() {
+        myViewModel2 = new MyViewModel2();
 
-        myViewModel.getObservableDataFirebaseAuth().observe(new MyObserver<FirebaseAuth>() {
+        myViewModel2.getLogins().observe(new MyObserver<FirebaseAuth>() {
             @Override
             public void onChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -164,12 +175,12 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     tvNavigationHeaderName.setText(userDisplayName);
                     tvNavigationHeaderEmail.setText(userEmail);
 
-                    myViewModel.getObservableDataUser().setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser()); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
-                    myViewModel.addDatabaseListener();
+                    dao2.getObservableDataUser().setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser()); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
+                    dao2.addDatabaseListener();
                 } else { // User is signed out
                     Log.i("ZZZ", "logged out ");
 
-                    myViewModel.removeDatabaseListener();
+                    myViewModel2.removeDatabaseListener();
 
                     userEmail = null;
                     uid = null; // This value is used in removeDatabaseListener(), so it is set to null after this method is done
@@ -187,7 +198,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        myViewModel.getObservableDataUser().observe(new MyObserver<User>() {
+        myViewModel2.getUser().observe(new MyObserver<User>() {
             @Override
             public void onChanged(User currentUser) {
                 user = currentUser;
@@ -222,14 +233,14 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        myViewModel.getObservableDataDataUsers().observe(new MyObserver<ArrayList<User>>() {
+        myViewModel2.getUsers().observe(new MyObserver<ArrayList<User>>() {
             @Override
             public void onChanged(ArrayList<User> allUsers) {
                 users = allUsers;
             }
         });
 
-        myViewModel.getObservableDataPermissionRequests().observe(new MyObserver<ArrayList<PermissionRequest>>() {
+        myViewModel2.getPermissionRequests().observe(new MyObserver<ArrayList<PermissionRequest>>() {
             @Override
             public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
                 pendingPermissionRequests = new ArrayList<>();
@@ -243,7 +254,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        myViewModel.getObservableDataConsentcoinReferences().observe(new MyObserver<ArrayList<ConsentcoinReference>>() {
+        myViewModel2.getConsentcoinReferences().observe(new MyObserver<ArrayList<ConsentcoinReference>>() {
             @Override
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
@@ -256,7 +267,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        myViewModel.getObservableDataInviteRequests().observe(new MyObserver<ArrayList<InviteRequest>>() {
+        myViewModel2.getInviteRequests().observe(new MyObserver<ArrayList<InviteRequest>>() {
             @Override
             public void onChanged(ArrayList<InviteRequest> inviteRequests) {
                 pendingInviteRequests = new ArrayList<>();
@@ -270,12 +281,136 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         });
     }
 
+//    public void setupViewModel() {
+//        myViewModel = new MyViewModel();
+//
+//        myViewModel.getObservableDataFirebaseAuth().observe(new MyObserver<FirebaseAuth>() {
+//            @Override
+//            public void onChanged(FirebaseAuth firebaseAuth) {
+//                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+//                if (firebaseUser != null) { // User is signed in
+//                    Log.i("ZZZ", "logged in ");
+//
+//                    user = null; // Set the user to null to avoid using the user details of a different user, who was logged in on the same device
+//
+//                    userDisplayName = firebaseUser.getDisplayName();
+//                    userEmail = firebaseUser.getEmail();
+//                    uid = firebaseUser.getUid();
+//                    tvNavigationHeaderName.setText(userDisplayName);
+//                    tvNavigationHeaderEmail.setText(userEmail);
+//
+//                    myViewModel.getObservableDataUser().setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser()); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
+//                    myViewModel.addDatabaseListener();
+//                } else { // User is signed out
+//                    Log.i("ZZZ", "logged out ");
+//
+//                    myViewModel.removeDatabaseListener();
+//
+//                    userEmail = null;
+//                    uid = null; // This value is used in removeDatabaseListener(), so it is set to null after this method is done
+//                    userDisplayName = null;
+//
+//                    startActivityForResult(
+//                            AuthUI.getInstance()
+//                                    .createSignInIntentBuilder()
+//                                    .setIsSmartLockEnabled(true) // Doesn't seem to do anything
+//                                    .setTheme(R.style.LightTheme)
+//                                    .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build())) // Additional sign-in providers can be added here. See: https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+//                                    .build(),
+//                            REQUEST_CODE_SIGN_IN);
+//                }
+//            }
+//        });
+//
+//        myViewModel.getObservableDataUser().observe(new MyObserver<User>() {
+//            @Override
+//            public void onChanged(User currentUser) {
+//                user = currentUser;
+//
+//                if (currentUser == null) {
+//                    addUser();
+//                } else {
+//                    if (currentUser.getType().equals("Member")) {
+//                        menuItemPendingRequests.setVisible(true); // Members can receive, but not create requests
+//                        menuItemCreateRequest.setVisible(false);
+//                        tvNavigationDrawerCounter.setVisibility(View.VISIBLE);
+//                        menuItemAddOrganization.setVisible(true); // Members can only add and view their organizations
+//                        menuItemAddMember.setVisible(false);
+//                        menuItemMyOrganizations.setVisible(true);
+//                        menuItemMyMembers.setVisible(false);
+//                        menuItemInvite.setVisible(false);
+//                        menuItemPendingInvites.setVisible(true);
+//                        tvNavigationDrawerPendingInviteCounter.setVisibility(View.VISIBLE);
+//                    } else if (currentUser.getType().equals("Organization")) {
+//                        menuItemPendingRequests.setVisible(false); // Organizations can create, but not receive requests
+//                        menuItemCreateRequest.setVisible(true);
+//                        tvNavigationDrawerCounter.setVisibility(View.GONE);
+//                        menuItemAddOrganization.setVisible(false); // Organizations can only add and view their members
+//                        menuItemAddMember.setVisible(true);
+//                        menuItemMyOrganizations.setVisible(false);
+//                        menuItemMyMembers.setVisible(true);
+//                        menuItemInvite.setVisible(true);
+//                        menuItemPendingInvites.setVisible(false);
+//                        tvNavigationDrawerPendingInviteCounter.setVisibility(View.INVISIBLE);
+//                    }
+//                }
+//            }
+//        });
+//
+//        myViewModel.getObservableDataDataUsers().observe(new MyObserver<ArrayList<User>>() {
+//            @Override
+//            public void onChanged(ArrayList<User> allUsers) {
+//                users = allUsers;
+//            }
+//        });
+//
+//        myViewModel.getObservableDataPermissionRequests().observe(new MyObserver<ArrayList<PermissionRequest>>() {
+//            @Override
+//            public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
+//                pendingPermissionRequests = new ArrayList<>();
+//                for (PermissionRequest permissionRequest : permissionRequests) {
+//                    if (permissionRequest.getMember().equals(userEmail)) {
+//                        pendingPermissionRequests.add(permissionRequest);
+//                    }
+//                }
+//                tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+//                tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+//            }
+//        });
+//
+//        myViewModel.getObservableDataConsentcoinReferences().observe(new MyObserver<ArrayList<ConsentcoinReference>>() {
+//            @Override
+//            public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
+//                consentcoinReferences = new ArrayList<>();
+//                for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
+//                    if (user.getType().equals("Member") && consentcoinReference.getMember().equals(userEmail))
+//                        consentcoinReferences.add(consentcoinReference);
+//                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(userEmail))
+//                        consentcoinReferences.add(consentcoinReference);
+//                }
+//            }
+//        });
+//
+//        myViewModel.getObservableDataInviteRequests().observe(new MyObserver<ArrayList<InviteRequest>>() {
+//            @Override
+//            public void onChanged(ArrayList<InviteRequest> inviteRequests) {
+//                pendingInviteRequests = new ArrayList<>();
+//                for (InviteRequest inviteRequest : inviteRequests) {
+//                    if (inviteRequest.getMember().equals(userEmail)) {
+//                        pendingInviteRequests.add(inviteRequest);
+//                    }
+//                }
+//                tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
+//            }
+//        });
+//    }
+
     @Override
     protected void onResume() {
         super.onResume();
 //        firebaseUtilities.addAuthStateListener();
-        myViewModel.addAuthStateListener();
-//        myViewModel2.addAuthStateListener();
+//        myViewModel.addAuthStateListener();
+        myViewModel2.addAuthStateListener();
     }
 
     // onResume adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
@@ -394,7 +529,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                     if (permissionGranted) {
                         Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
 //                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
-                        dao.addConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
+                        dao.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
                     } else {
                         Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                     }
@@ -725,7 +860,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
 
         tietInviteMember = inviteDialogView.findViewById(R.id.memberEditText);
         inviteMemberList = new ArrayList<>();
-        listMember = inviteDialogView.findViewById(R.id.list_member);
+        ListView listMember = inviteDialogView.findViewById(R.id.list_member);
 
         inviteMemberAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, inviteMemberList);
         listMember.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -828,6 +963,17 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             alertDialog.show();
         } else
             Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();
+    }
+
+    public void getConsentcoin(ConsentcoinReference consentcoinReference) {
+        try {
+            consentcoins.clear();
+            new DownloadObjects().execute(new URL(consentcoinReference.getStorageUrl()));
+
+            Toast.makeText(this, "Loading Consenscoins. Please wait", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void getConsentcoins() {
