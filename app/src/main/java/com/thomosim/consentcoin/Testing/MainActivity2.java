@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,7 +43,6 @@ import com.thomosim.consentcoin.AdapterProcessRequest;
 import com.thomosim.consentcoin.MyConsentcoinsActivity;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
-import com.thomosim.consentcoin.Persistence.DAO;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
 import com.thomosim.consentcoin.Persistence.DAOInterface;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
@@ -50,6 +50,9 @@ import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
 import com.thomosim.consentcoin.R;
 
+import java.io.BufferedInputStream;
+import java.io.ObjectInputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -342,7 +345,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             createRequest();
         } else if (id == R.id.nav_my_consentcoins) {
 //            myConsentcoins();
-            displayConsentcoins();
+            displayConsentcoinReferences();
         } else if (id == R.id.nav_pending_invites) {
             processInvites();
         } else if (id == R.id.nav_invite) {
@@ -587,7 +590,7 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                 .show();
     }
 
-    public void displayConsentcoins() {
+    public void displayConsentcoinReferences() {
         if (consentcoinReferences != null && consentcoinReferences.size() > 0) {
             String[] array = new String[consentcoinReferences.size()];
             for (int i = 0; i < consentcoinReferences.size(); i++) {
@@ -794,12 +797,102 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                 .show();
     }
 
+    public void displayConsentcoins() {
+        if (consentcoins != null) {
+            String[] array = new String[consentcoins.size()];
+
+            for (int i = 0; i < consentcoins.size(); i++) {
+                Consentcoin consentcoin = consentcoins.get(i);
+                array[i] = "ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getContractType() + " MemID: " + consentcoin.getMemberId() + " OrgID: " + consentcoin.getOrganizationId();
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
+
+            AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
+                    .setTitle("My Consenscoins")
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .create();
+
+            ListView listView = alertDialog.getListView();
+            listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
+            listView.setDividerHeight(5);
+            alertDialog.show();
+        } else
+            Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();
+    }
+
+    public void getConsentcoins() {
+        if (consentcoinReferences.size() > 0) {
+            try {
+                // If we start one AsyncTask for sendRequestToAllMembers downloads
+                URL[] urls = new URL[consentcoinReferences.size()];
+
+                for (int i = 0; i < consentcoinReferences.size(); i++) {
+                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
+                    if (consentcoinReference.getMember().equals(userEmail))
+                        urls[i] = new URL(consentcoinReference.getStorageUrl());
+                }
+
+                consentcoins.clear();
+                new DownloadObjects().execute(urls);
+
+                Toast.makeText(this, "Loading Consenscoins. Please wait", Toast.LENGTH_SHORT).show();
+
+                // If we start one AsyncTask per download
+//                for (int i = 0; i < consentcoinReferences.size(); i++) {
+//                    new DownloadObjects().execute(new URL(consentcoinReferences.get(i).getStorageUrl()));
+//                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void write(View view) {
 //        String test = textInputEditText.getText().toString();
 //        firebaseUtilities.write(test);
 //        textInputEditText.setText("");
 
         Toast.makeText(this, user.getType(), Toast.LENGTH_SHORT).show();
+    }
 
+    // To solve the "leaks might occur" warning: https://stackoverflow.com/questions/44309241/warning-this-asynctask-class-should-be-static-or-leaks-might-occur/46166223#46166223
+    private class DownloadObjects extends AsyncTask<URL, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(URL... urls) {
+            try {
+                for (int i = 0; i < urls.length; i++) {
+                    ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[i].openStream()));
+                    // TODO (3) Decrypt the Consentcoin object
+                    Consentcoin consentcoin = (Consentcoin) objectInputStream.readObject();
+                    consentcoins.add(consentcoin);
+                    objectInputStream.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+//            displayConsentcoin();
+        }
     }
 }

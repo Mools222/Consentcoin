@@ -29,6 +29,11 @@ public class DAOMySQL implements DAOInterface {
     }
 
     @Override
+    public void addConsentcoinReference(String id, String member, String organization, String storageUrl) {
+
+    }
+
+    @Override
     public void addConsentcoin(String id, String contractType, String organization, String member) {
 
     }

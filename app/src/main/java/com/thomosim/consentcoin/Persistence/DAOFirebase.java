@@ -60,6 +60,12 @@ public class DAOFirebase implements DAOInterface {
         firebaseUtilities.getDatabaseReferencePermissionRequests().child(id).removeValue(); // Remove the permission request from the database
     }
 
+    @Override
+    public void addConsentcoinReference(String id, String member, String organization, String storageUrl) {
+        ConsentcoinReference consentcoinReference = new ConsentcoinReference(id, member, organization, storageUrl);
+        firebaseUtilities.getDatabaseReferenceConsentcoinReferences().push().setValue(consentcoinReference);
+    }
+
     /**
      * This method:
      * 1) Creates a new instance of the Consentcoin class
@@ -78,7 +84,7 @@ public class DAOFirebase implements DAOInterface {
      * 9) A new Uri object is created by calling the getResult method on the Task<Uri> object.
      * 10) A new ConsentcoinReference object is created using the contract ID, member ID and organization ID of the Consentcoin object and the download URL.
      * 11) The ConsentcoinReference object is persisted to the Firebase Realtime Database using the push and setValue methods.
-     * 12) Finally the contract.dat file is deleted from the storage of the phone.
+     * 12) Finally the file is deleted from the storage of the phone.
      */
 
     @Override
@@ -105,8 +111,7 @@ public class DAOFirebase implements DAOInterface {
                 while (!urlTask.isSuccessful()) ;
                 Uri downloadUrl = urlTask.getResult();
 
-                ConsentcoinReference consentcoinReference = new ConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberId(), consentcoin.getOrganizationId(), downloadUrl.toString());
-                firebaseUtilities.getDatabaseReferenceConsentcoinReferences().push().setValue(consentcoinReference);
+                addConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberId(), consentcoin.getOrganizationId(), downloadUrl.toString());
 
                 file.delete();
 
