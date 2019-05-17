@@ -83,6 +83,9 @@ public class DAOFirebase2 implements DAOInterface2 {
         observableDataInviteRequests.removeDatabaseListener();
     }
 
+    public ObservableDataUser getObservableDataUser() {
+        return observableDataUser;
+    }
 
     @Override
     public <T> MyObservable<T> getLogin() {

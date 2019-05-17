@@ -21,9 +21,7 @@ public class MyViewModel2 {
     private MyObservable<ArrayList<InviteRequest>> inviteRequests;
 
     public MyViewModel2() {
-        FirebaseUtilities firebaseUtilities = FirebaseUtilities.getInstance();
-
-        DAOInterface2 dao = new DAOFirebase2();
+        DAOFirebase2 dao = DAOFirebase2.getInstance();
         logins = dao.getLogin();
         user = dao.getUser();
         users = dao.getUsers();
