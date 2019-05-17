@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin;
+package com.thomosim.consentcoin.View;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
-import com.thomosim.consentcoin.Testing.MainActivity2;
+import com.thomosim.consentcoin.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,8 +40,7 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
                     Intent intent = new Intent(context, ProcessRequestActivity.class);
                     intent.putExtra("PR", permissionRequest);
                     intent.putExtra("POS", getAdapterPosition());
-//                    ((MainActivity) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_REQUEST);
-                    ((MainActivity2) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_REQUEST);
+                    ((MainActivity) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_REQUEST);
                 }
             });
         }

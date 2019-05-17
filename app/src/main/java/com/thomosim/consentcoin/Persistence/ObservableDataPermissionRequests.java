@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin.Testing;
+package com.thomosim.consentcoin.Persistence;
 
 import androidx.annotation.NonNull;
 
@@ -6,15 +6,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.thomosim.consentcoin.Persistence.InviteRequest;
+import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
 import java.util.ArrayList;
 
-public class ObservableDataInviteRequests extends MyObservable<ArrayList<InviteRequest>> {
+public class ObservableDataPermissionRequests extends MyObservable<ArrayList<PermissionRequest>> {
     private DatabaseReference databaseReference;
     private MyValueEventListener myValueEventListener;
 
-    public ObservableDataInviteRequests(DatabaseReference databaseReference) {
+    public ObservableDataPermissionRequests(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
@@ -35,11 +35,11 @@ public class ObservableDataInviteRequests extends MyObservable<ArrayList<InviteR
     private class MyValueEventListener implements ValueEventListener {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            ArrayList<InviteRequest> inviteRequests = new ArrayList<>();
+            ArrayList<PermissionRequest> permissionRequests = new ArrayList<>();
             for (DataSnapshot dataSnapshotChild : dataSnapshot.getChildren()) {
-                inviteRequests.add(dataSnapshotChild.getValue(InviteRequest.class));
+                permissionRequests.add(dataSnapshotChild.getValue(PermissionRequest.class));
             }
-            setValue(inviteRequests);
+            setValue(permissionRequests);
         }
 
         @Override

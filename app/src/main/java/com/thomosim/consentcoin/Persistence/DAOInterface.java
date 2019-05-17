@@ -2,19 +2,21 @@ package com.thomosim.consentcoin.Persistence;
 
 import android.content.Context;
 
-import com.thomosim.consentcoin.Testing.MyObservable;
+import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
 import java.net.URL;
 import java.util.ArrayList;
 
 public interface DAOInterface {
-//    <T> MyObservable<T> getLogin();
+    <T> MyObservable<T> getLogin();
+
+    void logOut(Context context);
 
     void addUser(String userType, String uid, String userEmail, String userDisplayName);
 
-//    MyObservable<User> getUser();
+    MyObservable<User> getUser();
 
-//    MyObservable<ArrayList<User>> getUsers();
+    MyObservable<ArrayList<User>> getUsers();
 
     void updateUser(String uid, User user);
 
@@ -22,11 +24,11 @@ public interface DAOInterface {
 
     void addPermissionRequest(String organizationEmail, String memberEmail, String permissionType);
 
-//    MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
+    MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
 
     void removePermissionRequest(String id);
 
-//    MyObservable<ArrayList<ConsentcoinReference>> getConsentcoinReferences();
+    MyObservable<ArrayList<ConsentcoinReference>> getConsentcoinReferences();
 
     void addConsentcoinReference(String id, String member, String organization, String storageUrl);
 
@@ -38,7 +40,7 @@ public interface DAOInterface {
 
     void removeConsentcoin(Consentcoin consentcoin);
 
-//    MyObservable<ArrayList<InviteRequest>> getInviteRequests();
+    MyObservable<ArrayList<InviteRequest>> getInviteRequests();
 
     void addInviteRequest(ArrayList<String> members, final String organization);
 

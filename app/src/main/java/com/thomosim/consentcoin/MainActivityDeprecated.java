@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,31 +46,32 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
-import com.thomosim.consentcoin.Persistence.DAO;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
+import com.thomosim.consentcoin.View.AdapterCreateRequest;
+import com.thomosim.consentcoin.View.AdapterProcessInvite;
+import com.thomosim.consentcoin.View.AdapterProcessRequest;
+import com.thomosim.consentcoin.View.MyConsentcoinsActivity;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 // TODO (99) Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
 // TODO (98) Make all named constants (keyword final) uppercase
 // TODO (50) Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607)
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivityDeprecated extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DatabaseReference databaseReferenceTest;
     private DatabaseReference databaseReferenceContractReferences;
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         // Initialize references to views
-//        textView1 = findViewById(R.id.textView1);
+//        tvName = findViewById(R.id.tvName);
 //        textInputEditText = findViewById(R.id.textInputEditText);
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
@@ -360,25 +360,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (requestCode == REQUEST_CODE_PROCESS_INVITE) {
             if (resultCode == RESULT_OK) {
                 if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
-                    InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS",-1));
+                    InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
 
                     boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
 
-                    if(inviteAccepted){
+                    if (inviteAccepted) {
 
                         Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
-                        DAO dao = new DAO();
-                        for (User user: users) {
-                            if(user.getUid().equals(inviteRequest.getOrganization())){
+//                        DAO dao = new DAO();
+                        for (User user : users) {
+                            if (user.getUid().equals(inviteRequest.getOrganization())) {
                                 user.getAssociatedUsersUid().add(uid);
-                                dao.acceptInvite(inviteRequest,user);
+//                                dao.acceptInvite(inviteRequest, user);
                             }
                         }
 
 
-
                     } else {
-                        Toast.makeText(this,"Invite declined", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
                     }
 
                     databaseReferenceInviteRequests.child(inviteRequest.getId()).removeValue();
@@ -793,16 +792,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
                     }
                 }
+
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 }
+
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 }
+
                 @Override
                 public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
@@ -1071,14 +1074,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                             if (validateMembers(inviteMemberList)) {
 
-                                DAO dao = new DAO();
+//                                DAO dao = new DAO();
                                 String organization;
                                 if (firebaseAuth.getUid() != null) {
                                     organization = firebaseAuth.getUid();
                                 } else {
                                     organization = "testOrg";
                                 }
-                                dao.invite(inviteMemberList, organization);
+//                                dao.invite(inviteMemberList, organization);
                             }
                         }
 

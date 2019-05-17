@@ -17,16 +17,16 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
-        <activity android:name=".Testing.MainActivity2">
+        <activity android:name=".View.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProcessRequestActivity" />
-        <activity android:name=".MyConsentcoinsActivity"></activity>
-        <activity android:name=".ProcessInviteActivity"/>
+        <activity android:name=".View.ProcessRequestActivity" />
+        <activity android:name=".View.MyConsentcoinsActivity"></activity>
+        <activity android:name=".View.ProcessInviteActivity"/>
     </application>
 
 </manifest>

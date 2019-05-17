@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin;
+package com.thomosim.consentcoin.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
+import com.thomosim.consentcoin.R;
 
 public class ProcessRequestActivity extends AppCompatActivity {
 

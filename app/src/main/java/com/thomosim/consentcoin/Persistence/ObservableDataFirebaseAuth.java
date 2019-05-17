@@ -1,8 +1,9 @@
-package com.thomosim.consentcoin.Testing;
+package com.thomosim.consentcoin.Persistence;
 
 import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
 public class ObservableDataFirebaseAuth extends MyObservable<FirebaseAuth> {
     private MyAuthStateListener myAuthStateListener;

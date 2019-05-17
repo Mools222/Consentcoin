@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin.Testing;
+package com.thomosim.consentcoin.Persistence;
 
 import android.content.Context;
 

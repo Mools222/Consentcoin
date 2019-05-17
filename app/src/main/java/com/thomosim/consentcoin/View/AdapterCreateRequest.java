@@ -1,6 +1,5 @@
-package com.thomosim.consentcoin;
+package com.thomosim.consentcoin.View;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thomosim.consentcoin.Persistence.User;
+import com.thomosim.consentcoin.R;
 
 import java.util.ArrayList;
 

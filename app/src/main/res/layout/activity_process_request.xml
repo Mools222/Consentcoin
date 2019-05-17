@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ProcessRequestActivity">
+    tools:context=".View.ProcessRequestActivity">
 
     <TextView
         android:id="@+id/tv_process_request"

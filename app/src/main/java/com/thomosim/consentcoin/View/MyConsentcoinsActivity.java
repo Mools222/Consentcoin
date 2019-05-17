@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin;
+package com.thomosim.consentcoin.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
+import com.thomosim.consentcoin.R;
 
 public class MyConsentcoinsActivity extends AppCompatActivity {
 

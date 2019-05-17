@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin;
+package com.thomosim.consentcoin.View;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.thomosim.consentcoin.Persistence.InviteRequest;
+import com.thomosim.consentcoin.R;
 
 public class ProcessInviteActivity extends AppCompatActivity {
     private Intent returnIntent;

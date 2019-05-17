@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin;
+package com.thomosim.consentcoin.View;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thomosim.consentcoin.Persistence.InviteRequest;
-import com.thomosim.consentcoin.Testing.MainActivity2;
+import com.thomosim.consentcoin.R;
 
 import java.util.ArrayList;
 
@@ -38,8 +38,7 @@ public class AdapterProcessInvite extends RecyclerView.Adapter<AdapterProcessInv
                     Intent intent = new Intent(context, ProcessInviteActivity.class);
                     intent.putExtra("PR", inviteRequest);
                     intent.putExtra("POS", getAdapterPosition());
-//                    ((MainActivity) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_INVITE);
-                    ((MainActivity2) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_INVITE);
+                    ((MainActivity) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_INVITE);
                 }
             });
         }

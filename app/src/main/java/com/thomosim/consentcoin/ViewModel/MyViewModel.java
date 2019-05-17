@@ -1,28 +1,26 @@
-package com.thomosim.consentcoin.Testing;
+package com.thomosim.consentcoin.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
-import com.thomosim.consentcoin.Persistence.DAOFirebase2;
-import com.thomosim.consentcoin.Persistence.DAOInterface;
-import com.thomosim.consentcoin.Persistence.DAOInterface2;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
 
 import java.util.ArrayList;
 
-public class MyViewModel2 {
-    private MyObservable<FirebaseAuth> logins;
+public class MyViewModel {
+    private MyObservable<FirebaseAuth> login;
     private MyObservable<User> user;
     private MyObservable<ArrayList<User>> users;
     private MyObservable<ArrayList<PermissionRequest>> permissionRequests;
     private MyObservable<ArrayList<ConsentcoinReference>> consentcoinReferences;
     private MyObservable<ArrayList<InviteRequest>> inviteRequests;
 
-    public MyViewModel2() {
-        DAOFirebase2 dao = DAOFirebase2.getInstance();
-        logins = dao.getLogin();
+    public MyViewModel() {
+        DAOFirebase dao = DAOFirebase.getInstance();
+        login = dao.getLogin();
         user = dao.getUser();
         users = dao.getUsers();
         permissionRequests = dao.getPermissionRequests();
@@ -30,8 +28,8 @@ public class MyViewModel2 {
         inviteRequests = dao.getInviteRequests();
     }
 
-    public MyObservable<FirebaseAuth> getLogins() {
-        return logins;
+    public MyObservable<FirebaseAuth> getLogin() {
+        return login;
     }
 
     public MyObservable<User> getUser() {
@@ -53,5 +51,4 @@ public class MyViewModel2 {
     public MyObservable<ArrayList<InviteRequest>> getInviteRequests() {
         return inviteRequests;
     }
-
 }

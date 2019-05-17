@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin.Testing;
+package com.thomosim.consentcoin.Persistence;
 
 import androidx.annotation.NonNull;
 
@@ -6,7 +6,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
+import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
 import java.util.ArrayList;
 
