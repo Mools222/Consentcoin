@@ -10,12 +10,16 @@
         <item
             android:id="@+id/nav_pending_requests"
             android:icon="@drawable/icon_pending_requests"
-            android:title="Pending requests"
+            android:title="Pending Requests"
             app:actionViewClass="android.widget.TextView" />
         <item
             android:id="@+id/nav_create_request"
             android:icon="@drawable/icon_create_request"
-            android:title="Create request" />
+            android:title="Create Request" />
+        <item
+            android:id="@+id/nav_active_requests"
+            android:icon="@drawable/icon_sent_requests"
+            android:title="Active Request(s)" />
         <item
             android:id="@+id/nav_my_consentcoins"
             android:icon="@drawable/icon_my_consentcoins"
@@ -32,11 +36,11 @@
         <item
             android:id="@+id/nav_add_organization"
             android:icon="@drawable/icon_add"
-            android:title="Add organization" />
+            android:title="Add Organization" />
         <item
             android:id="@+id/nav_add_member"
             android:icon="@drawable/icon_add"
-            android:title="Add member" />
+            android:title="Add Member" />
     </group>
 
     <item android:title="Communicate">
@@ -44,11 +48,11 @@
             <item
                 android:id="@+id/nav_my_organizations"
                 android:icon="@drawable/ic_menu_share"
-                android:title="My organizations" />
+                android:title="My Organizations" />
             <item
                 android:id="@+id/nav_my_members"
                 android:icon="@drawable/ic_menu_share"
-                android:title="My members" />
+                android:title="My Members" />
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_send"

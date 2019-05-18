@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRequest.ViewHolderProcessRequest> {
-
     private ArrayList<PermissionRequest> pendingPermissionRequests;
     private Context context;
     private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
@@ -61,7 +60,7 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
     @Override
     public void onBindViewHolder(@NonNull ViewHolderProcessRequest holder, int position) {
         PermissionRequest permissionRequest = pendingPermissionRequests.get(position);
-        Date date = permissionRequest.getRequestDate();
+        Date date = permissionRequest.getCreationDate();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
         holder.textView1.setText(simpleDateFormat.format(date));

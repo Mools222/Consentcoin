@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.R;
 
+import java.text.SimpleDateFormat;
+
 public class ProcessRequestActivity extends AppCompatActivity {
 
     private Intent returnIntent;
@@ -21,14 +23,36 @@ public class ProcessRequestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_request);
 
-        TextView textView = findViewById(R.id.tv_process_request);
+        TextView tvMember = findViewById(R.id.tv_process_request_member);
+        TextView tvOrganization = findViewById(R.id.tv_process_request_organization);
+        TextView tvPurposes = findViewById(R.id.tv_process_request_purposes);
+        TextView tvStartDate = findViewById(R.id.tv_process_request_startDate);
+        TextView tvEndDate = findViewById(R.id.tv_process_request_endDate);
 
         // The getIntent method returns the intent that started this activity. This intent was created in the constructor of the ViewHolderProcessRequest class found in the AdapterProcessRequest. The processRequest method of the MainActivity class creates an instance of the AdapterProcessRequest class
         Intent startIntent = getIntent();
         if (startIntent.hasExtra("PR") && startIntent.hasExtra("POS")) {
             PermissionRequest permissionRequest = (PermissionRequest) startIntent.getSerializableExtra("PR");
             position = startIntent.getIntExtra("POS", -1);
-            textView.setText("ID: " + permissionRequest.getId());
+            tvMember.setText(permissionRequest.getMemberName());
+            tvOrganization.setText(permissionRequest.getOrganizationName());
+
+            switch (permissionRequest.getPermissionType()) {
+                case "1":
+                    tvPurposes.setText("non-commercial purposes");
+                    break;
+                case "2":
+                    tvPurposes.setText("commercial purposes");
+                    break;
+                case "3":
+                    tvPurposes.setText("commercial and non-commercial purposes");
+                    break;
+            }
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            tvStartDate.setText(simpleDateFormat.format(permissionRequest.getPermissionStartDate()));
+            tvEndDate.setText(simpleDateFormat.format(permissionRequest.getPermissionEndDate()));
+
         }
 
         returnIntent = new Intent();

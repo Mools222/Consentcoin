@@ -58,7 +58,7 @@
 //import com.thomosim.consentcoin.View.AdapterCreateRequest;
 //import com.thomosim.consentcoin.View.AdapterProcessInvite;
 //import com.thomosim.consentcoin.View.AdapterProcessRequest;
-//import com.thomosim.consentcoin.View.MyConsentcoinsActivity;
+//import com.thomosim.consentcoin.View.MyConsentcoinActivity;
 //
 //import java.io.BufferedInputStream;
 //import java.io.File;
@@ -142,7 +142,7 @@
 //        navigationView.setNavigationItemSelectedListener(this);
 //
 //        // Initialize references to views
-////        tvName = findViewById(R.id.tvName);
+////        tvDate = findViewById(R.id.tvDate);
 ////        textInputEditText = findViewById(R.id.textInputEditText);
 //        tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
 //        tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
@@ -337,7 +337,7 @@
 //
 //                    if (permissionGranted) {
 //                        Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
-//                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
+//                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationName(), permissionRequest.getMemberName()); // If the user chooses to give permission, create a Consentcoin
 //                    } else {
 //                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
 //                    }
@@ -369,7 +369,7 @@
 //                        Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
 ////                        DAO dao = new DAO();
 //                        for (User user : users) {
-//                            if (user.getUid().equals(inviteRequest.getOrganization())) {
+//                            if (user.getUid().equals(inviteRequest.getOrganizationName())) {
 //                                user.getAssociatedUsersUids().add(uid);
 ////                                dao.acceptInvite(inviteRequest, user);
 //                            }
@@ -724,9 +724,9 @@
 //                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 //                    ConsentcoinReference consentcoinReference = dataSnapshot.getValue(ConsentcoinReference.class);
 //
-//                    if (user.getType().equals("Member") && consentcoinReference.getMember().equals(userEmail))
+//                    if (user.getType().equals("Member") && consentcoinReference.getMemberName().equals(userEmail))
 //                        consentcoinReferences.add(consentcoinReference);
-//                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(userEmail))
+//                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationName().equals(userEmail))
 //                        consentcoinReferences.add(consentcoinReference);
 //                }
 //
@@ -754,7 +754,7 @@
 //                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 //                    PermissionRequest permissionRequest = dataSnapshot.getValue(PermissionRequest.class);
 //
-//                    if (permissionRequest.getMember().equals(userEmail)) {
+//                    if (permissionRequest.getMemberName().equals(userEmail)) {
 //                        pendingPermissionRequests.add(permissionRequest);
 //                        tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
 //                        tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
@@ -787,7 +787,7 @@
 //
 //                    InviteRequest inviteRequest = dataSnapshot.getValue(InviteRequest.class);
 //
-//                    if (inviteRequest.getMember().equals(userEmail)) {
+//                    if (inviteRequest.getMemberName().equals(userEmail)) {
 //                        pendingInviteRequests.add(inviteRequest);
 //                        tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
 //                    }
@@ -923,7 +923,7 @@
 //                while (!urlTask.isSuccessful()) ;
 //                Uri downloadUrl = urlTask.getResult();
 //
-//                ConsentcoinReference consentcoinReference = new ConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberId(), consentcoin.getOrganizationId(), downloadUrl.toString());
+//                ConsentcoinReference consentcoinReference = new ConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberName(), consentcoin.getOrganizationName(), downloadUrl.toString());
 //                databaseReferenceContractReferences.push().setValue(consentcoinReference);
 //
 //                file.delete();
@@ -944,7 +944,7 @@
 //
 //                for (int i = 0; i < consentcoinReferences.size(); i++) {
 //                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-//                    if (consentcoinReference.getMember().equals(userEmail))
+//                    if (consentcoinReference.getMemberName().equals(userEmail))
 //                        urls[i] = new URL(consentcoinReference.getStorageUrl());
 //                }
 //
@@ -971,13 +971,13 @@
 //            if (user.getType().equals("Member"))
 //                for (int i = 0; i < consentcoinReferences.size(); i++) {
 //                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-//                    if (consentcoinReference.getMember().equals(userEmail))
+//                    if (consentcoinReference.getMemberName().equals(userEmail))
 //                        myConsentcoinReferences.add(consentcoinReference);
 //                }
 //            else if (user.getType().equals("Organization"))
 //                for (int i = 0; i < consentcoinReferences.size(); i++) {
 //                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-//                    if (consentcoinReference.getOrganization().equals(userEmail))
+//                    if (consentcoinReference.getOrganizationName().equals(userEmail))
 //                        myConsentcoinReferences.add(consentcoinReference);
 //                }
 //
@@ -985,7 +985,7 @@
 //
 //            for (int i = 0; i < myConsentcoinReferences.size(); i++) {
 //                ConsentcoinReference consentcoinReference = myConsentcoinReferences.get(i);
-//                array[i] = "ID: " + consentcoinReference.getContractId() + " Member: " + consentcoinReference.getMember() + " Org: " + consentcoinReference.getOrganization();
+//                array[i] = "ID: " + consentcoinReference.getContractId() + " Member: " + consentcoinReference.getMemberName() + " Org: " + consentcoinReference.getOrganizationName();
 //            }
 //
 //            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
@@ -997,7 +997,7 @@
 //                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
 //                        @Override
 //                        public void onClick(DialogInterface dialog, int which) {
-//                            Intent intent = new Intent(CONTEXT, MyConsentcoinsActivity.class);
+//                            Intent intent = new Intent(CONTEXT, MyConsentcoinActivity.class);
 //                            intent.putExtra("CR", myConsentcoinReferences.get(which));
 //                            intent.putExtra("POS", which);
 //                            startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
@@ -1024,7 +1024,7 @@
 //
 //            for (int i = 0; i < consentcoins.size(); i++) {
 //                Consentcoin consentcoin = consentcoins.get(i);
-//                array[i] = "ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getContractType() + " MemID: " + consentcoin.getMemberId() + " OrgID: " + consentcoin.getOrganizationId();
+//                array[i] = "ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getPermissionType() + " MemID: " + consentcoin.getMemberName() + " OrgID: " + consentcoin.getOrganizationName();
 //            }
 //
 //            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
@@ -1205,7 +1205,7 @@
 //
 //        for (int i = 0; i < consentcoins.size(); i++) {
 //        Consentcoin consentcoin = consentcoins.get(i);
-//        array[i] = "ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getContractType() + " MemID: " + consentcoin.getMemberId() + " OrgID: " + consentcoin.getOrganizationId();
+//        array[i] = "ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getPermissionType() + " MemID: " + consentcoin.getMemberName() + " OrgID: " + consentcoin.getOrganizationName();
 //        }
 //
 //        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
@@ -1251,7 +1251,7 @@
 //
 //        for (int i = 0; i < consentcoinReferences.size(); i++) {
 //        ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-//        if (consentcoinReference.getMember().equals(userEmail))
+//        if (consentcoinReference.getMemberName().equals(userEmail))
 //        urls[i] = new URL(consentcoinReference.getStorageUrl());
 //        }
 //

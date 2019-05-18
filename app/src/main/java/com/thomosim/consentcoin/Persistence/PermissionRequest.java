@@ -8,22 +8,24 @@ public class PermissionRequest implements Serializable {
     private String id;
     private String organizationName;
     private String organizationUid;
+    private String memberName;
     private String memberUid;
     private String permissionType;
-    private Date requestDate;
+    private Date creationDate;
     private Date permissionStartDate;
     private Date permissionEndDate;
 
     public PermissionRequest() {
     }
 
-    public PermissionRequest(String id, String organizationName, String organizationUid, String memberUid, String permissionType, Date requestDate, Date permissionStartDate, Date permissionEndDate) {
+    public PermissionRequest(String id, String organizationName, String organizationUid, String memberName, String memberUid, String permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         this.id = id;
         this.organizationName = organizationName;
         this.organizationUid = organizationUid;
+        this.memberName = memberName;
         this.memberUid = memberUid;
         this.permissionType = permissionType;
-        this.requestDate = requestDate;
+        this.creationDate = creationDate;
         this.permissionStartDate = permissionStartDate;
         this.permissionEndDate = permissionEndDate;
     }
@@ -52,6 +54,14 @@ public class PermissionRequest implements Serializable {
         this.organizationUid = organizationUid;
     }
 
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
+
     public String getMemberUid() {
         return memberUid;
     }
@@ -68,12 +78,12 @@ public class PermissionRequest implements Serializable {
         this.permissionType = permissionType;
     }
 
-    public Date getRequestDate() {
-        return requestDate;
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-    public void setRequestDate(Date requestDate) {
-        this.requestDate = requestDate;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Date getPermissionStartDate() {

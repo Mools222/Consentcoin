@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".View.ProcessRequestActivity" />
-        <activity android:name=".View.MyConsentcoinsActivity" />
+        <activity android:name=".View.MyConsentcoinActivity" />
         <activity android:name=".View.ProcessInviteActivity" />
         <activity android:name=".View.CreateRequestActivity" />
     </application>

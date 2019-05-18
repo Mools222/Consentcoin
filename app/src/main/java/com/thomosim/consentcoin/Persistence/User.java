@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String lastName;
     private String organizationName;
     private ArrayList<String> associatedUsersUids;
-    private ArrayList<UserActivity> userActivities;
+    private ArrayList<UserActivity> userActivities; // Tried making this a LinkedList to add elements using the addFirst method, but Firebase won't take it
 
     public User() {
     }

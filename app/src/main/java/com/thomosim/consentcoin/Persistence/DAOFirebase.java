@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 
 public class DAOFirebase implements DAOInterface {
     private FirebaseUtilities firebaseUtilities;
@@ -99,6 +100,9 @@ public class DAOFirebase implements DAOInterface {
             else if (userNameSplit.length == 3)
                 user = new User(uid, userEmail, userType, userNameSplit[0], userNameSplit[1], userNameSplit[2], organizationName.length() == 0 ? null : organizationName, null, null);
         }
+        ArrayList<UserActivity> userActivities = new ArrayList<>();
+        userActivities.add(0, new UserActivity("UC", userDisplayName, organizationName.length() == 0 ? null : organizationName, new Date())); // Create a "UC" (User Created) UserActivity and add it to the new user
+        user.setUserActivities(userActivities);
         firebaseUtilities.getDatabaseReferenceUsers().child(uid).setValue(user);
     }
 
@@ -124,10 +128,10 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addPermissionRequest(String organizationName, String organizationUid, String memberUid, String permissionType, Date requestDate, Date permissionStartDate, Date permissionEndDate) {
+    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, String permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         DatabaseReference databaseReference = firebaseUtilities.getDatabaseReferencePermissionRequests().push(); // Creates blank record in the database
         String firebaseId = databaseReference.getKey(); // Get the auto generated key
-        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberUid, permissionType, requestDate, permissionStartDate, permissionEndDate);
+        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate);
         databaseReference.setValue(permissionRequest);
     }
 
@@ -148,8 +152,8 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addConsentcoinReference(String id, String member, String organization, String storageUrl) {
-        ConsentcoinReference consentcoinReference = new ConsentcoinReference(id, member, organization, storageUrl);
+    public void addConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl) {
+        ConsentcoinReference consentcoinReference = new ConsentcoinReference(contractId, memberUid, organizationUid, storageUrl);
         firebaseUtilities.getDatabaseReferenceConsentcoinReferences().push().setValue(consentcoinReference);
     }
 
@@ -180,9 +184,9 @@ public class DAOFirebase implements DAOInterface {
      */
 
     @Override
-    public void addConsentcoin(Context context, String id, String contractType, String organization, String member) {
+    public void addConsentcoin(Context context, String contractId, String permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         // TODO (2) Encrypt the Consentcoin object
-        final Consentcoin consentcoin = new Consentcoin(id, contractType, member, organization);
+        final Consentcoin consentcoin = new Consentcoin(contractId, permissionType, organizationUid, memberUid, creationDate, permissionStartDate, permissionEndDate);
 
         String fileName = "consentcoin";
         final File file = new File(context.getFilesDir(), fileName);
@@ -194,19 +198,15 @@ public class DAOFirebase implements DAOInterface {
             e.printStackTrace();
         }
 
-        StorageReference storageReference = firebaseUtilities.getStorageReference().child(id);
-
+        StorageReference storageReference = firebaseUtilities.getStorageReference().child(contractId);
         storageReference.putFile(Uri.fromFile(file)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
                 while (!urlTask.isSuccessful()) ;
                 Uri downloadUrl = urlTask.getResult();
-
-                addConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberId(), consentcoin.getOrganizationId(), downloadUrl.toString());
-
+                addConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberUid(), consentcoin.getOrganizationUid(), downloadUrl.toString());
                 file.delete();
-
             }
         });
     }

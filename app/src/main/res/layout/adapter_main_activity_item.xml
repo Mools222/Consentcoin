@@ -8,7 +8,11 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/mtrl_card_spacing"
     android:layout_marginTop="@dimen/mtrl_card_spacing"
-    android:layout_marginRight="@dimen/mtrl_card_spacing">
+    android:layout_marginRight="@dimen/mtrl_card_spacing"
+    app:cardElevation="20dp"
+    app:rippleColor="@color/colorGreen"
+    app:strokeColor="@color/colorOuterSpace"
+    app:strokeWidth="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,16 +43,18 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_cardView_name"
+                    android:id="@+id/tv_cardView_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Andras Acs Pedersen" />
+                    android:fontFamily="@font/vollkorn"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_cardView_activity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Givet tilladelse" />
+                    android:fontFamily="@font/noto_sans" />
 
             </LinearLayout>
         </LinearLayout>
@@ -58,33 +64,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="har givet tilladelse til Zealand til at bruge billeder, hvor han optræder." />
+            android:fontFamily="@font/noto_sans" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mb_cardView_read_more"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:text="Read more" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/mb_cardView_read_more"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:text="Læs mere"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/mb_cardView_edit"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:text="Rediger"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-        </LinearLayout>
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -25,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,11 +42,13 @@ import com.thomosim.consentcoin.Persistence.DAOFirebase;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
+import com.thomosim.consentcoin.Persistence.UserActivity;
 import com.thomosim.consentcoin.R;
 import com.thomosim.consentcoin.ViewModel.MyViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 // TODO (99) Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
 // TODO (98) Make all named constants (keyword final) uppercase
@@ -56,10 +59,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView tvNavigationDrawerCounter;
     private TextView tvNavigationDrawerPendingPermissionsCounter;
     private TextView tvNavigationDrawerPendingInviteCounter;
-    private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
+    private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemSentRequests, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
     private AdapterMainActivity adapterMainActivity;
     private AdapterProcessRequest adapterProcessRequest;
-    private AdapterCreateRequest adapterCreateRequest;
     private AdapterProcessInvite adapterProcessInvite;
 
     private TextInputEditText tietInviteMember;
@@ -68,21 +70,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private String userDisplayName, userEmail, uid;
     private User user;
-    private int chosenUserType; // Default value = 0
+    private int chosenUserType; // int default value = 0
     private static final int REQUEST_CODE_SIGN_IN = 1;
     private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
     private static final int REQUEST_CODE_MY_CONSENTCOINS = 3;
     private static final int REQUEST_CODE_PROCESS_INVITE = 4;
     private static final int REQUEST_CODE_CREATE_REQUEST = 5;
-    private boolean sendRequestToAllMembers;
 
+    private ArrayList<User> users;
     private ArrayList<ConsentcoinReference> consentcoinReferences;
-    private ArrayList<Consentcoin> consentcoins;
     private ArrayList<PermissionRequest> pendingPermissionRequests;
     private ArrayList<InviteRequest> pendingInviteRequests;
-    private ArrayList<User> organizations;
-    private ArrayList<User> members;
-    private ArrayList<User> users;
 
     private DAOFirebase dao;
 
@@ -103,19 +101,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        ArrayList<String> testRecyclerViewWithCardView = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            testRecyclerViewWithCardView.add("" + i);
-        }
-
         // Initialize references to views
         recyclerView = findViewById(R.id.rv_main_activity);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 //        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
 //        recyclerView.addItemDecoration(dividerItemDecoration);
-        adapterMainActivity = new AdapterMainActivity(testRecyclerViewWithCardView, this);
+        adapterMainActivity = new AdapterMainActivity(this);
         recyclerView.setAdapter(adapterMainActivity);
+
+        // This ItemTouchHelper allows the user to delete UserActivity objects by swiping left or right
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) { // This method is called when a user swipes left or right on a ViewHolder
+                int position = viewHolder.getAdapterPosition();
+                ArrayList<UserActivity> userActivities = user.getUserActivities();
+                userActivities.remove(position);
+                user.setUserActivities(userActivities);
+                dao.updateUser(uid, user);
+            }
+        }).attachToRecyclerView(recyclerView);
 
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
@@ -134,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
         menuItemCreateRequest = navigationView.getMenu().findItem(R.id.nav_create_request);
+        menuItemSentRequests = navigationView.getMenu().findItem(R.id.nav_active_requests);
         menuItemMyPermissions = navigationView.getMenu().findItem(R.id.nav_my_consentcoins);
         menuItemPendingInvites = navigationView.getMenu().findItem(R.id.nav_pending_invites);
         menuItemInvite = navigationView.getMenu().findItem(R.id.nav_invite);
@@ -157,8 +168,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) { // User is signed in
                     Log.i("ZZZ", "logged in " + firebaseUser.getUid());
-
-                    user = null; // Set the user to null to avoid using the user details of a different user, who was logged in on the same device
 
                     userDisplayName = firebaseUser.getDisplayName();
                     userEmail = firebaseUser.getEmail();
@@ -197,9 +206,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (user == null) {
                     addUser();
                 } else {
+                    ArrayList<UserActivity> userActivity = user.getUserActivities();
+                    if (userActivity != null)
+                        adapterMainActivity.updateData(userActivity);
+
                     if (user.getType().equals("Member")) {
                         menuItemPendingRequests.setVisible(true); // Members can receive, but not create requests
                         menuItemCreateRequest.setVisible(false);
+                        menuItemSentRequests.setVisible(false);
                         tvNavigationDrawerCounter.setVisibility(View.VISIBLE);
                         menuItemAddOrganization.setVisible(true); // Members can only add and view their organizations
                         menuItemAddMember.setVisible(false);
@@ -211,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } else if (user.getType().equals("Organization")) {
                         menuItemPendingRequests.setVisible(false); // Organizations can create, but not receive requests
                         menuItemCreateRequest.setVisible(true);
+                        menuItemSentRequests.setVisible(true);
                         tvNavigationDrawerCounter.setVisibility(View.GONE);
                         menuItemAddOrganization.setVisible(false); // Organizations can only add and view their members
                         menuItemAddMember.setVisible(true);
@@ -238,11 +253,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
                 pendingPermissionRequests = new ArrayList<>();
 
-                for (PermissionRequest permissionRequest : permissionRequests) {
-                    if (permissionRequest.getMemberUid().equals(uid)) {
-                        pendingPermissionRequests.add(permissionRequest);
+                // TODO Sometimes the user is still null when the listener fires the first time. This causes the result to be ignored. Fix: Just let this method add all PermissionRequests and then sort them in the relevant methods
+                if (user != null)
+                    for (PermissionRequest permissionRequest : permissionRequests) {
+                        if (user.getType().equals("Member") && permissionRequest.getMemberUid().equals(uid))
+                            pendingPermissionRequests.add(permissionRequest);
+                        else if (user.getType().equals("Organization") && permissionRequest.getOrganizationUid().equals(uid))
+                            pendingPermissionRequests.add(permissionRequest);
                     }
-                }
+
                 tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
                 tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
             }
@@ -252,11 +271,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
+
+                // TODO Sometimes the user is still null when the listener fires the first time. This causes the result to be ignored. Fix: Just let this method add all ConsentcoinReference and then sort them in the relevant methods
                 if (user != null)
                     for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                        if (user.getType().equals("Member") && consentcoinReference.getMember().equals(uid))
+                        if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid))
                             consentcoinReferences.add(consentcoinReference);
-                        else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(uid))
+                        else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid))
                             consentcoinReferences.add(consentcoinReference);
                     }
             }
@@ -350,8 +371,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             processRequest();
         } else if (id == R.id.nav_create_request) {
             createRequest();
+        } else if (id == R.id.nav_active_requests) {
+            displayActiveRequests();
         } else if (id == R.id.nav_my_consentcoins) {
-//            myConsentcoins();
             displayConsentcoinReferences();
         } else if (id == R.id.nav_pending_invites) {
             processInvites();
@@ -403,10 +425,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
                     boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
                     PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
+                    Date date = new Date();
+
+                    User organization = null;
+                    for (User user : users) {
+                        if (user.getUid().equals(permissionRequest.getOrganizationUid())) {
+                            organization = user;
+                            break;
+                        }
+                    }
+
                     if (permissionGranted) {
+                        dao.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
+                                date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate()); // If the user chooses to give permission, create a Consentcoin
+
+                        ArrayList<UserActivity> userActivities = user.getUserActivities();
+                        if (userActivities == null)
+                            userActivities = new ArrayList<>();
+                        userActivities.add(0, new UserActivity("APR", userDisplayName, organization.getOrganizationName(), date)); // "APR" = Accept Permission Request
+                        user.setUserActivities(userActivities);
+                        dao.updateUser(uid, user);
+
+                        userActivities = organization.getUserActivities();
+                        if (userActivities == null)
+                            userActivities = new ArrayList<>();
+                        userActivities.add(0, new UserActivity("RAPR", userDisplayName, organization.getOrganizationName(), date)); // "RAPR" = Receive Accepted Permission Request
+                        organization.setUserActivities(userActivities);
+                        dao.updateUser(organization.getUid(), organization);
+
                         Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
-                        dao.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid()); // If the user chooses to give permission, create a Consentcoin
                     } else {
+                        ArrayList<UserActivity> userActivities = user.getUserActivities();
+                        if (userActivities == null)
+                            userActivities = new ArrayList<>();
+                        userActivities.add(0, new UserActivity("DPR", userDisplayName, organization.getOrganizationName(), date)); // "DPR" = Deny Permission Request
+                        user.setUserActivities(userActivities);
+                        dao.updateUser(uid, user);
+
+                        userActivities = organization.getUserActivities();
+                        if (userActivities == null)
+                            userActivities = new ArrayList<>();
+                        userActivities.add(0, new UserActivity("RDPR", userDisplayName, organization.getOrganizationName(), date)); // "RDPR" = Receive Denied Permission Request
+                        organization.setUserActivities(userActivities);
+                        dao.updateUser(organization.getUid(), organization);
+
                         Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                     }
 
@@ -459,9 +521,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         } else if (requestCode == REQUEST_CODE_CREATE_REQUEST) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "CreateRequest RESULT_OK", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission request sent", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "CreateRequest RESULT_CANCELED", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission request canceled", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -516,8 +578,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             Intent intent = new Intent(this, CreateRequestActivity.class);
-            intent.putExtra("OrgName", user.getOrganizationName());
-            intent.putExtra("OrgUid", user.getUid());
+            intent.putExtra("O", user);
             intent.putExtra("M", members);
             startActivityForResult(intent, REQUEST_CODE_CREATE_REQUEST);
         } else
@@ -545,12 +606,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .show();
     }
 
+    public void displayActiveRequests() {
+        if (pendingPermissionRequests != null && pendingPermissionRequests.size() > 0) {
+            String[] array = new String[pendingPermissionRequests.size()];
+            for (int i = 0; i < pendingPermissionRequests.size(); i++) {
+                PermissionRequest permissionRequest = pendingPermissionRequests.get(i);
+                array[i] = "ID: " + permissionRequest.getId() + " Member: " + permissionRequest.getMemberUid();
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
+
+            final Context CONTEXT = this;
+            AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
+                    .setTitle("Sent permission requests")
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(CONTEXT, "Yep", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .create();
+
+            ListView listView = alertDialog.getListView();
+            listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
+            listView.setDividerHeight(5);
+            alertDialog.show();
+        } else
+            Toast.makeText(this, "You have no active permission requests", Toast.LENGTH_SHORT).show();
+    }
+
     public void displayConsentcoinReferences() {
         if (consentcoinReferences != null && consentcoinReferences.size() > 0) {
             String[] array = new String[consentcoinReferences.size()];
             for (int i = 0; i < consentcoinReferences.size(); i++) {
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-                array[i] = "ID: " + consentcoinReference.getContractId() + " Member: " + consentcoinReference.getMember() + " Org: " + consentcoinReference.getOrganization();
+                array[i] = "ID: " + consentcoinReference.getContractId() + " Member: " + consentcoinReference.getMemberUid() + " Org: " + consentcoinReference.getOrganizationUid();
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
@@ -561,7 +655,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dao.setConsentcoinUrl(consentcoinReferences.get(which).getStorageUrl());
-                            Toast.makeText(CONTEXT, "Getting Consentcoin. Please wait.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, "Getting Consentcoin. Please wait.", Toast.LENGTH_SHORT).show(); // TODO Add something that prevents the user from clicking on stuff while the Consentcoin is being downloaded
                         }
                     })
                     .setPositiveButton("Close", new DialogInterface.OnClickListener() {
@@ -580,14 +674,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void displayConsentcoin(Consentcoin consentcoin) {
-        Intent intent = new Intent(this, MyConsentcoinsActivity.class);
+        Intent intent = new Intent(this, MyConsentcoinActivity.class);
         intent.putExtra("CC", consentcoin);
         startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
     }
 
     public void addOrganizationOrMember(final String userType) {
-        organizations = new ArrayList<>();
-        members = new ArrayList<>();
+        final ArrayList<User> organizations = new ArrayList<>();
+        final ArrayList<User> members = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);

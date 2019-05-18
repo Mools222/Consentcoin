@@ -4,17 +4,17 @@ import java.io.Serializable;
 
 public class ConsentcoinReference implements Serializable {
     private String contractId;
-    private String member;
-    private String organization;
+    private String memberUid;
+    private String organizationUid;
     private String storageUrl;
 
     public ConsentcoinReference() {
     }
 
-    public ConsentcoinReference(String contractId, String member, String organization, String storageUrl) {
+    public ConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl) {
         this.contractId = contractId;
-        this.member = member;
-        this.organization = organization;
+        this.memberUid = memberUid;
+        this.organizationUid = organizationUid;
         this.storageUrl = storageUrl;
     }
 
@@ -26,20 +26,20 @@ public class ConsentcoinReference implements Serializable {
         this.contractId = contractId;
     }
 
-    public String getMember() {
-        return member;
+    public String getMemberUid() {
+        return memberUid;
     }
 
-    public void setMember(String member) {
-        this.member = member;
+    public void setMemberUid(String memberUid) {
+        this.memberUid = memberUid;
     }
 
-    public String getOrganization() {
-        return organization;
+    public String getOrganizationUid() {
+        return organizationUid;
     }
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setOrganizationUid(String organizationUid) {
+        this.organizationUid = organizationUid;
     }
 
     public String getStorageUrl() {

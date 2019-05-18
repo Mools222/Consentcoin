@@ -1,18 +1,28 @@
 package com.thomosim.consentcoin.Persistence;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Consentcoin implements Serializable {
     private String contractId;
-    private String contractType;
-    private String memberId;
-    private String organizationId;
+    private String permissionType;
+    private String organizationUid;
+    private String memberUid;
+    private Date creationDate;
+    private Date permissionStartDate;
+    private Date permissionEndDate;
 
-    public Consentcoin(String contractId, String contractType, String memberId, String organizationId) {
+    public Consentcoin() {
+    }
+
+    public Consentcoin(String contractId, String permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         this.contractId = contractId;
-        this.contractType = contractType;
-        this.memberId = memberId;
-        this.organizationId = organizationId;
+        this.permissionType = permissionType;
+        this.organizationUid = organizationUid;
+        this.memberUid = memberUid;
+        this.creationDate = creationDate;
+        this.permissionStartDate = permissionStartDate;
+        this.permissionEndDate = permissionEndDate;
     }
 
     public String getContractId() {
@@ -23,27 +33,51 @@ public class Consentcoin implements Serializable {
         this.contractId = contractId;
     }
 
-    public String getContractType() {
-        return contractType;
+    public String getPermissionType() {
+        return permissionType;
     }
 
-    public void setContractType(String contractType) {
-        this.contractType = contractType;
+    public void setPermissionType(String permissionType) {
+        this.permissionType = permissionType;
     }
 
-    public String getMemberId() {
-        return memberId;
+    public String getOrganizationUid() {
+        return organizationUid;
     }
 
-    public void setMemberId(String memberId) {
-        this.memberId = memberId;
+    public void setOrganizationUid(String organizationUid) {
+        this.organizationUid = organizationUid;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
+    public String getMemberUid() {
+        return memberUid;
     }
 
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
+    public void setMemberUid(String memberUid) {
+        this.memberUid = memberUid;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getPermissionStartDate() {
+        return permissionStartDate;
+    }
+
+    public void setPermissionStartDate(Date permissionStartDate) {
+        this.permissionStartDate = permissionStartDate;
+    }
+
+    public Date getPermissionEndDate() {
+        return permissionEndDate;
+    }
+
+    public void setPermissionEndDate(Date permissionEndDate) {
+        this.permissionEndDate = permissionEndDate;
     }
 }

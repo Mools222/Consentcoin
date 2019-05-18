@@ -20,6 +20,7 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
 import com.thomosim.consentcoin.Persistence.User;
+import com.thomosim.consentcoin.Persistence.UserActivity;
 import com.thomosim.consentcoin.R;
 
 import java.text.SimpleDateFormat;
@@ -29,7 +30,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class CreateRequestActivity extends AppCompatActivity {
-
     private TextInputEditText textInputEditTextStartDate;
     private TextInputEditText textInputEditTextEndDate;
     private MaterialCheckBox materialCheckBoxCommercial;
@@ -38,12 +38,11 @@ public class CreateRequestActivity extends AppCompatActivity {
 
     private GregorianCalendar gregorianCalendar;
     private SimpleDateFormat simpleDateFormat;
+    private User organization;
     private ArrayList<User> members;
     private boolean sendRequestToAllMembers;
     private Date startDate;
     private Date endDate;
-    private String organizationName;
-    private String organizationUid;
     private String permissionType;
 
     private Intent returnIntent;
@@ -62,9 +61,8 @@ public class CreateRequestActivity extends AppCompatActivity {
         materialCheckBoxNoncommercial = findViewById(R.id.cb_create_request_noncommercial);
 
         Intent startIntent = getIntent();
-        if (startIntent.hasExtra("OrgName") && startIntent.hasExtra("OrgName") && startIntent.hasExtra("M")) {
-            organizationName = startIntent.getStringExtra("OrgName");
-            organizationUid = startIntent.getStringExtra("OrgUid");
+        if (startIntent.hasExtra("O") && startIntent.hasExtra("M")) {
+            organization = (User) startIntent.getSerializableExtra("O");
             members = (ArrayList<User>) startIntent.getSerializableExtra("M");
         }
 
@@ -156,23 +154,56 @@ public class CreateRequestActivity extends AppCompatActivity {
     // TODO Create checks to make sure the user picked the purpose(s), correct dates, etc before sending.
     public void send(View view) {
         if (materialCheckBoxCommercial.isChecked() && materialCheckBoxNoncommercial.isChecked())
-            permissionType = "3";
+            permissionType = "3"; // Commercial + non-commercial
         else if (materialCheckBoxCommercial.isChecked())
-            permissionType = "2";
+            permissionType = "2"; // Commercial
         else if (materialCheckBoxNoncommercial.isChecked())
-            permissionType = "1";
+            permissionType = "1"; // Non-commercial
 
         if (permissionType == null)
             Toast.makeText(this, "Please select purpose(s)", Toast.LENGTH_SHORT).show();
         else {
-            if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members
+            Date date = new Date();
+            if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members, we iterate through the members list and perform the necessary tasks
                 for (int i = 0; i < members.size(); i++) {
-                    dao.addPermissionRequest(organizationName, organizationUid, members.get(i).getUid(), permissionType, new Date(), startDate, endDate);
+                    User member = members.get(i);
+                    String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
+                    dao.addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
+
+                    ArrayList<UserActivity> userActivities = organization.getUserActivities();
+                    if (userActivities == null)
+                        userActivities = new ArrayList<>();
+                    userActivities.add(0, new UserActivity("CPR", memberName, organization.getOrganizationName(), date)); // "CPR" = Create Permission Request
+                    organization.setUserActivities(userActivities);
+                    dao.updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
+
+                    userActivities = member.getUserActivities();
+                    if (userActivities == null)
+                        userActivities = new ArrayList<>();
+                    userActivities.add(0, new UserActivity("RPR", memberName, organization.getOrganizationName(), date)); // "RPR" = Receive Permission Request
+                    member.setUserActivities(userActivities);
+                    dao.updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
                 }
-            } else { // If the organization wishes to send requests out to a select number of its associated members
+            } else { // If the organization wishes to send requests out to a select number of its associated members, we iterate through the checkedUsers list and perform the necessary tasks
                 ArrayList<User> checkedUsers = adapterCreateRequest.getCheckedUsers();
                 for (int i = 0; i < checkedUsers.size(); i++) {
-                    dao.addPermissionRequest(organizationName, organizationUid, checkedUsers.get(i).getUid(), permissionType, new Date(), startDate, endDate);
+                    User member = checkedUsers.get(i);
+                    String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
+                    dao.addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
+
+                    ArrayList<UserActivity> userActivities = organization.getUserActivities();
+                    if (userActivities == null)
+                        userActivities = new ArrayList<>();
+                    userActivities.add(0, new UserActivity("CPR", memberName, organization.getOrganizationName(), date)); // "CPR" = Create Permission Request
+                    organization.setUserActivities(userActivities);
+                    dao.updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
+
+                    userActivities = member.getUserActivities();
+                    if (userActivities == null)
+                        userActivities = new ArrayList<>();
+                    userActivities.add(0, new UserActivity("RPR", memberName, organization.getOrganizationName(), date)); // "RPR" = Receive Permission Request
+                    member.setUserActivities(userActivities);
+                    dao.updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
                 }
             }
             Toast.makeText(this, "Request(s) sent!", Toast.LENGTH_SHORT).show();
