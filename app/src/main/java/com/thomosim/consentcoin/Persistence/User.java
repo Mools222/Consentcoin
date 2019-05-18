@@ -1,27 +1,32 @@
 package com.thomosim.consentcoin.Persistence;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class User {
+public class User implements Serializable {
     private String uid;
     private String email;
     private String type;
     private String firstName;
     private String middleName;
     private String lastName;
-    private ArrayList<String> associatedUsersUid;
+    private String organizationName;
+    private ArrayList<String> associatedUsersUids;
+    private ArrayList<UserActivity> userActivities;
 
     public User() {
     }
 
-    public User(String uid, String email, String type, String firstName, String middleName, String lastName, ArrayList<String> associatedUsersUid) {
+    public User(String uid, String email, String type, String firstName, String middleName, String lastName, String organizationName, ArrayList<String> associatedUsersUids, ArrayList<UserActivity> userActivities) {
         this.uid = uid;
         this.email = email;
         this.type = type;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
-        this.associatedUsersUid = associatedUsersUid;
+        this.organizationName = organizationName;
+        this.associatedUsersUids = associatedUsersUids;
+        this.userActivities = userActivities;
     }
 
     public String getUid() {
@@ -72,11 +77,27 @@ public class User {
         this.lastName = lastName;
     }
 
-    public ArrayList<String> getAssociatedUsersUid() {
-        return associatedUsersUid;
+    public String getOrganizationName() {
+        return organizationName;
     }
 
-    public void setAssociatedUsersUid(ArrayList<String> associatedUsersUid) {
-        this.associatedUsersUid = associatedUsersUid;
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public ArrayList<String> getAssociatedUsersUids() {
+        return associatedUsersUids;
+    }
+
+    public void setAssociatedUsersUids(ArrayList<String> associatedUsersUids) {
+        this.associatedUsersUids = associatedUsersUids;
+    }
+
+    public ArrayList<UserActivity> getUserActivities() {
+        return userActivities;
+    }
+
+    public void setUserActivities(ArrayList<UserActivity> userActivities) {
+        this.userActivities = userActivities;
     }
 }

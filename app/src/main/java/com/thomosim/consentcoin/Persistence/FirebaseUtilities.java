@@ -1,6 +1,7 @@
 package com.thomosim.consentcoin.Persistence;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;

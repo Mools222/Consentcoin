@@ -61,11 +61,11 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
     @Override
     public void onBindViewHolder(@NonNull ViewHolderProcessRequest holder, int position) {
         PermissionRequest permissionRequest = pendingPermissionRequests.get(position);
-        Date date = permissionRequest.getDate();
+        Date date = permissionRequest.getRequestDate();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
         holder.textView1.setText(simpleDateFormat.format(date));
-        holder.textView2.setText(permissionRequest.getOrganization());
+        holder.textView2.setText(permissionRequest.getOrganizationName());
     }
 
     @Override

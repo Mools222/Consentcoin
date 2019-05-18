@@ -7,6 +7,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DAOFirebase implements DAOInterface {
     private FirebaseUtilities firebaseUtilities;
@@ -73,13 +75,13 @@ public class DAOFirebase implements DAOInterface {
         observableDataInviteRequests.removeDatabaseListener();
     }
 
-    public void setDatabaseReferenceCurrentUser(){
+    public void setDatabaseReferenceCurrentUser() {
         observableDataUser.setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser());
     }
 
     @Override
     public <T> MyObservable<T> getLogin() {
-        return (MyObservable<T>)observableDataFirebaseAuth;
+        return (MyObservable<T>) observableDataFirebaseAuth;
     }
 
     @Override
@@ -88,14 +90,14 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addUser(String userType, String uid, String userEmail, String userDisplayName) {
-        User user = new User(uid, userEmail, userType, "FirstName", null, "LastName", null);
+    public void addUser(String userType, String uid, String userEmail, String userDisplayName, String organizationName) {
+        User user = new User(uid, userEmail, userType, "FirstName", null, "LastName", organizationName.length() == 0 ? null : organizationName, null, null);
         if (userDisplayName != null) {
             String[] userNameSplit = userDisplayName.split("\\s");
             if (userNameSplit.length == 2)
-                user = new User(uid, userEmail, userType, userNameSplit[0], null, userNameSplit[1], null);
+                user = new User(uid, userEmail, userType, userNameSplit[0], null, userNameSplit[1], organizationName.length() == 0 ? null : organizationName, null, null);
             else if (userNameSplit.length == 3)
-                user = new User(uid, userEmail, userType, userNameSplit[0], userNameSplit[1], userNameSplit[2], null);
+                user = new User(uid, userEmail, userType, userNameSplit[0], userNameSplit[1], userNameSplit[2], organizationName.length() == 0 ? null : organizationName, null, null);
         }
         firebaseUtilities.getDatabaseReferenceUsers().child(uid).setValue(user);
     }
@@ -122,10 +124,10 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addPermissionRequest(String organizationEmail, String memberEmail, String permissionType) {
+    public void addPermissionRequest(String organizationName, String organizationUid, String memberUid, String permissionType, Date requestDate, Date permissionStartDate, Date permissionEndDate) {
         DatabaseReference databaseReference = firebaseUtilities.getDatabaseReferencePermissionRequests().push(); // Creates blank record in the database
         String firebaseId = databaseReference.getKey(); // Get the auto generated key
-        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationEmail, memberEmail, permissionType);
+        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberUid, permissionType, requestDate, permissionStartDate, permissionEndDate);
         databaseReference.setValue(permissionRequest);
     }
 
@@ -216,7 +218,6 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void removeConsentcoin(Consentcoin consentcoin) {
-
     }
 
     @Override

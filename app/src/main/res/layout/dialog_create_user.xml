@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
 
     <RadioGroup
         android:id="@+id/radio_group"
@@ -12,24 +13,24 @@
         android:checkedButton="@+id/rb_first"
         android:orientation="vertical">
 
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/rb_first"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Request permission from all members" />
+            android:text="Member" />
 
-        <RadioButton
+        <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/rb_second"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Request permission from selected members" />
+            android:text="Organization" />
     </RadioGroup>
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search for specific user">
+        android:hint="Enter organization name">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_create_request"
@@ -37,9 +38,5 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_create_request"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </LinearLayout>

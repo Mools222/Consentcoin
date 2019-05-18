@@ -6,13 +6,16 @@ import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 
 public interface DAOInterface {
-    <T> MyObservable<T> getLogin();
+    void setDatabaseReferenceCurrentUser();
+
+    <T> MyObservable<T> getLogin(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T is used to accommodate all possibilities.
 
     void logOut(Context context);
 
-    void addUser(String userType, String uid, String userEmail, String userDisplayName);
+    void addUser(String userType, String uid, String userEmail, String userDisplayName, String organizationName);
 
     MyObservable<User> getUser();
 
@@ -22,7 +25,7 @@ public interface DAOInterface {
 
     void removeUser(User user);
 
-    void addPermissionRequest(String organizationEmail, String memberEmail, String permissionType);
+    void addPermissionRequest(String organizationName, String organizationUid, String memberUid, String permissionType, Date requestDate, Date permissionStartDate, Date permissionEndDate);
 
     MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
 

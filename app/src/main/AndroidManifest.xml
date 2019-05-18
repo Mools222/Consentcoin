@@ -9,14 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/LightTheme">
-        <!--<activity android:name=".MainActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-
         <activity android:name=".View.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,8 +17,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".View.ProcessRequestActivity" />
-        <activity android:name=".View.MyConsentcoinsActivity"></activity>
-        <activity android:name=".View.ProcessInviteActivity"/>
+        <activity android:name=".View.MyConsentcoinsActivity" />
+        <activity android:name=".View.ProcessInviteActivity" />
+        <activity android:name=".View.CreateRequestActivity" />
     </application>
 
 </manifest>

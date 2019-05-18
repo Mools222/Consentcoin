@@ -50,7 +50,7 @@
                 android:icon="@drawable/ic_menu_share"
                 android:title="My members" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Settings" />
         </menu>
