@@ -63,6 +63,7 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--If height isn't specified, the RecyclerView will push the views below it out of the screen when it becomes too big-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_create_request"
         android:layout_width="match_parent"

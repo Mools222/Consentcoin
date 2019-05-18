@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public interface DAOInterface {
-    void setDatabaseReferenceCurrentUser();
-
     <T> MyObservable<T> getLogin(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T is used to accommodate all possibilities.
 
     void logOut(Context context);
+
+    void setDatabaseReferenceCurrentUser();
 
     void addUser(String userType, String uid, String userEmail, String userDisplayName, String organizationName);
 
@@ -35,11 +35,13 @@ public interface DAOInterface {
 
     void addConsentcoinReference(String id, String member, String organization, String storageUrl);
 
+    void setConsentcoinUrl(String storageUrl);
+
     void addConsentcoin(Context context, String id, String contractType, String organization, String member);
 
-    Consentcoin getConsentcoin(URL url);
+    MyObservable<Consentcoin> getConsentcoin();
 
-    ArrayList<Consentcoin> getConsentcoins();
+    MyObservable<ArrayList<Consentcoin>> getConsentcoins();
 
     void removeConsentcoin(Consentcoin consentcoin);
 

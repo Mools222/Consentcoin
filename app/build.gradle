@@ -40,8 +40,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:17.0.0' // Realtime Database
     implementation 'com.google.firebase:firebase-storage:17.0.0' // Cloud Storage
     implementation 'com.google.firebase:firebase-auth:17.0.0' // Authentication
-    implementation 'com.firebaseui:firebase-ui-auth:4.3.2'
-    // FirebaseUI (https://firebase.google.com/docs/auth)
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.2' // FirebaseUI (https://firebase.google.com/docs/auth)
 
     // Lifecycle
     implementation "android.arch.lifecycle:extensions:1.1.1"

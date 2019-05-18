@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -45,10 +44,6 @@ import com.thomosim.consentcoin.Persistence.User;
 import com.thomosim.consentcoin.R;
 import com.thomosim.consentcoin.ViewModel.MyViewModel;
 
-import java.io.BufferedInputStream;
-import java.io.ObjectInputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -259,9 +254,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 consentcoinReferences = new ArrayList<>();
                 if (user != null)
                     for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                        if (user.getType().equals("Member") && consentcoinReference.getMember().equals(userEmail))
+                        if (user.getType().equals("Member") && consentcoinReference.getMember().equals(uid))
                             consentcoinReferences.add(consentcoinReference);
-                        else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(userEmail))
+                        else if (user.getType().equals("Organization") && consentcoinReference.getOrganization().equals(uid))
                             consentcoinReferences.add(consentcoinReference);
                     }
             }
@@ -277,6 +272,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
                 tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
+            }
+        });
+
+        myViewModel.getConsentcoin().observe(new MyObserver<Consentcoin>() {
+            @Override
+            public void onChanged(Consentcoin consentcoin) {
+                displayConsentcoin(consentcoin);
             }
         });
     }
@@ -377,7 +379,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("test2");
 //        databaseReference.push().setValue(permissionRequest2);
 
-
     }
 
     /**
@@ -402,16 +403,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
                     boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
                     PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
-
                     if (permissionGranted) {
                         Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
-//                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganization(), permissionRequest.getMember()); // If the user chooses to give permission, create a Consentcoin
-                        dao.addConsentcoin(this, permissionRequest.getId(), String.valueOf(permissionRequest.getPermissionType()), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid()); // If the user chooses to give permission, create a Consentcoin
+                        dao.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid()); // If the user chooses to give permission, create a Consentcoin
                     } else {
                         Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                     }
 
-//                    databaseReferencePermissionRequests.child(permissionRequest.getId()).removeValue(); // Remove the permission request from the database
                     dao.removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
                     pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
                     adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
@@ -454,7 +452,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
                     }
 
-//                    databaseReferenceInviteRequests.child(inviteRequest.getId()).removeValue();
                     dao.removeInviteRequest(inviteRequest.getId());
                     pendingInviteRequests.remove(inviteRequest);
                     adapterProcessInvite.updateData(pendingInviteRequests);
@@ -563,14 +560,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            URL url = null;
-                            try {
-                                url = new URL(consentcoinReferences.get(which).getStorageUrl());
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            }
-                            consentcoins = new ArrayList<>();
-                            new DownloadConsentcoins().execute(url);
+                            dao.setConsentcoinUrl(consentcoinReferences.get(which).getStorageUrl());
                             Toast.makeText(CONTEXT, "Getting Consentcoin. Please wait.", Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -589,9 +579,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();
     }
 
-    public void displayConsentcoin() {
+    public void displayConsentcoin(Consentcoin consentcoin) {
         Intent intent = new Intent(this, MyConsentcoinsActivity.class);
-        intent.putExtra("CC", consentcoins.get(0));
+        intent.putExtra("CC", consentcoin);
         startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
     }
 
@@ -764,117 +754,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 })
                 .show();
-    }
-
-    public void displayConsentcoins() {
-        if (consentcoins != null) {
-            String[] array = new String[consentcoins.size()];
-
-            for (int i = 0; i < consentcoins.size(); i++) {
-                Consentcoin consentcoin = consentcoins.get(i);
-                array[i] = "ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getContractType() + " MemID: " + consentcoin.getMemberId() + " OrgID: " + consentcoin.getOrganizationId();
-            }
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
-
-            AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
-                    .setTitle("My Consenscoins")
-                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .create();
-
-            ListView listView = alertDialog.getListView();
-            listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
-            listView.setDividerHeight(5);
-            alertDialog.show();
-        } else
-            Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();
-    }
-
-    public void getConsentcoin(ConsentcoinReference consentcoinReference) {
-        try {
-            consentcoins.clear();
-            new DownloadConsentcoins().execute(new URL(consentcoinReference.getStorageUrl()));
-
-            Toast.makeText(this, "Loading Consenscoins. Please wait", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void getConsentcoins() {
-        if (consentcoinReferences.size() > 0) {
-            try {
-                // If we start one AsyncTask for sendRequestToAllMembers downloads
-                URL[] urls = new URL[consentcoinReferences.size()];
-
-                for (int i = 0; i < consentcoinReferences.size(); i++) {
-                    ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-                    if (consentcoinReference.getMember().equals(userEmail))
-                        urls[i] = new URL(consentcoinReference.getStorageUrl());
-                }
-
-                consentcoins.clear();
-                new DownloadConsentcoins().execute(urls);
-
-                Toast.makeText(this, "Loading Consenscoins. Please wait", Toast.LENGTH_SHORT).show();
-
-                // If we start one AsyncTask per download
-//                for (int i = 0; i < consentcoinReferences.size(); i++) {
-//                    new DownloadConsentcoins().execute(new URL(consentcoinReferences.get(i).getStorageUrl()));
-//                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void write(View view) {
-//        String test = textInputEditText.getText().toString();
-//        firebaseUtilities.write(test);
-//        textInputEditText.setText("");
-
-        Toast.makeText(this, user.getType(), Toast.LENGTH_SHORT).show();
-    }
-
-    // TODO Put his in a MyObservable class
-    // To solve the "leaks might occur" warning: https://stackoverflow.com/questions/44309241/warning-this-asynctask-class-should-be-static-or-leaks-might-occur/46166223#46166223
-    private class DownloadConsentcoins extends AsyncTask<URL, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(URL... urls) {
-            try {
-                for (int i = 0; i < urls.length; i++) {
-                    ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[i].openStream()));
-                    // TODO (3) Decrypt the Consentcoin object
-                    Consentcoin consentcoin = (Consentcoin) objectInputStream.readObject();
-                    consentcoins.add(consentcoin);
-                    objectInputStream.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            displayConsentcoin();
-
-        }
     }
 }

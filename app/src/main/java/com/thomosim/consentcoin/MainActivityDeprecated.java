@@ -1197,3 +1197,108 @@
 //    }
 //
 //}
+
+
+//public void displayConsentcoins() {
+//        if (consentcoins != null) {
+//        String[] array = new String[consentcoins.size()];
+//
+//        for (int i = 0; i < consentcoins.size(); i++) {
+//        Consentcoin consentcoin = consentcoins.get(i);
+//        array[i] = "ID: " + consentcoin.getContractId() + " Type: " + consentcoin.getContractType() + " MemID: " + consentcoin.getMemberId() + " OrgID: " + consentcoin.getOrganizationId();
+//        }
+//
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
+//
+//        AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
+//        .setTitle("My Consenscoins")
+//        .setAdapter(adapter, new DialogInterface.OnClickListener() {
+//@Override
+//public void onClick(DialogInterface dialog, int which) {
+//        }
+//        })
+//        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+//@Override
+//public void onClick(DialogInterface dialog, int which) {
+//        }
+//        })
+//        .create();
+//
+//        ListView listView = alertDialog.getListView();
+//        listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
+//        listView.setDividerHeight(5);
+//        alertDialog.show();
+//        } else
+//        Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();
+//        }
+//
+//public void getConsentcoin(ConsentcoinReference consentcoinReference) {
+//        try {
+//        consentcoins.clear();
+//        new DownloadConsentcoins().execute(new URL(consentcoinReference.getStorageUrl()));
+//
+//        Toast.makeText(this, "Loading Consenscoins. Please wait", Toast.LENGTH_SHORT).show();
+//        } catch (Exception e) {
+//        e.printStackTrace();
+//        }
+//        }
+//
+//public void getConsentcoins() {
+//        if (consentcoinReferences.size() > 0) {
+//        try {
+//        // If we start one AsyncTask for sendRequestToAllMembers downloads
+//        URL[] urls = new URL[consentcoinReferences.size()];
+//
+//        for (int i = 0; i < consentcoinReferences.size(); i++) {
+//        ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
+//        if (consentcoinReference.getMember().equals(userEmail))
+//        urls[i] = new URL(consentcoinReference.getStorageUrl());
+//        }
+//
+//        consentcoins.clear();
+//        new DownloadConsentcoins().execute(urls);
+//
+//        Toast.makeText(this, "Loading Consenscoins. Please wait", Toast.LENGTH_SHORT).show();
+//
+//        // If we start one AsyncTask per download
+////                for (int i = 0; i < consentcoinReferences.size(); i++) {
+////                    new DownloadConsentcoins().execute(new URL(consentcoinReferences.get(i).getStorageUrl()));
+////                }
+//
+//        } catch (Exception e) {
+//        e.printStackTrace();
+//        }
+//        }
+//        }
+
+
+// To solve the "leaks might occur" warning: https://stackoverflow.com/questions/44309241/warning-this-asynctask-class-should-be-static-or-leaks-might-occur/46166223#46166223
+//private class DownloadConsentcoins extends AsyncTask<URL, Void, Void> {
+//    @Override
+//    protected void onPreExecute() {
+//        super.onPreExecute();
+//    }
+//
+//    @Override
+//    protected Void doInBackground(URL... urls) {
+//        try {
+//            for (int i = 0; i < urls.length; i++) {
+//                ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[i].openStream()));
+//                // TODO (3) Decrypt the Consentcoin object
+//                Consentcoin consentcoin = (Consentcoin) objectInputStream.readObject();
+//                consentcoins.add(consentcoin);
+//                objectInputStream.close();
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+//
+//    @Override
+//    protected void onPostExecute(Void aVoid) {
+//        super.onPostExecute(aVoid);
+//        displayConsentcoin();
+//
+//    }
+//}

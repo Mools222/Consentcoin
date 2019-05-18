@@ -2,6 +2,7 @@ package com.thomosim.consentcoin.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
+import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
@@ -17,6 +18,7 @@ public class MyViewModel {
     private MyObservable<ArrayList<PermissionRequest>> permissionRequests;
     private MyObservable<ArrayList<ConsentcoinReference>> consentcoinReferences;
     private MyObservable<ArrayList<InviteRequest>> inviteRequests;
+    private MyObservable<Consentcoin> consentcoin;
 
     public MyViewModel() {
         DAOFirebase dao = DAOFirebase.getInstance();
@@ -26,6 +28,7 @@ public class MyViewModel {
         permissionRequests = dao.getPermissionRequests();
         consentcoinReferences = dao.getConsentcoinReferences();
         inviteRequests = dao.getInviteRequests();
+        consentcoin = dao.getConsentcoin();
     }
 
     public MyObservable<FirebaseAuth> getLogin() {
@@ -50,5 +53,9 @@ public class MyViewModel {
 
     public MyObservable<ArrayList<InviteRequest>> getInviteRequests() {
         return inviteRequests;
+    }
+
+    public MyObservable<Consentcoin> getConsentcoin() {
+        return consentcoin;
     }
 }

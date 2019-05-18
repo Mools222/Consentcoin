@@ -7,14 +7,12 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
 import java.io.File;
 import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -27,6 +25,7 @@ public class DAOFirebase implements DAOInterface {
     private ObservableDataPermissionRequests observableDataPermissionRequests;
     private ObservableDataConsentcoinReferences observableDataConsentcoinReferences;
     private ObservableDataInviteRequests observableDataInviteRequests;
+    private ObservableDataConsentcoin observableDataConsentcoin;
 
     private static final Object LOCK = new Object();
     private static DAOFirebase instance;
@@ -49,6 +48,7 @@ public class DAOFirebase implements DAOInterface {
         observableDataPermissionRequests = new ObservableDataPermissionRequests(firebaseUtilities.getDatabaseReferencePermissionRequests());
         observableDataConsentcoinReferences = new ObservableDataConsentcoinReferences(firebaseUtilities.getDatabaseReferenceConsentcoinReferences());
         observableDataInviteRequests = new ObservableDataInviteRequests(firebaseUtilities.getDatabaseReferenceInviteRequests());
+        observableDataConsentcoin = new ObservableDataConsentcoin();
     }
 
     public void addAuthStateListener() {
@@ -153,6 +153,11 @@ public class DAOFirebase implements DAOInterface {
         firebaseUtilities.getDatabaseReferenceConsentcoinReferences().push().setValue(consentcoinReference);
     }
 
+    @Override
+    public void setConsentcoinUrl(String storageUrl) {
+        observableDataConsentcoin.setConsentcoinUrl(storageUrl);
+    }
+
     /**
      * This method:
      * 1) Creates a new instance of the Consentcoin class
@@ -207,12 +212,12 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public Consentcoin getConsentcoin(URL url) {
-        return null;
+    public MyObservable<Consentcoin> getConsentcoin() {
+        return observableDataConsentcoin;
     }
 
     @Override
-    public ArrayList<Consentcoin> getConsentcoins() {
+    public MyObservable<ArrayList<Consentcoin>> getConsentcoins() {
         return null;
     }
 
