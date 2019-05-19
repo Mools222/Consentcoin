@@ -14,8 +14,7 @@ public class MyObservable<T> {
     public void observe(MyObserver<T> myObserver) {
         if (myObserver == null)
             throw new NullPointerException();
-        if (!myObservers.contains(myObserver)) {
+        if (!myObservers.contains(myObserver))
             myObservers.add(myObserver);
-        }
     }
 }

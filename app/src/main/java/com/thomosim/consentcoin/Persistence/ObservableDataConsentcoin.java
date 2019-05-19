@@ -30,11 +30,10 @@ public class ObservableDataConsentcoin extends MyObservable<Consentcoin> {
             try {
                 for (URL url: urls) {
                     ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(url.openStream()));
-                    // TODO (3) Decrypt the Consentcoin object
+                    // TODO Decrypt the Consentcoin object
                     consentcoin = (Consentcoin) objectInputStream.readObject();
                     objectInputStream.close();
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {

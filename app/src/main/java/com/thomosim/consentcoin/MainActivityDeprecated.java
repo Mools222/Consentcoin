@@ -68,9 +68,6 @@
 //import java.util.ArrayList;
 //import java.util.Arrays;
 //
-//// TODO (99) Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
-//// TODO (98) Make all named constants (keyword final) uppercase
-//// TODO (50) Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607)
 //public class MainActivityDeprecated extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 //
 //    private DatabaseReference databaseReferenceTest;
@@ -902,7 +899,6 @@
 //     */
 //
 //    public void createConsentcoin(String id, String contractType, String organization, String member) {
-//        // TODO (2) Encrypt the Consentcoin object
 //        final Consentcoin consentcoin = new Consentcoin(id, contractType, member, organization);
 //
 //        String fileName = "consentcoin";
@@ -1106,7 +1102,6 @@
 //    }
 //
 //    private boolean validateMembers(ArrayList<String> users) {
-//        //TODO: add a check to see if users exists
 //        return true;
 //    }
 //
@@ -1149,7 +1144,6 @@
 ////                    HttpURLConnection httpURLConnection = (HttpURLConnection) urls[i].openConnection();
 ////                    if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 ////                        objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[i].openStream()));
-////                        // TODO (3) Decrypt the Consentcoin object
 ////                        Consentcoin consentcoin = (Consentcoin) objectInputStream.readObject();
 ////                        consentcoins.add(consentcoin);
 ////                    }
@@ -1158,7 +1152,6 @@
 //
 //                for (int i = 0; i < urls.length; i++) {
 //                    ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[i].openStream()));
-//                    // TODO (3) Decrypt the Consentcoin object
 //                    Consentcoin consentcoin = (Consentcoin) objectInputStream.readObject();
 //                    consentcoins.add(consentcoin);
 //                    objectInputStream.close();
@@ -1176,7 +1169,6 @@
 ////            try {
 ////                ObjectInputStream objectInputStream = null;
 ////                objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[0].openStream()));
-////                // TODO (3) Decrypt the Consentcoin object
 ////                Consentcoin contract = (Consentcoin) objectInputStream.myConsentcoins();
 ////                consentcoins.add(contract);
 ////                objectInputStream.close();
@@ -1284,7 +1276,6 @@
 //        try {
 //            for (int i = 0; i < urls.length; i++) {
 //                ObjectInputStream objectInputStream = new ObjectInputStream(new BufferedInputStream(urls[i].openStream()));
-//                // TODO (3) Decrypt the Consentcoin object
 //                Consentcoin consentcoin = (Consentcoin) objectInputStream.readObject();
 //                consentcoins.add(consentcoin);
 //                objectInputStream.close();

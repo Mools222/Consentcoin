@@ -39,6 +39,7 @@ import com.thomosim.consentcoin.ObserverPattern.MyObserver;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
+import com.thomosim.consentcoin.Persistence.DAOInterface;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
@@ -50,9 +51,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-// TODO (99) Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
-// TODO (98) Make all named constants (keyword final) uppercase
-// TODO (50) Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607)
+// TODO Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
+// TODO Make all named constants (keyword final) uppercase
+// TODO Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607) - if that's even possible
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private RecyclerView recyclerView;
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail;
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<PermissionRequest> pendingPermissionRequests;
     private ArrayList<InviteRequest> pendingInviteRequests;
 
-    private DAOFirebase dao;
+    private DAOInterface dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

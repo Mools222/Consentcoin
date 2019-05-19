@@ -15,14 +15,13 @@ import java.io.File;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 
 public class DAOFirebase implements DAOInterface {
     private FirebaseUtilities firebaseUtilities;
 
     private ObservableDataFirebaseAuth observableDataFirebaseAuth;
     private ObservableDataUser observableDataUser;
-    private ObservableDataDataUsers observableDataDataUsers;
+    private ObservableDataUsers observableDataUsers;
     private ObservableDataPermissionRequests observableDataPermissionRequests;
     private ObservableDataConsentcoinReferences observableDataConsentcoinReferences;
     private ObservableDataInviteRequests observableDataInviteRequests;
@@ -45,52 +44,58 @@ public class DAOFirebase implements DAOInterface {
         firebaseUtilities = FirebaseUtilities.getInstance();
         observableDataFirebaseAuth = new ObservableDataFirebaseAuth(firebaseUtilities.getFirebaseAuth());
         observableDataUser = new ObservableDataUser();
-        observableDataDataUsers = new ObservableDataDataUsers(firebaseUtilities.getDatabaseReferenceUsers());
+        observableDataUsers = new ObservableDataUsers(firebaseUtilities.getDatabaseReferenceUsers());
         observableDataPermissionRequests = new ObservableDataPermissionRequests(firebaseUtilities.getDatabaseReferencePermissionRequests());
         observableDataConsentcoinReferences = new ObservableDataConsentcoinReferences(firebaseUtilities.getDatabaseReferenceConsentcoinReferences());
         observableDataInviteRequests = new ObservableDataInviteRequests(firebaseUtilities.getDatabaseReferenceInviteRequests());
         observableDataConsentcoin = new ObservableDataConsentcoin();
     }
 
+    @Override
     public void addAuthStateListener() {
         observableDataFirebaseAuth.addAuthStateListener();
     }
 
+    @Override
     public void removeAuthStateListener() {
         observableDataFirebaseAuth.removeAuthStateListener();
     }
 
-    public void addDatabaseListenerUser() {
-        observableDataUser.addDatabaseListener();
-    }
-
-    public void addDatabaseListener() {
-        observableDataDataUsers.addDatabaseListener();
-        observableDataPermissionRequests.addDatabaseListener();
-        observableDataConsentcoinReferences.addDatabaseListener();
-        observableDataInviteRequests.addDatabaseListener();
-    }
-
-    public void removeDatabaseListener() {
-        observableDataUser.removeDatabaseListener();
-        observableDataDataUsers.removeDatabaseListener();
-        observableDataPermissionRequests.removeDatabaseListener();
-        observableDataConsentcoinReferences.removeDatabaseListener();
-        observableDataInviteRequests.removeDatabaseListener();
-    }
-
+    @Override
     public void setDatabaseReferenceCurrentUser() {
         observableDataUser.setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser());
     }
 
     @Override
-    public <T> MyObservable<T> getLogin() {
-        return (MyObservable<T>) observableDataFirebaseAuth;
+    public void addDatabaseListenerUser() {
+        observableDataUser.addDatabaseListener();
+    }
+
+    @Override
+    public void addDatabaseListener() {
+        observableDataUsers.addDatabaseListener();
+        observableDataPermissionRequests.addDatabaseListener();
+        observableDataConsentcoinReferences.addDatabaseListener();
+        observableDataInviteRequests.addDatabaseListener();
+    }
+
+    @Override
+    public void removeDatabaseListener() {
+        observableDataUser.removeDatabaseListener();
+        observableDataUsers.removeDatabaseListener();
+        observableDataPermissionRequests.removeDatabaseListener();
+        observableDataConsentcoinReferences.removeDatabaseListener();
+        observableDataInviteRequests.removeDatabaseListener();
     }
 
     @Override
     public void logOut(Context context) {
         AuthUI.getInstance().signOut(context);
+    }
+
+    @Override
+    public <T> MyObservable<T> getLogin() {
+        return (MyObservable<T>) observableDataFirebaseAuth;
     }
 
     @Override
@@ -116,7 +121,7 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public MyObservable<ArrayList<User>> getUsers() {
-        return observableDataDataUsers;
+        return observableDataUsers;
     }
 
 
@@ -127,7 +132,6 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void removeUser(User user) {
-
     }
 
     @Override
@@ -141,6 +145,11 @@ public class DAOFirebase implements DAOInterface {
     @Override
     public MyObservable<ArrayList<PermissionRequest>> getPermissionRequests() {
         return observableDataPermissionRequests;
+    }
+
+    @Override
+    public void updatePermissionRequest(String id, PermissionRequest permissionRequest) {
+
     }
 
 
@@ -161,8 +170,13 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void setConsentcoinUrl(String storageUrl) {
-        observableDataConsentcoin.setConsentcoinUrl(storageUrl);
+    public void updateConsentcoinReference(String id, ConsentcoinReference consentcoinReference) {
+
+    }
+
+    @Override
+    public void removeConsentcoinReference(ConsentcoinReference consentcoinReference) {
+
     }
 
     /**
@@ -188,7 +202,7 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void addConsentcoin(Context context, String contractId, String permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
-        // TODO (2) Encrypt the Consentcoin object
+        // TODO Encrypt the Consentcoin object
         final Consentcoin consentcoin = new Consentcoin(contractId, permissionType, organizationUid, memberUid, creationDate, permissionStartDate, permissionEndDate);
 
         String fileName = "consentcoin";
@@ -212,6 +226,11 @@ public class DAOFirebase implements DAOInterface {
                 file.delete();
             }
         });
+    }
+
+    @Override
+    public void setConsentcoinUrl(String storageUrl) {
+        observableDataConsentcoin.setConsentcoinUrl(storageUrl);
     }
 
     @Override

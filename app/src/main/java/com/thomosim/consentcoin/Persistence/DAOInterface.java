@@ -4,16 +4,26 @@ import android.content.Context;
 
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
 public interface DAOInterface {
-    <T> MyObservable<T> getLogin(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T is used to accommodate all possibilities.
+
+    void addAuthStateListener();
+
+    void removeAuthStateListener();
+
+    void setDatabaseReferenceCurrentUser();
+
+    void addDatabaseListenerUser();
+
+    void addDatabaseListener();
+
+    void removeDatabaseListener();
 
     void logOut(Context context);
 
-    void setDatabaseReferenceCurrentUser();
+    <T> MyObservable<T> getLogin(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T is used to accommodate all possibilities.
 
     void addUser(String userType, String uid, String userEmail, String userDisplayName, String organizationName);
 
@@ -29,15 +39,21 @@ public interface DAOInterface {
 
     MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
 
+    void updatePermissionRequest(String id, PermissionRequest permissionRequest);
+
     void removePermissionRequest(String id);
 
     MyObservable<ArrayList<ConsentcoinReference>> getConsentcoinReferences();
 
     void addConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl);
 
-    void setConsentcoinUrl(String storageUrl);
+    void updateConsentcoinReference(String id, ConsentcoinReference consentcoinReference);
+
+    void removeConsentcoinReference(ConsentcoinReference consentcoinReference);
 
     void addConsentcoin(Context context, String contractId, String permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate);
+
+    void setConsentcoinUrl(String storageUrl);
 
     MyObservable<Consentcoin> getConsentcoin();
 

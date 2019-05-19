@@ -10,11 +10,11 @@ import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
 import java.util.ArrayList;
 
-public class ObservableDataDataUsers extends MyObservable<ArrayList<User>> {
+public class ObservableDataUsers extends MyObservable<ArrayList<User>> {
     private DatabaseReference databaseReference;
     private MyValueEventListener myValueEventListener;
 
-    public ObservableDataDataUsers(DatabaseReference databaseReference) {
+    public ObservableDataUsers(DatabaseReference databaseReference) {
         this.databaseReference = databaseReference;
     }
 
