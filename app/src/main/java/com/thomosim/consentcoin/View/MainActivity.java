@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     tvNavigationHeaderEmail.setText(userEmail);
 
                     dao.setDatabaseReferenceCurrentUser(); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
-                    dao.addDatabaseListener();
+                    dao.addDatabaseListenerUser(); // Starting off, only the database listener for the current user is added, since the user type (which is only known when the User object for the logged in user is retrieved) is needed to determine whether the user has any PermissionRequests or ConsentcoinReferences
                 } else { // User is signed out
                     Log.i("ZZZ", "logged out ");
 
@@ -206,9 +206,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (user == null) {
                     addUser();
                 } else {
+                    dao.addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
+
                     ArrayList<UserActivity> userActivity = user.getUserActivities();
                     if (userActivity != null)
-                        adapterMainActivity.updateData(userActivity);
+                        adapterMainActivity.updateData(userActivity); // Add the list of UserActivity objects to the RecyclerView adapter
 
                     if (user.getType().equals("Member")) {
                         menuItemPendingRequests.setVisible(true); // Members can receive, but not create requests
@@ -235,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         menuItemPendingInvites.setVisible(false);
                         tvNavigationDrawerPendingInviteCounter.setVisibility(View.INVISIBLE);
 
-                        tvNavigationHeaderName.setText(user.getOrganizationName());
+                        tvNavigationHeaderName.setText(user.getOrganizationName()); // Add the name of the organization to the NavigationDrawer header
                     }
                 }
             }
@@ -252,16 +254,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
                 pendingPermissionRequests = new ArrayList<>();
-
-                // TODO Sometimes the user is still null when the listener fires the first time. This causes the result to be ignored. Fix: Just let this method add all PermissionRequests and then sort them in the relevant methods
-                if (user != null)
-                    for (PermissionRequest permissionRequest : permissionRequests) {
-                        if (user.getType().equals("Member") && permissionRequest.getMemberUid().equals(uid))
-                            pendingPermissionRequests.add(permissionRequest);
-                        else if (user.getType().equals("Organization") && permissionRequest.getOrganizationUid().equals(uid))
-                            pendingPermissionRequests.add(permissionRequest);
-                    }
-
+                for (PermissionRequest permissionRequest : permissionRequests) {
+                    if (user.getType().equals("Member") && permissionRequest.getMemberUid().equals(uid))
+                        pendingPermissionRequests.add(permissionRequest);
+                    else if (user.getType().equals("Organization") && permissionRequest.getOrganizationUid().equals(uid))
+                        pendingPermissionRequests.add(permissionRequest);
+                }
                 tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
                 tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
             }
@@ -271,15 +269,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
-
-                // TODO Sometimes the user is still null when the listener fires the first time. This causes the result to be ignored. Fix: Just let this method add all ConsentcoinReference and then sort them in the relevant methods
-                if (user != null)
-                    for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                        if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid))
-                            consentcoinReferences.add(consentcoinReference);
-                        else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid))
-                            consentcoinReferences.add(consentcoinReference);
-                    }
+                for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
+                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid))
+                        consentcoinReferences.add(consentcoinReference);
+                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid))
+                        consentcoinReferences.add(consentcoinReference);
+                }
             }
         });
 

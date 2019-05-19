@@ -60,8 +60,11 @@ public class DAOFirebase implements DAOInterface {
         observableDataFirebaseAuth.removeAuthStateListener();
     }
 
-    public void addDatabaseListener() {
+    public void addDatabaseListenerUser() {
         observableDataUser.addDatabaseListener();
+    }
+
+    public void addDatabaseListener() {
         observableDataDataUsers.addDatabaseListener();
         observableDataPermissionRequests.addDatabaseListener();
         observableDataConsentcoinReferences.addDatabaseListener();
