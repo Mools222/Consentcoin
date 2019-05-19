@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.R;
 
+// TODO This whole activity
 public class MyConsentcoinActivity extends AppCompatActivity {
-
     private Intent returnIntent;
 
     @Override

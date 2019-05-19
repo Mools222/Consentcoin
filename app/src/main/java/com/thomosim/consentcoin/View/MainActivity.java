@@ -38,8 +38,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.ObserverPattern.MyObserver;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
-import com.thomosim.consentcoin.Persistence.DAOFirebase;
-import com.thomosim.consentcoin.Persistence.DAOInterface;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
@@ -55,20 +53,15 @@ import java.util.Date;
 // TODO Make all named constants (keyword final) uppercase
 // TODO Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607) - if that's even possible
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private RecyclerView recyclerView;
-    private TextView tvNavigationHeaderName, tvNavigationHeaderEmail;
-    private TextView tvNavigationDrawerCounter;
-    private TextView tvNavigationDrawerPendingPermissionsCounter;
-    private TextView tvNavigationDrawerPendingInviteCounter;
+    private TextView tvNavigationHeaderName, tvNavigationHeaderEmail, tvNavigationDrawerCounter, tvNavigationDrawerPendingPermissionsCounter, tvNavigationDrawerPendingInviteCounter;
     private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemSentRequests, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
     private AdapterMainActivity adapterMainActivity;
     private AdapterProcessRequest adapterProcessRequest;
     private AdapterProcessInvite adapterProcessInvite;
-
     private TextInputEditText tietInviteMember;
+
     private ArrayList<String> inviteMemberList;
     private ArrayAdapter<String> inviteMemberAdapter;
-
     private String userDisplayName, userEmail, uid;
     private User user;
     private int chosenUserType; // int default value = 0
@@ -83,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<PermissionRequest> pendingPermissionRequests;
     private ArrayList<InviteRequest> pendingInviteRequests;
 
-    private DAOInterface dao;
+    private MyViewModel myViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         // Initialize references to views
-        recyclerView = findViewById(R.id.rv_main_activity);
+        RecyclerView recyclerView = findViewById(R.id.rv_main_activity);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 //        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
@@ -124,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ArrayList<UserActivity> userActivities = user.getUserActivities();
                 userActivities.remove(position);
                 user.setUserActivities(userActivities);
-                dao.updateUser(uid, user);
+                myViewModel.getDao().updateUser(uid, user);
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -154,14 +147,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menuItemMyOrganizations = navigationView.getMenu().findItem(R.id.nav_my_organizations);
         menuItemMyMembers = navigationView.getMenu().findItem(R.id.nav_my_members);
 
-        dao = DAOFirebase.getInstance();
         setupViewModel();
 
         Log.i("ZZZ", "onCreate");
     }
 
+    /**
+     * This method sets up the view model.
+     * 1) It creates a new MyViewModel object and assigns it to myViewModel class variable.
+     * 2) It gets an instance of every ObservableData[Name] class, all of which are subclasses of MyObservable, which contains the observe and setValue methods.
+     * 3) It calls the observe method found in these classes and passes an anonymous inner class of the interface MyObserver as a parameter to each of them. This
+     *    combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added to the list of MyObserver object
+     *    inside the various instances of ObservableData[Name].
+     * 4) When creating the anonymous inner classes, we implement the onChange method found in the interface. The onChanged method is used to initialize and
+     *    update various data fields and to create and manipulate certain views.
+     * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. The setValue method is called by the onDataChange method
+     *    found in the various ValueEventListener objects contained in each subclasses of MyObservable. The onDataChange method is called by Firebase when it
+     *    detects changes to the relevant data sources.
+     */
+
     public void setupViewModel() {
-        MyViewModel myViewModel = new MyViewModel();
+        myViewModel = new MyViewModel();
 
         myViewModel.getAuthentication().observe(new MyObserver<FirebaseAuth>() {
             @Override
@@ -176,12 +182,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     tvNavigationHeaderName.setText(userDisplayName);
                     tvNavigationHeaderEmail.setText(userEmail);
 
-                    dao.setDatabaseReferenceCurrentUser(); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
-                    dao.addDatabaseListenerUser(); // Starting off, only the database listener for the current user is added, since the user type (which is only known when the User object for the logged in user is retrieved) is needed to determine whether the user has any PermissionRequests or ConsentcoinReferences
+                    myViewModel.getDao().setDatabaseReferenceCurrentUser(); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
+                    myViewModel.getDao().addDatabaseListenerUser(); // Starting off, only the database listener for the current user is added, since the user type (which is only known when the User object for the logged in user is retrieved) is needed to determine whether the user has any PermissionRequests or ConsentcoinReferences
                 } else { // User is signed out
                     Log.i("ZZZ", "logged out ");
 
-                    dao.removeDatabaseListener();
+                    myViewModel.getDao().removeDatabaseListener();
 
                     userEmail = null;
                     uid = null; // This value is used in removeDatabaseListener(), so it is set to null after this method is done
@@ -207,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (user == null) {
                     addUser();
                 } else {
-                    dao.addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
+                    myViewModel.getDao().addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
 
                     ArrayList<UserActivity> userActivity = user.getUserActivities();
                     if (userActivity != null)
@@ -303,15 +309,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        dao.addAuthStateListener();
+        myViewModel.getDao().addAuthStateListener();
     }
 
     // onResume adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
     @Override
     protected void onPause() {
         super.onPause();
-        dao.removeAuthStateListener();
-        dao.removeDatabaseListener();
+        myViewModel.getDao().removeAuthStateListener();
+        myViewModel.getDao().removeDatabaseListener();
     }
 
     /**
@@ -347,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sign_out_menu:
-                dao.logOut(this);
+                myViewModel.getDao().logOut(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -392,11 +398,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    public void test() {
+    public void test() { // Method for testing new stuff
 //        PermissionRequest2 permissionRequest2 = new PermissionRequest2("123", "org", "mem", Enums.P1, new Date());
 //        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("test2");
 //        databaseReference.push().setValue(permissionRequest2);
-
     }
 
     /**
@@ -432,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     if (permissionGranted) {
-                        dao.addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
+                        myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
                                 date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate()); // If the user chooses to give permission, create a Consentcoin
 
                         ArrayList<UserActivity> userActivities = user.getUserActivities();
@@ -440,14 +445,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             userActivities = new ArrayList<>();
                         userActivities.add(0, new UserActivity("APR", userDisplayName, organization.getOrganizationName(), date)); // "APR" = Accept Permission Request
                         user.setUserActivities(userActivities);
-                        dao.updateUser(uid, user);
+                        myViewModel.getDao().updateUser(uid, user);
 
                         userActivities = organization.getUserActivities();
                         if (userActivities == null)
                             userActivities = new ArrayList<>();
                         userActivities.add(0, new UserActivity("RAPR", userDisplayName, organization.getOrganizationName(), date)); // "RAPR" = Receive Accepted Permission Request
                         organization.setUserActivities(userActivities);
-                        dao.updateUser(organization.getUid(), organization);
+                        myViewModel.getDao().updateUser(organization.getUid(), organization);
 
                         Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
                     } else {
@@ -456,19 +461,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             userActivities = new ArrayList<>();
                         userActivities.add(0, new UserActivity("DPR", userDisplayName, organization.getOrganizationName(), date)); // "DPR" = Deny Permission Request
                         user.setUserActivities(userActivities);
-                        dao.updateUser(uid, user);
+                        myViewModel.getDao().updateUser(uid, user);
 
                         userActivities = organization.getUserActivities();
                         if (userActivities == null)
                             userActivities = new ArrayList<>();
                         userActivities.add(0, new UserActivity("RDPR", userDisplayName, organization.getOrganizationName(), date)); // "RDPR" = Receive Denied Permission Request
                         organization.setUserActivities(userActivities);
-                        dao.updateUser(organization.getUid(), organization);
+                        myViewModel.getDao().updateUser(organization.getUid(), organization);
 
                         Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                     }
 
-                    dao.removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
+                    myViewModel.getDao().removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
                     pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
                     adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
                 }
@@ -503,14 +508,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
 
-                                dao.updateUser(inviteRequest.getOrganization(), user);
+                                myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
                             }
                         }
                     } else {
                         Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
                     }
 
-                    dao.removeInviteRequest(inviteRequest.getId());
+                    myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
                     pendingInviteRequests.remove(inviteRequest);
                     adapterProcessInvite.updateData(pendingInviteRequests);
                 }
@@ -553,7 +558,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onClick(DialogInterface dialog, int which) {
                         String userType = chosenUserType == 0 ? "Member" : "Organization";
                         String organizationName = textInputEditText.getText().toString();
-                        dao.addUser(userType, uid, userEmail, userDisplayName, organizationName);
+                        myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName);
                         Toast.makeText(CONTEXT, "Details saved", Toast.LENGTH_SHORT).show();
                     }
                 })
@@ -650,7 +655,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            dao.setConsentcoinUrl(consentcoinReferences.get(which).getStorageUrl());
+                            myViewModel.getDao().setConsentcoinUrl(consentcoinReferences.get(which).getStorageUrl());
                             Toast.makeText(CONTEXT, "Getting Consentcoin. Please wait.", Toast.LENGTH_SHORT).show(); // TODO Add something that prevents the user from clicking on stuff while the Consentcoin is being downloaded
                         }
                     })
@@ -725,7 +730,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             if (!associatedUsersUids.contains(organizationOrMember.getUid()))
                                 associatedUsersUids.add(organizationOrMember.getUid());
                             user.setAssociatedUsersUids(associatedUsersUids);
-                            dao.updateUser(uid, user);
+                            myViewModel.getDao().updateUser(uid, user);
                             Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " added", Toast.LENGTH_SHORT).show();
                         } else // If the organization or member does not exist, display a toast
                             Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
@@ -777,7 +782,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ListView listMember = inviteDialogView.findViewById(R.id.list_member);
 
         inviteMemberAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, inviteMemberList);
-//        listMember.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listMember.setAdapter(inviteMemberAdapter);
         listMember.setVisibility(View.VISIBLE);
 
@@ -795,8 +799,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 } else {
                                     organization = "testOrg";
                                 }
-                                dao.addInviteRequest(inviteMemberList, organization);
-
+                                myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
                             }
                         }
 
@@ -813,9 +816,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void addInviteMember(View view) {
 
         if (!tietInviteMember.getText().toString().equals("") || tietInviteMember.getText() == null) {
-            //inviteMemberList.add(tietInviteMember.getText().toString());
             inviteMemberAdapter.add(tietInviteMember.getText().toString());
-
             tietInviteMember.setText("");
         }
     }

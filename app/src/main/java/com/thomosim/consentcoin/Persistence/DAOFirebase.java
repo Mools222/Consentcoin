@@ -6,7 +6,10 @@ import android.net.Uri;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
@@ -17,7 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class DAOFirebase implements DAOInterface {
-    private FirebaseUtilities firebaseUtilities;
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseReferenceUsers;
+    private DatabaseReference databaseReferencePermissionRequests;
+    private DatabaseReference databaseReferenceConsentcoinReferences;
+    private DatabaseReference databaseReferenceInviteRequests;
+    private StorageReference storageReference;
 
     private ObservableDataFirebaseAuth observableDataFirebaseAuth;
     private ObservableDataUser observableDataUser;
@@ -41,13 +49,19 @@ public class DAOFirebase implements DAOInterface {
     }
 
     public DAOFirebase() {
-        firebaseUtilities = FirebaseUtilities.getInstance();
-        observableDataFirebaseAuth = new ObservableDataFirebaseAuth(firebaseUtilities.getFirebaseAuth());
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        databaseReferencePermissionRequests = FirebaseDatabase.getInstance().getReference().child("PermissionRequests");
+        databaseReferenceConsentcoinReferences = FirebaseDatabase.getInstance().getReference().child("ConsentcoinReferences");
+        databaseReferenceInviteRequests = FirebaseDatabase.getInstance().getReference().child("InviteRequests");
+        storageReference = FirebaseStorage.getInstance().getReference().child("consentcoins");
+
+        observableDataFirebaseAuth = new ObservableDataFirebaseAuth(firebaseAuth);
         observableDataUser = new ObservableDataUser();
-        observableDataUsers = new ObservableDataUsers(firebaseUtilities.getDatabaseReferenceUsers());
-        observableDataPermissionRequests = new ObservableDataPermissionRequests(firebaseUtilities.getDatabaseReferencePermissionRequests());
-        observableDataConsentcoinReferences = new ObservableDataConsentcoinReferences(firebaseUtilities.getDatabaseReferenceConsentcoinReferences());
-        observableDataInviteRequests = new ObservableDataInviteRequests(firebaseUtilities.getDatabaseReferenceInviteRequests());
+        observableDataUsers = new ObservableDataUsers(databaseReferenceUsers);
+        observableDataPermissionRequests = new ObservableDataPermissionRequests(databaseReferencePermissionRequests);
+        observableDataConsentcoinReferences = new ObservableDataConsentcoinReferences(databaseReferenceConsentcoinReferences);
+        observableDataInviteRequests = new ObservableDataInviteRequests(databaseReferenceInviteRequests);
         observableDataConsentcoin = new ObservableDataConsentcoin();
     }
 
@@ -63,7 +77,7 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void setDatabaseReferenceCurrentUser() {
-        observableDataUser.setDatabaseReference(firebaseUtilities.getDatabaseReferenceCurrentUser());
+        observableDataUser.setDatabaseReference(databaseReferenceUsers.child(firebaseAuth.getCurrentUser().getUid()));
     }
 
     @Override
@@ -123,7 +137,7 @@ public class DAOFirebase implements DAOInterface {
         ArrayList<UserActivity> userActivities = new ArrayList<>();
         userActivities.add(0, new UserActivity("UC", userDisplayName, organizationName.length() == 0 ? null : organizationName, new Date())); // Create a "UC" (User Created) UserActivity and add it to the new user
         user.setUserActivities(userActivities);
-        firebaseUtilities.getDatabaseReferenceUsers().child(uid).setValue(user);
+        databaseReferenceUsers.child(uid).setValue(user);
     }
 
     @Override
@@ -139,7 +153,7 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void updateUser(String uid, User user) {
-        firebaseUtilities.getDatabaseReferenceUsers().child(uid).setValue(user);
+        databaseReferenceUsers.child(uid).setValue(user);
     }
 
     @Override
@@ -148,7 +162,7 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, String permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
-        DatabaseReference databaseReference = firebaseUtilities.getDatabaseReferencePermissionRequests().push(); // Creates blank record in the database
+        DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
         String firebaseId = databaseReference.getKey(); // Get the auto generated key
         PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate);
         databaseReference.setValue(permissionRequest);
@@ -161,13 +175,12 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void updatePermissionRequest(String id, PermissionRequest permissionRequest) {
-
     }
 
 
     @Override
     public void removePermissionRequest(String id) {
-        firebaseUtilities.getDatabaseReferencePermissionRequests().child(id).removeValue(); // Remove the permission request from the database
+        databaseReferencePermissionRequests.child(id).removeValue(); // Remove the permission request from the database
     }
 
     @Override
@@ -178,17 +191,15 @@ public class DAOFirebase implements DAOInterface {
     @Override
     public void addConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl) {
         ConsentcoinReference consentcoinReference = new ConsentcoinReference(contractId, memberUid, organizationUid, storageUrl);
-        firebaseUtilities.getDatabaseReferenceConsentcoinReferences().push().setValue(consentcoinReference);
+        databaseReferenceConsentcoinReferences.push().setValue(consentcoinReference);
     }
 
     @Override
     public void updateConsentcoinReference(String id, ConsentcoinReference consentcoinReference) {
-
     }
 
     @Override
     public void removeConsentcoinReference(ConsentcoinReference consentcoinReference) {
-
     }
 
     /**
@@ -227,8 +238,8 @@ public class DAOFirebase implements DAOInterface {
             e.printStackTrace();
         }
 
-        StorageReference storageReference = firebaseUtilities.getStorageReference().child(contractId);
-        storageReference.putFile(Uri.fromFile(file)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        StorageReference storageReferenceChild = storageReference.child(contractId);
+        storageReferenceChild.putFile(Uri.fromFile(file)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -267,7 +278,7 @@ public class DAOFirebase implements DAOInterface {
     @Override
     public void addInviteRequest(ArrayList<String> members, String organization) {
         for (String uid : members) {
-            DatabaseReference inviteRequestDatabaseReference = firebaseUtilities.getDatabaseReferenceInviteRequests().push();
+            DatabaseReference inviteRequestDatabaseReference = databaseReferenceInviteRequests.push();
             String inviteID = inviteRequestDatabaseReference.getKey();
             InviteRequest inviteRequest = new InviteRequest(inviteID, organization, uid);
             inviteRequestDatabaseReference.setValue(inviteRequest);
@@ -276,6 +287,6 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void removeInviteRequest(String id) {
-        firebaseUtilities.getDatabaseReferenceInviteRequests().child(id).removeValue();
+        databaseReferenceInviteRequests.child(id).removeValue();
     }
 }

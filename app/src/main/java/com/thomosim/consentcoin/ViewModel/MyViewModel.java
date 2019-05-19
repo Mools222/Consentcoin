@@ -5,6 +5,7 @@ import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
+import com.thomosim.consentcoin.Persistence.DAOInterface;
 import com.thomosim.consentcoin.Persistence.InviteRequest;
 import com.thomosim.consentcoin.Persistence.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.User;
@@ -12,6 +13,7 @@ import com.thomosim.consentcoin.Persistence.User;
 import java.util.ArrayList;
 
 public class MyViewModel {
+    private DAOInterface dao;
     private MyObservable<FirebaseAuth> authentication;
     private MyObservable<User> user;
     private MyObservable<ArrayList<User>> users;
@@ -21,7 +23,7 @@ public class MyViewModel {
     private MyObservable<Consentcoin> consentcoin;
 
     public MyViewModel() {
-        DAOFirebase dao = DAOFirebase.getInstance();
+        dao = DAOFirebase.getInstance(); // By changing this line (e.g. to "dao = DAOMySQL.getInstance();"), it is possible to change the data persistence of the app
         authentication = dao.getAuthentication();
         user = dao.getUser();
         users = dao.getUsers();
@@ -29,6 +31,10 @@ public class MyViewModel {
         consentcoinReferences = dao.getConsentcoinReferences();
         inviteRequests = dao.getInviteRequests();
         consentcoin = dao.getConsentcoin();
+    }
+
+    public DAOInterface getDao() {
+        return dao;
     }
 
     public MyObservable<FirebaseAuth> getAuthentication() {
