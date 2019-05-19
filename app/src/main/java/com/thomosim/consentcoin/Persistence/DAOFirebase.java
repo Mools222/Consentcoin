@@ -94,8 +94,20 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public <T> MyObservable<T> getLogin() {
+    public void addAuthentication() {
+    }
+
+    @Override
+    public <T> MyObservable<T> getAuthentication() {
         return (MyObservable<T>) observableDataFirebaseAuth;
+    }
+
+    @Override
+    public <T> void updateAuthentication(String id, T t) {
+    }
+
+    @Override
+    public <T> void removeAuthentication(T t) {
     }
 
     @Override

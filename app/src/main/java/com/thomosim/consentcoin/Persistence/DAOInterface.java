@@ -23,7 +23,13 @@ public interface DAOInterface {
 
     void logOut(Context context);
 
-    <T> MyObservable<T> getLogin(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T is used to accommodate all possibilities.
+    void addAuthentication();
+
+    <T> MyObservable<T> getAuthentication(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T is used to accommodate all possibilities.
+
+    <T> void updateAuthentication(String id, T t);
+
+    <T> void removeAuthentication(T t);
 
     void addUser(String userType, String uid, String userEmail, String userDisplayName, String organizationName);
 

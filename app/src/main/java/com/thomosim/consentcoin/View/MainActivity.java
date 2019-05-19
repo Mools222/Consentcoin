@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void setupViewModel() {
         MyViewModel myViewModel = new MyViewModel();
 
-        myViewModel.getLogin().observe(new MyObserver<FirebaseAuth>() {
+        myViewModel.getAuthentication().observe(new MyObserver<FirebaseAuth>() {
             @Override
             public void onChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();

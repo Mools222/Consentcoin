@@ -12,7 +12,7 @@ import com.thomosim.consentcoin.Persistence.User;
 import java.util.ArrayList;
 
 public class MyViewModel {
-    private MyObservable<FirebaseAuth> login;
+    private MyObservable<FirebaseAuth> authentication;
     private MyObservable<User> user;
     private MyObservable<ArrayList<User>> users;
     private MyObservable<ArrayList<PermissionRequest>> permissionRequests;
@@ -22,7 +22,7 @@ public class MyViewModel {
 
     public MyViewModel() {
         DAOFirebase dao = DAOFirebase.getInstance();
-        login = dao.getLogin();
+        authentication = dao.getAuthentication();
         user = dao.getUser();
         users = dao.getUsers();
         permissionRequests = dao.getPermissionRequests();
@@ -31,8 +31,8 @@ public class MyViewModel {
         consentcoin = dao.getConsentcoin();
     }
 
-    public MyObservable<FirebaseAuth> getLogin() {
-        return login;
+    public MyObservable<FirebaseAuth> getAuthentication() {
+        return authentication;
     }
 
     public MyObservable<User> getUser() {

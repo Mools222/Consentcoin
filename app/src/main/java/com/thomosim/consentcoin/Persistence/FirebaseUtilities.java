@@ -1,9 +1,5 @@
 package com.thomosim.consentcoin.Persistence;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -66,9 +62,5 @@ public class FirebaseUtilities {
 
     public StorageReference getStorageReference() {
         return storageReference;
-    }
-
-    public void signOut(Context context) {
-        AuthUI.getInstance().signOut(context);
     }
 }
