@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
+import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.User;
 
 import java.util.ArrayList;
 import java.util.Date;

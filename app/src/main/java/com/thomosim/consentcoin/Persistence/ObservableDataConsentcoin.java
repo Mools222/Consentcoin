@@ -3,6 +3,7 @@ package com.thomosim.consentcoin.Persistence;
 import android.os.AsyncTask;
 
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
+import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.thomosim.consentcoin.Persistence.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.R;
 
 import java.text.SimpleDateFormat;

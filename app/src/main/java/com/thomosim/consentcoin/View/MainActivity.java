@@ -29,24 +29,22 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.ObserverPattern.MyObserver;
-import com.thomosim.consentcoin.Persistence.Consentcoin;
-import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
-import com.thomosim.consentcoin.Persistence.InviteRequest;
-import com.thomosim.consentcoin.Persistence.PermissionRequest;
-import com.thomosim.consentcoin.Persistence.User;
-import com.thomosim.consentcoin.Persistence.UserActivity;
+import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.User;
+import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
 import com.thomosim.consentcoin.R;
 import com.thomosim.consentcoin.ViewModel.MyViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 // TODO Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?

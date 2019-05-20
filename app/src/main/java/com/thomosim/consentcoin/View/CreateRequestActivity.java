@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
-import com.thomosim.consentcoin.Persistence.User;
-import com.thomosim.consentcoin.Persistence.UserActivity;
+import com.thomosim.consentcoin.Persistence.ModelClass.User;
+import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
 import com.thomosim.consentcoin.R;
 
 import java.text.SimpleDateFormat;

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.thomosim.consentcoin.Persistence.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.R;
 
 // TODO This whole activity

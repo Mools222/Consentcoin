@@ -14,6 +14,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
+import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.User;
+import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
 import com.thomosim.consentcoin.R;
 
 import java.io.File;
