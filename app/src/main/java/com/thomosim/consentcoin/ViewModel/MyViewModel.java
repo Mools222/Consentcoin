@@ -1,5 +1,7 @@
 package com.thomosim.consentcoin.ViewModel;
 
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.Consentcoin;
@@ -21,6 +23,20 @@ public class MyViewModel {
     private MyObservable<ArrayList<ConsentcoinReference>> consentcoinReferences;
     private MyObservable<ArrayList<InviteRequest>> inviteRequests;
     private MyObservable<Consentcoin> consentcoin;
+
+    private static final Object LOCK = new Object();
+    private static MyViewModel instance;
+
+    // Singleton pattern
+    public static MyViewModel getInstance() {
+        if (instance == null) {
+            synchronized (LOCK) {
+                instance = new MyViewModel();
+            }
+        }
+        Log.i("ZZZ", "getInstance VM " + instance);
+        return instance;
+    }
 
     public MyViewModel() {
         dao = DAOFirebase.getInstance(); // By changing this line (e.g. to "dao = DAOMySQL.getInstance();"), it is possible to change the data persistence of the app

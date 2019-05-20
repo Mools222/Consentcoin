@@ -1,20 +1,15 @@
 package com.thomosim.consentcoin.ObserverPattern;
 
-import java.util.ArrayList;
-
 public class MyObservable<T> {
-    private ArrayList<MyObserver<T>> myObservers = new ArrayList<>();
+    private MyObserver<T> myObserver; // Only one observer is necessary for this program.
 
     public void setValue(T value) {
-        for (MyObserver<T> myObserver : myObservers) {
-            myObserver.onChanged(value);
-        }
+        myObserver.onChanged(value);
     }
 
     public void observe(MyObserver<T> myObserver) {
         if (myObserver == null)
             throw new NullPointerException();
-        if (!myObservers.contains(myObserver))
-            myObservers.add(myObserver);
+        this.myObserver = myObserver;
     }
 }

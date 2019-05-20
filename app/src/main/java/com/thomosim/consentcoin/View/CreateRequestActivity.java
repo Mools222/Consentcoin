@@ -18,11 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
-import com.thomosim.consentcoin.Persistence.DAOFirebase;
-import com.thomosim.consentcoin.Persistence.DAOInterface;
 import com.thomosim.consentcoin.Persistence.User;
 import com.thomosim.consentcoin.Persistence.UserActivity;
 import com.thomosim.consentcoin.R;
+import com.thomosim.consentcoin.ViewModel.MyViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,14 +47,14 @@ public class CreateRequestActivity extends AppCompatActivity {
 
     private Intent returnIntent;
 
-    private DAOInterface dao;
+    private MyViewModel myViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_request);
 
-        dao = DAOFirebase.getInstance();
+        myViewModel = MyViewModel.getInstance();
 
         textInputEditTextStartDate = findViewById(R.id.et_create_request_start_date);
         textInputEditTextEndDate = findViewById(R.id.et_create_request_end_date);
@@ -183,21 +182,21 @@ public class CreateRequestActivity extends AppCompatActivity {
         for (int i = 0; i < memberList.size(); i++) {
             User member = memberList.get(i);
             String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
-            dao.addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
+            myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
 
             ArrayList<UserActivity> userActivities = organization.getUserActivities();
             if (userActivities == null)
                 userActivities = new ArrayList<>();
             userActivities.add(0, new UserActivity("CPR", memberName, organization.getOrganizationName(), date)); // "CPR" = Create Permission Request
             organization.setUserActivities(userActivities);
-            dao.updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
+            myViewModel.getDao().updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
 
             userActivities = member.getUserActivities();
             if (userActivities == null)
                 userActivities = new ArrayList<>();
             userActivities.add(0, new UserActivity("RPR", memberName, organization.getOrganizationName(), date)); // "RPR" = Receive Permission Request
             member.setUserActivities(userActivities);
-            dao.updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
+            myViewModel.getDao().updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
         }
     }
 

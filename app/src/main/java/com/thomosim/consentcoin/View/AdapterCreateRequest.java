@@ -15,7 +15,6 @@ import com.thomosim.consentcoin.R;
 import java.util.ArrayList;
 
 public class AdapterCreateRequest extends RecyclerView.Adapter<AdapterCreateRequest.ViewHolderCreateRequest> {
-
     private ArrayList<User> associatedUsers;
     private ArrayList<User> checkedUsers;
 

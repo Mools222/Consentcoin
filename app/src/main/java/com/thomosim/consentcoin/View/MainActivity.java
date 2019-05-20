@@ -149,9 +149,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menuItemMyOrganizations = navigationView.getMenu().findItem(R.id.nav_my_organizations);
         menuItemMyMembers = navigationView.getMenu().findItem(R.id.nav_my_members);
 
-        setupViewModel();
-
         Log.i("ZZZ", "onCreate");
+
+        setupViewModel();
     }
 
     /**
@@ -159,18 +159,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * 1) It creates a new MyViewModel object and assigns it to myViewModel class variable.
      * 2) It gets an instance of every ObservableData[Name] class, all of which are subclasses of MyObservable, which contains the observe and setValue methods.
      * 3) It calls the observe method found in these classes and passes an anonymous inner class of the interface MyObserver as a parameter to each of them. This
-     *    combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added to the list of MyObserver object
-     *    inside the various instances of ObservableData[Name].
+     * combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added to the list of MyObserver object
+     * inside the various instances of ObservableData[Name].
      * 4) When creating the anonymous inner classes, we implement the onChange method found in the interface. The onChanged method is used to initialize and
-     *    update various data fields and to create and manipulate certain views.
+     * update various data fields and to create and manipulate certain views.
      * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. In most cases the setValue method is called by the
-     *    onDataChange method found in the various ValueEventListener objects contained in each subclasses of MyObservable. The onDataChange method is called by
-     *    Firebase when it detects changes to the relevant data sources. In ObservableDataConsentcoin the setValue method is called by the onPostExecute method
-     *    of the AsyncTask. The onPostExecute is called via the setConsentcoinUrl method, which is called when a user inspects a Consentcoin.
+     * onDataChange method found in the various ValueEventListener objects contained in each subclasses of MyObservable. The onDataChange method is called by
+     * Firebase when it detects changes to the relevant data sources. In ObservableDataConsentcoin the setValue method is called by the onPostExecute method
+     * of the AsyncTask. The onPostExecute is called via the setConsentcoinUrl method, which is called when a user inspects a Consentcoin.
      */
 
     public void setupViewModel() {
-        myViewModel = new MyViewModel();
+        myViewModel = MyViewModel.getInstance();
 
         myViewModel.getAuthentication().observe(new MyObserver<FirebaseAuth>() {
             @Override
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myViewModel.getDao().setDatabaseReferenceCurrentUser(); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
                     myViewModel.getDao().addDatabaseListenerUser(); // Starting off, only the database listener for the current user is added, since the user type (which is only known when the User object connected to the logged in user is retrieved) is needed to determine whether the user has any PermissionRequests or ConsentcoinReferences
                 } else { // User is signed out
-                    Log.i("ZZZ", "logged out ");
+                    Log.i("ZZZ", "logged out + startActivityForResult");
 
                     userEmail = null;
                     uid = null;
@@ -265,6 +265,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
                 tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+
+                if (adapterProcessRequest != null)
+                    adapterProcessRequest.updateData(pendingPermissionRequests);
             }
         });
 
@@ -305,19 +308,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        myViewModel.getDao().addAuthStateListener();
-
         Log.i("ZZZ", "onResume + addAuthStateListener");
+
+        myViewModel.getDao().addAuthStateListener();
     }
 
     // onResume adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i("ZZZ", "onPause + removeAuthStateListener + removeDatabaseListener");
+
         myViewModel.getDao().removeAuthStateListener();
         myViewModel.getDao().removeDatabaseListener();
+    }
 
-        Log.i("ZZZ", "onPause + removeAuthStateListener + removeDatabaseListener");
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("ZZZ", "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        myViewModel = null;
+        Log.i("ZZZ", "onDestroy");
     }
 
     /**
@@ -386,9 +402,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_add_member) {
             addOrganizationOrMember("member");
         } else if (id == R.id.nav_my_organizations) {
-            myOrganizationsOrMembers("organizations");
+            displayOrganizationsOrMembers("organizations");
         } else if (id == R.id.nav_my_members) {
-            myOrganizationsOrMembers("members");
+            displayOrganizationsOrMembers("members");
         } else if (id == R.id.nav_settings) {
             test();
         }
@@ -413,70 +429,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // Sign-in succeeded, set up the UI
+            if (resultCode == RESULT_OK) { // Sign-in succeeded
                 Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                // Sign in was canceled by the user, finish the activity
+            } else if (resultCode == RESULT_CANCELED) { // Sign in was canceled by the user, finish the activity
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
             }
         } else if (requestCode == REQUEST_CODE_PROCESS_REQUEST) {
             if (resultCode == RESULT_OK) {
-                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
-                    boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
-                    PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
-                    Date date = new Date();
-
-                    User organization = null;
-                    for (User user : users) {
-                        if (user.getUid().equals(permissionRequest.getOrganizationUid())) {
-                            organization = user;
-                            break;
-                        }
-                    }
-
-                    if (permissionGranted) {
-                        myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
-                                date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate()); // If the user chooses to give permission, create a Consentcoin
-
-                        ArrayList<UserActivity> userActivities = user.getUserActivities();
-                        if (userActivities == null)
-                            userActivities = new ArrayList<>();
-                        userActivities.add(0, new UserActivity("APR", userDisplayName, organization.getOrganizationName(), date)); // "APR" = Accept Permission Request
-                        user.setUserActivities(userActivities);
-                        myViewModel.getDao().updateUser(uid, user);
-
-                        userActivities = organization.getUserActivities();
-                        if (userActivities == null)
-                            userActivities = new ArrayList<>();
-                        userActivities.add(0, new UserActivity("RAPR", userDisplayName, organization.getOrganizationName(), date)); // "RAPR" = Receive Accepted Permission Request
-                        organization.setUserActivities(userActivities);
-                        myViewModel.getDao().updateUser(organization.getUid(), organization);
-
-                        Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
-                    } else {
-                        ArrayList<UserActivity> userActivities = user.getUserActivities();
-                        if (userActivities == null)
-                            userActivities = new ArrayList<>();
-                        userActivities.add(0, new UserActivity("DPR", userDisplayName, organization.getOrganizationName(), date)); // "DPR" = Deny Permission Request
-                        user.setUserActivities(userActivities);
-                        myViewModel.getDao().updateUser(uid, user);
-
-                        userActivities = organization.getUserActivities();
-                        if (userActivities == null)
-                            userActivities = new ArrayList<>();
-                        userActivities.add(0, new UserActivity("RDPR", userDisplayName, organization.getOrganizationName(), date)); // "RDPR" = Receive Denied Permission Request
-                        organization.setUserActivities(userActivities);
-                        myViewModel.getDao().updateUser(organization.getUid(), organization);
-
-                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                    }
-
-                    myViewModel.getDao().removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
-                    pendingPermissionRequests.remove(permissionRequest); // Remove the permission request from the ArrayList
-                    adapterProcessRequest.updateData(pendingPermissionRequests); // Update the adapter
-                }
+                createOrDenyConsentcoin(data);
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
             }
@@ -522,10 +483,65 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         } else if (requestCode == REQUEST_CODE_CREATE_REQUEST) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Permission request sent", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Permission request sent", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Permission request canceled", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Permission request canceled", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    public void createOrDenyConsentcoin(Intent data) {
+        if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+            boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
+            PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
+            Date date = new Date();
+
+            User organization = null;
+            for (User user : users) {
+                if (user.getUid().equals(permissionRequest.getOrganizationUid())) {
+                    organization = user;
+                    break;
+                }
+            }
+
+            if (permissionGranted) {
+                myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
+                        date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate()); // If the user chooses to give permission, create a Consentcoin
+
+                ArrayList<UserActivity> userActivities = user.getUserActivities();
+                if (userActivities == null)
+                    userActivities = new ArrayList<>();
+                userActivities.add(0, new UserActivity("APR", userDisplayName, organization.getOrganizationName(), date)); // "APR" = Accept Permission Request
+                user.setUserActivities(userActivities);
+                myViewModel.getDao().updateUser(uid, user);
+
+                userActivities = organization.getUserActivities();
+                if (userActivities == null)
+                    userActivities = new ArrayList<>();
+                userActivities.add(0, new UserActivity("RAPR", userDisplayName, organization.getOrganizationName(), date)); // "RAPR" = Receive Accepted Permission Request
+                organization.setUserActivities(userActivities);
+                myViewModel.getDao().updateUser(organization.getUid(), organization);
+
+                Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
+            } else {
+                ArrayList<UserActivity> userActivities = user.getUserActivities();
+                if (userActivities == null)
+                    userActivities = new ArrayList<>();
+                userActivities.add(0, new UserActivity("DPR", userDisplayName, organization.getOrganizationName(), date)); // "DPR" = Deny Permission Request
+                user.setUserActivities(userActivities);
+                myViewModel.getDao().updateUser(uid, user);
+
+                userActivities = organization.getUserActivities();
+                if (userActivities == null)
+                    userActivities = new ArrayList<>();
+                userActivities.add(0, new UserActivity("RDPR", userDisplayName, organization.getOrganizationName(), date)); // "RDPR" = Receive Denied Permission Request
+                organization.setUserActivities(userActivities);
+                myViewModel.getDao().updateUser(organization.getUid(), organization);
+
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            }
+
+            myViewModel.getDao().removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
         }
     }
 
@@ -744,7 +760,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .show();
     }
 
-    public void myOrganizationsOrMembers(String userType) {
+    public void displayOrganizationsOrMembers(String userType) {
         ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
 
         if (associatedUsersUids != null) {

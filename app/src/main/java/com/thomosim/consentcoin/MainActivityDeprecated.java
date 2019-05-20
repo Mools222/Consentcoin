@@ -295,9 +295,9 @@
 //        } else if (id == R.id.nav_add_member) {
 //            addOrganizationOrMember("member");
 //        } else if (id == R.id.nav_my_organizations) {
-//            myOrganizationsOrMembers("organizations");
+//            displayOrganizationsOrMembers("organizations");
 //        } else if (id == R.id.nav_my_members) {
-//            myOrganizationsOrMembers("members");
+//            displayOrganizationsOrMembers("members");
 //        } else if (id == R.id.nav_settings) {
 //
 //        }
@@ -334,7 +334,7 @@
 //
 //                    if (permissionGranted) {
 //                        Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
-//                        createConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationName(), permissionRequest.getMemberName()); // If the user chooses to give permission, create a Consentcoin
+//                        createOrDenyConsentcoin(permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationName(), permissionRequest.getMemberName()); // If the user chooses to give permission, create a Consentcoin
 //                    } else {
 //                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
 //                    }
@@ -452,7 +452,7 @@
 //                .show();
 //    }
 //
-//    public void myOrganizationsOrMembers(String userType) {
+//    public void displayOrganizationsOrMembers(String userType) {
 //        ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
 //
 //        if (associatedUsersUids != null) {
@@ -898,7 +898,7 @@
 //     * 12) Finally the contract.dat file is deleted from the storage of the phone.
 //     */
 //
-//    public void createConsentcoin(String id, String contractType, String organization, String member) {
+//    public void createOrDenyConsentcoin(String id, String contractType, String organization, String member) {
 //        final Consentcoin consentcoin = new Consentcoin(id, contractType, member, organization);
 //
 //        String fileName = "consentcoin";

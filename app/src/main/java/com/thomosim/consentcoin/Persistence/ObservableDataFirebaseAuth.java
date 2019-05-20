@@ -1,5 +1,7 @@
 package com.thomosim.consentcoin.Persistence;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,12 +18,12 @@ public class ObservableDataFirebaseAuth extends MyObservable<FirebaseAuth> {
 
     public void addAuthStateListener() {
         firebaseAuth.addAuthStateListener(myAuthStateListener);
+        Log.i("ZZZ", "addAuthStateListener " + firebaseAuth + " " + myAuthStateListener);
     }
 
     public void removeAuthStateListener() {
-        if (myAuthStateListener != null) {
-            firebaseAuth.removeAuthStateListener(myAuthStateListener);
-        }
+        firebaseAuth.removeAuthStateListener(myAuthStateListener);
+        Log.i("ZZZ", "removeAuthStateListener " + firebaseAuth + " " + myAuthStateListener);
     }
 
     private class MyAuthStateListener implements FirebaseAuth.AuthStateListener {
