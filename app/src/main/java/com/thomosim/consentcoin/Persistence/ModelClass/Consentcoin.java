@@ -1,49 +1,44 @@
-package com.thomosim.consentcoin.Persistence;
+package com.thomosim.consentcoin.Persistence.ModelClass;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class PermissionRequest implements Serializable {
-
-    private String id;
-    private String organizationName;
+public class Consentcoin implements Serializable {
+    private String contractId;
+    private ContractTypeEnum permissionType;
     private String organizationUid;
-    private String memberName;
     private String memberUid;
-    private String permissionType;
     private Date creationDate;
     private Date permissionStartDate;
     private Date permissionEndDate;
 
-    public PermissionRequest() {
+    public Consentcoin() {
     }
 
-    public PermissionRequest(String id, String organizationName, String organizationUid, String memberName, String memberUid, String permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
-        this.id = id;
-        this.organizationName = organizationName;
-        this.organizationUid = organizationUid;
-        this.memberName = memberName;
-        this.memberUid = memberUid;
+    public Consentcoin(String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+        this.contractId = contractId;
         this.permissionType = permissionType;
+        this.organizationUid = organizationUid;
+        this.memberUid = memberUid;
         this.creationDate = creationDate;
         this.permissionStartDate = permissionStartDate;
         this.permissionEndDate = permissionEndDate;
     }
 
-    public String getId() {
-        return id;
+    public String getContractId() {
+        return contractId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setContractId(String contractId) {
+        this.contractId = contractId;
     }
 
-    public String getOrganizationName() {
-        return organizationName;
+    public ContractTypeEnum getPermissionType() {
+        return permissionType;
     }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
+    public void setPermissionType(ContractTypeEnum permissionType) {
+        this.permissionType = permissionType;
     }
 
     public String getOrganizationUid() {
@@ -54,28 +49,12 @@ public class PermissionRequest implements Serializable {
         this.organizationUid = organizationUid;
     }
 
-    public String getMemberName() {
-        return memberName;
-    }
-
-    public void setMemberName(String memberName) {
-        this.memberName = memberName;
-    }
-
     public String getMemberUid() {
         return memberUid;
     }
 
     public void setMemberUid(String memberUid) {
         this.memberUid = memberUid;
-    }
-
-    public String getPermissionType() {
-        return permissionType;
-    }
-
-    public void setPermissionType(String permissionType) {
-        this.permissionType = permissionType;
     }
 
     public Date getCreationDate() {

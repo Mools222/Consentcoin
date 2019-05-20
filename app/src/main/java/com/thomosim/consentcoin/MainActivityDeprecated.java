@@ -50,11 +50,11 @@
 //import com.google.firebase.storage.FirebaseStorage;
 //import com.google.firebase.storage.StorageReference;
 //import com.google.firebase.storage.UploadTask;
-//import com.thomosim.consentcoin.Persistence.Consentcoin;
-//import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
-//import com.thomosim.consentcoin.Persistence.InviteRequest;
-//import com.thomosim.consentcoin.Persistence.PermissionRequest;
-//import com.thomosim.consentcoin.Persistence.User;
+//import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
+//import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+//import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
+//import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
+//import com.thomosim.consentcoin.Persistence.ModelClass.User;
 //import com.thomosim.consentcoin.View.AdapterCreateRequest;
 //import com.thomosim.consentcoin.View.AdapterProcessInvite;
 //import com.thomosim.consentcoin.View.AdapterProcessRequest;

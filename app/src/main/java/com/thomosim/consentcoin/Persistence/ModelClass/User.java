@@ -1,4 +1,4 @@
-package com.thomosim.consentcoin.Persistence;
+package com.thomosim.consentcoin.Persistence.ModelClass;
 
 import java.io.Serializable;
 import java.util.ArrayList;

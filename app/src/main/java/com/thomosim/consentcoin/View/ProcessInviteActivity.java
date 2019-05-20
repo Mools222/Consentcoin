@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.thomosim.consentcoin.Persistence.InviteRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.R;
 
 public class ProcessInviteActivity extends AppCompatActivity {

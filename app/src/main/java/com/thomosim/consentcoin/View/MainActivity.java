@@ -35,12 +35,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.ObserverPattern.MyObserver;
-import com.thomosim.consentcoin.Persistence.Consentcoin;
-import com.thomosim.consentcoin.Persistence.ConsentcoinReference;
-import com.thomosim.consentcoin.Persistence.InviteRequest;
-import com.thomosim.consentcoin.Persistence.PermissionRequest;
-import com.thomosim.consentcoin.Persistence.User;
-import com.thomosim.consentcoin.Persistence.UserActivity;
+import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.User;
+import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
 import com.thomosim.consentcoin.R;
 import com.thomosim.consentcoin.ViewModel.MyViewModel;
 

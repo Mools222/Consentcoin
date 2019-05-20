@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.thomosim.consentcoin.Persistence.User;
+import com.thomosim.consentcoin.Persistence.ModelClass.User;
 import com.thomosim.consentcoin.R;
 
 import java.util.ArrayList;

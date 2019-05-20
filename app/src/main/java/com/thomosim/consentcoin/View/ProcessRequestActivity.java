@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.thomosim.consentcoin.Persistence.PermissionRequest;
+import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.R;
 
 import java.text.SimpleDateFormat;
@@ -38,13 +38,13 @@ public class ProcessRequestActivity extends AppCompatActivity {
             tvOrganization.setText(permissionRequest.getOrganizationName());
 
             switch (permissionRequest.getPermissionType()) {
-                case "1":
+                case NON_COMMERCIAL_USE:
                     tvPurposes.setText("non-commercial purposes");
                     break;
-                case "2":
+                case COMMERCIAL_USE:
                     tvPurposes.setText("commercial purposes");
                     break;
-                case "3":
+                case NON_COMMERCIAL_AND_COMERCIAL_USE:
                     tvPurposes.setText("commercial and non-commercial purposes");
                     break;
             }
