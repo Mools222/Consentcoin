@@ -50,6 +50,10 @@ import java.util.Date;
 // TODO Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
 // TODO Make all named constants (keyword final) uppercase
 // TODO Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607) - if that's even possible
+// TODO Add a nice UI for "Active Request(s)"
+// TODO Add a nice UI for "My Consentcoins"
+// TODO Add a nice UI for "My Members"
+// TODO Add "Settings"
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail, tvNavigationDrawerCounter, tvNavigationDrawerPendingPermissionsCounter, tvNavigationDrawerPendingInviteCounter;
     private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemSentRequests, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
@@ -770,6 +774,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, "You have no " + userType, Toast.LENGTH_SHORT).show();
     }
 
+    // TODO Maybe add a list of active invites for the organization (like the "Active Request(s)" in the menu)
+    // TODO Add 1) the sending of invites to the UserActivity of the sender and receiver and 2) the accepting / denying of the invite to the UserActivity of the sender and receiver
     public void invite() {
         View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
 

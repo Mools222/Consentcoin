@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
-import com.thomosim.consentcoin.Persistence.DAOFirebase;
+import com.thomosim.consentcoin.Persistence.DAOInterface;
 import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeENUM;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
 import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
@@ -48,7 +48,7 @@ public class CreateRequestActivity extends AppCompatActivity {
 
     private Intent returnIntent;
 
-    private DAOFirebase dao = DAOFirebase.getInstance();
+    private DAOInterface dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,52 +164,38 @@ public class CreateRequestActivity extends AppCompatActivity {
         if (permissionType == null)
             Toast.makeText(this, "Please select purpose(s)", Toast.LENGTH_SHORT).show();
         else {
-            Date date = new Date();
             if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members, we iterate through the members list and perform the necessary tasks
-                for (int i = 0; i < members.size(); i++) {
-                    User member = members.get(i);
-                    String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
-                    dao.addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
-
-                    ArrayList<UserActivity> userActivities = organization.getUserActivities();
-                    if (userActivities == null)
-                        userActivities = new ArrayList<>();
-                    userActivities.add(0, new UserActivity("CPR", memberName, organization.getOrganizationName(), date)); // "CPR" = Create Permission Request
-                    organization.setUserActivities(userActivities);
-                    dao.updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
-
-                    userActivities = member.getUserActivities();
-                    if (userActivities == null)
-                        userActivities = new ArrayList<>();
-                    userActivities.add(0, new UserActivity("RPR", memberName, organization.getOrganizationName(), date)); // "RPR" = Receive Permission Request
-                    member.setUserActivities(userActivities);
-                    dao.updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
-                }
+                sendRequests(members);
             } else { // If the organization wishes to send requests out to a select number of its associated members, we iterate through the checkedUsers list and perform the necessary tasks
                 ArrayList<User> checkedUsers = adapterCreateRequest.getCheckedUsers();
-                for (int i = 0; i < checkedUsers.size(); i++) {
-                    User member = checkedUsers.get(i);
-                    String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
-                    dao.addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
-
-                    ArrayList<UserActivity> userActivities = organization.getUserActivities();
-                    if (userActivities == null)
-                        userActivities = new ArrayList<>();
-                    userActivities.add(0, new UserActivity("CPR", memberName, organization.getOrganizationName(), date)); // "CPR" = Create Permission Request
-                    organization.setUserActivities(userActivities);
-                    dao.updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
-
-                    userActivities = member.getUserActivities();
-                    if (userActivities == null)
-                        userActivities = new ArrayList<>();
-                    userActivities.add(0, new UserActivity("RPR", memberName, organization.getOrganizationName(), date)); // "RPR" = Receive Permission Request
-                    member.setUserActivities(userActivities);
-                    dao.updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
-                }
+                sendRequests(checkedUsers);
             }
             Toast.makeText(this, "Request(s) sent!", Toast.LENGTH_SHORT).show();
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
+        }
+    }
+
+    public void sendRequests(ArrayList<User> memberList) {
+        Date date = new Date();
+        for (int i = 0; i < memberList.size(); i++) {
+            User member = memberList.get(i);
+            String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
+            dao.addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
+
+            ArrayList<UserActivity> userActivities = organization.getUserActivities();
+            if (userActivities == null)
+                userActivities = new ArrayList<>();
+            userActivities.add(0, new UserActivity("CPR", memberName, organization.getOrganizationName(), date)); // "CPR" = Create Permission Request
+            organization.setUserActivities(userActivities);
+            dao.updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
+
+            userActivities = member.getUserActivities();
+            if (userActivities == null)
+                userActivities = new ArrayList<>();
+            userActivities.add(0, new UserActivity("RPR", memberName, organization.getOrganizationName(), date)); // "RPR" = Receive Permission Request
+            member.setUserActivities(userActivities);
+            dao.updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
         }
     }
 

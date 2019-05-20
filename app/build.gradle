@@ -23,7 +23,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Androidx + junit
+    // Androidx + JUnit
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
@@ -41,10 +41,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:17.0.0' // Cloud Storage
     implementation 'com.google.firebase:firebase-auth:17.0.0' // Authentication
     implementation 'com.firebaseui:firebase-ui-auth:4.3.2' // FirebaseUI (https://firebase.google.com/docs/auth)
-
-    // Lifecycle
-    implementation "android.arch.lifecycle:extensions:1.1.1"
-    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
-
 
 }
