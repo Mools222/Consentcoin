@@ -239,6 +239,7 @@ public class DAOFirebase implements DAOInterface {
      * 12) Finally the file is deleted from the storage of the phone.
      */
 
+    // TODO Problem: The addConsentcoin method takes a Context parameter, which means the DAO knows the View?
     @Override
     public void addConsentcoin(Context context, String contractId, String permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         // TODO Encrypt the Consentcoin object
