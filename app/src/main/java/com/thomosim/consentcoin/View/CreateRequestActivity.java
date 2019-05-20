@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
+import com.thomosim.consentcoin.Persistence.DAOFirebase;
 import com.thomosim.consentcoin.Persistence.DAOInterface;
 import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
@@ -48,7 +49,7 @@ public class CreateRequestActivity extends AppCompatActivity {
 
     private Intent returnIntent;
 
-    private DAOInterface dao;
+    private DAOInterface dao = new DAOFirebase();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
