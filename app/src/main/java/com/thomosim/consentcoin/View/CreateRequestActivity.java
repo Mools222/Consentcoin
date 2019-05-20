@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
+import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeENUM;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
 import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
 import com.thomosim.consentcoin.R;
@@ -43,7 +44,7 @@ public class CreateRequestActivity extends AppCompatActivity {
     private boolean sendRequestToAllMembers;
     private Date startDate;
     private Date endDate;
-    private String permissionType;
+    private ContractTypeENUM permissionType;
 
     private Intent returnIntent;
 
@@ -154,11 +155,11 @@ public class CreateRequestActivity extends AppCompatActivity {
     // TODO Create checks to make sure the user picked the purpose(s), correct dates, etc before sending.
     public void send(View view) {
         if (materialCheckBoxCommercial.isChecked() && materialCheckBoxNoncommercial.isChecked())
-            permissionType = "3"; // Commercial + non-commercial
+            permissionType = ContractTypeENUM.NON_COMMERCIAL_AND_COMERCIAL_USE; // Commercial + non-commercial
         else if (materialCheckBoxCommercial.isChecked())
-            permissionType = "2"; // Commercial
+            permissionType = ContractTypeENUM.COMMERCIAL_USE; // Commercial
         else if (materialCheckBoxNoncommercial.isChecked())
-            permissionType = "1"; // Non-commercial
+            permissionType = ContractTypeENUM.NON_COMMERCIAL_USE; // Non-commercial
 
         if (permissionType == null)
             Toast.makeText(this, "Please select purpose(s)", Toast.LENGTH_SHORT).show();

@@ -25,7 +25,7 @@ public class MyConsentcoinActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         if (startIntent.hasExtra("CC")) {
             Consentcoin consentcoin = (Consentcoin) startIntent.getSerializableExtra("CC");
-            textView.setText("ID: " + consentcoin.getContractId() + "\nContractType: " + consentcoin.getPermissionType() + "\nMemID: " + consentcoin.getMemberUid() + "\nOrgID: " + consentcoin.getOrganizationUid());
+            textView.setText("ID: " + consentcoin.getContractId() + "\nContractType: " + consentcoin.getPermissionType().toString() + "\nMemID: " + consentcoin.getMemberUid() + "\nOrgID: " + consentcoin.getOrganizationUid());
         }
 
         returnIntent = new Intent();

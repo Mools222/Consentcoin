@@ -16,6 +16,7 @@ import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeENUM;
 import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
@@ -183,7 +184,7 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, String permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeENUM permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
         String firebaseId = databaseReference.getKey(); // Get the auto generated key
         PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate);
@@ -246,7 +247,7 @@ public class DAOFirebase implements DAOInterface {
      */
 
     @Override
-    public void addConsentcoin(Context context, String contractId, String permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public void addConsentcoin(Context context, String contractId, ContractTypeENUM permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         // TODO Encrypt the Consentcoin object
         final Consentcoin consentcoin = new Consentcoin(contractId, permissionType, organizationUid, memberUid, creationDate, permissionStartDate, permissionEndDate);
 
