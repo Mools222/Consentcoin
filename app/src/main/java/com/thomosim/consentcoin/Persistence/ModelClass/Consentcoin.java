@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Consentcoin implements Serializable {
     private String contractId;
-    private ContractTypeENUM permissionType;
+    private ContractTypeEnum permissionType;
     private String organizationUid;
     private String memberUid;
     private Date creationDate;
@@ -15,7 +15,7 @@ public class Consentcoin implements Serializable {
     public Consentcoin() {
     }
 
-    public Consentcoin(String contractId, ContractTypeENUM permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public Consentcoin(String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         this.contractId = contractId;
         this.permissionType = permissionType;
         this.organizationUid = organizationUid;
@@ -33,11 +33,11 @@ public class Consentcoin implements Serializable {
         this.contractId = contractId;
     }
 
-    public ContractTypeENUM getPermissionType() {
+    public ContractTypeEnum getPermissionType() {
         return permissionType;
     }
 
-    public void setPermissionType(ContractTypeENUM permissionType) {
+    public void setPermissionType(ContractTypeEnum permissionType) {
         this.permissionType = permissionType;
     }
 

@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
-import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeENUM;
+import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
@@ -50,7 +50,7 @@ public interface DAOInterface {
 
     void removeUser(User user);
 
-    void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeENUM permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate);
+    void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate);
 
     MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
 
@@ -66,7 +66,7 @@ public interface DAOInterface {
 
     void removeConsentcoinReference(ConsentcoinReference consentcoinReference);
 
-    void addConsentcoin(Context context, String contractId, ContractTypeENUM permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate);
+    void addConsentcoin(Context context, String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate);
 
     void setConsentcoinUrl(String storageUrl);
 

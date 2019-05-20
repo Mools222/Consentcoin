@@ -10,7 +10,7 @@ public class PermissionRequest implements Serializable {
     private String organizationUid;
     private String memberName;
     private String memberUid;
-    private ContractTypeENUM permissionType;
+    private ContractTypeEnum permissionType;
     private Date creationDate;
     private Date permissionStartDate;
     private Date permissionEndDate;
@@ -18,7 +18,7 @@ public class PermissionRequest implements Serializable {
     public PermissionRequest() {
     }
 
-    public PermissionRequest(String id, String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeENUM permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public PermissionRequest(String id, String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
         this.id = id;
         this.organizationName = organizationName;
         this.organizationUid = organizationUid;
@@ -71,11 +71,11 @@ public class PermissionRequest implements Serializable {
     }
 
 
-    public ContractTypeENUM getPermissionType() {
+    public ContractTypeEnum getPermissionType() {
         return permissionType;
     }
 
-    public void setPermissionType(ContractTypeENUM permissionType) {
+    public void setPermissionType(ContractTypeEnum permissionType) {
         this.permissionType = permissionType;
     }
 
