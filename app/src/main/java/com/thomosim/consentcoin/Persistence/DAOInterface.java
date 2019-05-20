@@ -1,6 +1,7 @@
 package com.thomosim.consentcoin.Persistence;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 
@@ -21,11 +22,13 @@ public interface DAOInterface {
 
     void removeDatabaseListener();
 
-    void logOut(Context context);
+    Intent getSignInIntent();
+
+    void signOut(Context context);
 
     void addAuthentication();
 
-    <T> MyObservable<T> getAuthentication(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T is used to accommodate all possibilities.
+    <T extends MyObservable> T getAuthentication(); // Firebase authentication comes in a FirebaseAuth object. When switching DAO, we'd probably use a different object. Therefore the generic type T and raw type MyObservable is used to accommodate all possibilities.
 
     <T> void updateAuthentication(String id, T t);
 

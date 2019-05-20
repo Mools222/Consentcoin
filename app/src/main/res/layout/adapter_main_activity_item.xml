@@ -9,6 +9,7 @@
     android:layout_marginLeft="@dimen/mtrl_card_spacing"
     android:layout_marginTop="@dimen/mtrl_card_spacing"
     android:layout_marginRight="@dimen/mtrl_card_spacing"
+    android:focusable="false"
     app:cardElevation="20dp"
     app:rippleColor="@color/colorGreen"
     app:strokeColor="@color/colorOuterSpace"

@@ -1,6 +1,7 @@
 package com.thomosim.consentcoin.Persistence;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 
 import com.firebase.ui.auth.AuthUI;
@@ -13,13 +14,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
+import com.thomosim.consentcoin.R;
 
 import java.io.File;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class DAOFirebase implements DAOInterface {
+    private AuthUI authUI;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReferenceUsers;
     private DatabaseReference databaseReferencePermissionRequests;
@@ -49,6 +53,7 @@ public class DAOFirebase implements DAOInterface {
     }
 
     public DAOFirebase() {
+        authUI = AuthUI.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         databaseReferencePermissionRequests = FirebaseDatabase.getInstance().getReference().child("PermissionRequests");
@@ -103,8 +108,19 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void logOut(Context context) {
-        AuthUI.getInstance().signOut(context);
+    public Intent getSignInIntent() {
+        return authUI
+                .createSignInIntentBuilder()
+                .setIsSmartLockEnabled(true) // Doesn't seem to do anything
+                .setTheme(R.style.LightTheme)
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build())) // Additional sign-in providers can be added here. See: https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+                .build();
+    }
+
+    // TODO Problem: The signOut method takes a Context parameter, which means the DAO knows the View?
+    @Override
+    public void signOut(Context context) {
+        authUI.signOut(context);
     }
 
     @Override
@@ -112,8 +128,8 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public <T> MyObservable<T> getAuthentication() {
-        return (MyObservable<T>) observableDataFirebaseAuth;
+    public <T extends MyObservable> T getAuthentication() {
+        return (T) observableDataFirebaseAuth;
     }
 
     @Override

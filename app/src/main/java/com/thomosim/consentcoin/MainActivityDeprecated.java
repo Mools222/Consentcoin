@@ -263,7 +263,7 @@
 //    public boolean onOptionsItemSelected(MenuItem item) {
 //        switch (item.getItemId()) {
 //            case R.id.sign_out_menu:
-//                AuthUI.getInstance().signOut(this);
+//                AuthUI.getInstance().getAuthenticationHelper(this);
 //                return true;
 //            default:
 //                return super.onOptionsItemSelected(item);

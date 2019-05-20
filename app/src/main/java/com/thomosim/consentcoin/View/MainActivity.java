@@ -161,9 +161,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      *    inside the various instances of ObservableData[Name].
      * 4) When creating the anonymous inner classes, we implement the onChange method found in the interface. The onChanged method is used to initialize and
      *    update various data fields and to create and manipulate certain views.
-     * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. The setValue method is called by the onDataChange method
-     *    found in the various ValueEventListener objects contained in each subclasses of MyObservable. The onDataChange method is called by Firebase when it
-     *    detects changes to the relevant data sources.
+     * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. In most cases the setValue method is called by the
+     *    onDataChange method found in the various ValueEventListener objects contained in each subclasses of MyObservable. The onDataChange method is called by
+     *    Firebase when it detects changes to the relevant data sources. In ObservableDataConsentcoin the setValue method is called by the onPostExecute method
+     *    of the AsyncTask. The onPostExecute is called via the setConsentcoinUrl method, which is called when a user inspects a Consentcoin.
      */
 
     public void setupViewModel() {
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) { // User is signed in
-                    Log.i("ZZZ", "logged in " + firebaseUser.getUid());
+                    Log.i("ZZZ", "logged in " + firebaseUser.getUid() + " + addDatabaseListenerUser");
 
                     userDisplayName = firebaseUser.getDisplayName();
                     userEmail = firebaseUser.getEmail();
@@ -183,24 +184,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     tvNavigationHeaderEmail.setText(userEmail);
 
                     myViewModel.getDao().setDatabaseReferenceCurrentUser(); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
-                    myViewModel.getDao().addDatabaseListenerUser(); // Starting off, only the database listener for the current user is added, since the user type (which is only known when the User object for the logged in user is retrieved) is needed to determine whether the user has any PermissionRequests or ConsentcoinReferences
+                    myViewModel.getDao().addDatabaseListenerUser(); // Starting off, only the database listener for the current user is added, since the user type (which is only known when the User object connected to the logged in user is retrieved) is needed to determine whether the user has any PermissionRequests or ConsentcoinReferences
                 } else { // User is signed out
                     Log.i("ZZZ", "logged out ");
 
-                    myViewModel.getDao().removeDatabaseListener();
-
                     userEmail = null;
-                    uid = null; // This value is used in removeDatabaseListener(), so it is set to null after this method is done
+                    uid = null;
                     userDisplayName = null;
+                    adapterMainActivity.updateData(new ArrayList<UserActivity>()); // This prevents the next user from getting a glimpse of the previous user's activities
 
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(true) // Doesn't seem to do anything
-                                    .setTheme(R.style.LightTheme)
-                                    .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build())) // Additional sign-in providers can be added here. See: https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
-                                    .build(),
-                            REQUEST_CODE_SIGN_IN);
+                    startActivityForResult(myViewModel.getDao().getSignInIntent(), REQUEST_CODE_SIGN_IN); // Create and start a sign in activity. This triggers the onPause method, which removes the listeners
                 }
             }
         });
@@ -214,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     addUser();
                 } else {
                     myViewModel.getDao().addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
+                    Log.i("ZZZ", "addDatabaseListener ");
 
                     ArrayList<UserActivity> userActivity = user.getUserActivities();
                     if (userActivity != null)
@@ -310,6 +304,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         myViewModel.getDao().addAuthStateListener();
+
+        Log.i("ZZZ", "onResume + addAuthStateListener");
     }
 
     // onResume adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
@@ -318,6 +314,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onPause();
         myViewModel.getDao().removeAuthStateListener();
         myViewModel.getDao().removeDatabaseListener();
+
+        Log.i("ZZZ", "onPause + removeAuthStateListener + removeDatabaseListener");
     }
 
     /**
@@ -353,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sign_out_menu:
-                myViewModel.getDao().logOut(this);
+                myViewModel.getDao().signOut(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
