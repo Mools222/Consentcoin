@@ -409,28 +409,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_pending_requests) {
-            processRequest();
-        } else if (id == R.id.nav_create_request) {
-            createRequest();
-        } else if (id == R.id.nav_active_requests) {
-            displayActiveRequests();
-        } else if (id == R.id.nav_my_consentcoins) {
-            displayConsentcoinReferences();
-        } else if (id == R.id.nav_pending_invites) {
-            processInvites();
-        } else if (id == R.id.nav_invite) {
-            invite();
-        } else if (id == R.id.nav_add_organization) {
-            addOrganizationOrMember("organization");
-        } else if (id == R.id.nav_add_member) {
-            addOrganizationOrMember("member");
-        } else if (id == R.id.nav_my_organizations) {
-            displayOrganizationsOrMembers("organizations");
-        } else if (id == R.id.nav_my_members) {
-            displayOrganizationsOrMembers("members");
-        } else if (id == R.id.nav_settings) {
-            test();
+        switch(id) {
+            case R.id.nav_pending_requests:
+                processRequest();
+                break;
+            case R.id.nav_create_request:
+                createRequest();
+                break;
+            case R.id.nav_active_requests:
+                displayActiveRequests();
+                break;
+            case R.id.nav_my_consentcoins:
+                displayConsentcoinReferences();
+                break;
+            case R.id.nav_pending_invites:
+                processInvites();
+                break;
+            case R.id.nav_invite:
+                invite();
+                break;
+            case R.id.nav_add_organization:
+                addOrganizationOrMember("Organization");
+                break;
+            case R.id.nav_add_member:
+                addOrganizationOrMember("member");
+                break;
+            case R.id.nav_my_organizations:
+                displayOrganizationsOrMembers("organization");
+                break;
+            case R.id.nav_my_members:
+                displayOrganizationsOrMembers("member");
+                break;
+            case R.id.nav_settings:
+                test();
+                break;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
