@@ -464,63 +464,69 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_SIGN_IN) {
-            if (resultCode == RESULT_OK) { // Sign-in succeeded
-                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) { // Sign in was canceled by the user, finish the activity
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        } else if (requestCode == REQUEST_CODE_PROCESS_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                createOrDenyConsentcoin(data);
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == REQUEST_CODE_MY_CONSENTCOINS) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == REQUEST_CODE_PROCESS_INVITE) {
-            if (resultCode == RESULT_OK) {
-                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
-                    InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
-
-                    boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
-
-                    if (inviteAccepted) {
-                        Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
-
-                        for (User user : users) {
-                            if (user.getUid().equals(inviteRequest.getOrganization())) {
-                                ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
-                                if (associatedUsersUids == null)
-                                    associatedUsersUids = new ArrayList<>();
-                                if (!associatedUsersUids.contains(uid))
-                                    associatedUsersUids.add(uid);
-
-                                user.setAssociatedUsersUids(associatedUsersUids);
-
-                                Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
-
-                                myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
-                            }
-                        }
-                    } else {
-                        Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
-                    }
-
-                    myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                if (resultCode == RESULT_OK) { // Sign-in succeeded
+                    Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) { // Sign in was canceled by the user, finish the activity
+                    Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
-            }
-        } else if (requestCode == REQUEST_CODE_CREATE_REQUEST) {
-            if (resultCode == RESULT_OK) {
+                break;
+            case REQUEST_CODE_PROCESS_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    createOrDenyConsentcoin(data);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_MY_CONSENTCOINS:
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_PROCESS_INVITE:
+                if (resultCode == RESULT_OK) {
+                    if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+                        InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
+
+                        boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
+
+                        if (inviteAccepted) {
+                            Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
+
+                            for (User user : users) {
+                                if (user.getUid().equals(inviteRequest.getOrganization())) {
+                                    ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
+                                    if (associatedUsersUids == null)
+                                        associatedUsersUids = new ArrayList<>();
+                                    if (!associatedUsersUids.contains(uid))
+                                        associatedUsersUids.add(uid);
+
+                                    user.setAssociatedUsersUids(associatedUsersUids);
+
+                                    Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
+
+                                    myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
+                                }
+                            }
+                        } else {
+                            Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
+                        }
+
+                        myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+                    }
+                }
+                break;
+            case REQUEST_CODE_CREATE_REQUEST:
+                if (resultCode == RESULT_OK) {
 //                Toast.makeText(this, "Permission request sent", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
+                } else if (resultCode == RESULT_CANCELED) {
 //                Toast.makeText(this, "Permission request canceled", Toast.LENGTH_SHORT).show();
-            }
+                }
+                break;
         }
     }
 
