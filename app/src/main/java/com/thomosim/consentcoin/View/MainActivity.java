@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AdapterProcessRequest adapterProcessRequest;
     private AdapterProcessInvite adapterProcessInvite;
     private TextInputEditText tietInviteMember;
+    private View navigationDrawerHeader;
+    private NavigationView navigationView;
+    private RecyclerView recyclerView;
 
     private ArrayList<String> inviteMemberList;
     private ArrayAdapter<String> inviteMemberAdapter;
@@ -85,27 +88,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupNavigationView();
+        setupRecyclerView();
+
+        createSwipeFunction();
+
+        assignTextViews();
+        assignMenuItems();
+
+        setupViewModel();
+
+        Log.i("ZZZ", "onCreate");
+    }
+
+    public void setupNavigationView(){
         // Setting up the Navigation View
         // https://material.io/develop/android/components/navigation-view/
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.navigation);
-        View navigationDrawerHeader = navigationView.getHeaderView(0);
+        navigationView = findViewById(R.id.navigation);
+        navigationDrawerHeader = navigationView.getHeaderView(0);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
+    public void setupRecyclerView(){
         // Initialize references to views
-        RecyclerView recyclerView = findViewById(R.id.rv_main_activity);
+        recyclerView = findViewById(R.id.rv_main_activity);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 //        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
 //        recyclerView.addItemDecoration(dividerItemDecoration);
         adapterMainActivity = new AdapterMainActivity(this);
         recyclerView.setAdapter(adapterMainActivity);
+    }
 
+    public void createSwipeFunction(){
         // This ItemTouchHelper allows the user to delete UserActivity objects by swiping left or right
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -122,7 +143,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myViewModel.getDao().updateUser(uid, user);
             }
         }).attachToRecyclerView(recyclerView);
+    }
 
+    public void assignTextViews(){
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);
@@ -137,7 +160,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingInviteCounter.setTypeface(null, Typeface.BOLD);
         tvNavigationDrawerPendingInviteCounter.setTextColor(getResources().getColor(R.color.colorRed));
         tvNavigationDrawerPendingInviteCounter.setText("0");
+    }
 
+    public void assignMenuItems(){
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
         menuItemCreateRequest = navigationView.getMenu().findItem(R.id.nav_create_request);
         menuItemSentRequests = navigationView.getMenu().findItem(R.id.nav_active_requests);
@@ -148,10 +173,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menuItemAddMember = navigationView.getMenu().findItem(R.id.nav_add_member);
         menuItemMyOrganizations = navigationView.getMenu().findItem(R.id.nav_my_organizations);
         menuItemMyMembers = navigationView.getMenu().findItem(R.id.nav_my_members);
-
-        Log.i("ZZZ", "onCreate");
-
-        setupViewModel();
     }
 
     /**
