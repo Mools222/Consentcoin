@@ -399,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_pending_invites) {
             processInvites();
         } else if (id == R.id.nav_invite) {
-            invite();
+            createInvite();
         } else if (id == R.id.nav_add_organization) {
             addOrganizationOrMember("organization");
         } else if (id == R.id.nav_add_member) {
@@ -552,14 +552,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_create_request);
         textInputEditText.setVisibility(View.GONE);
 
-        RadioGroup radioGroup = dialogView.findViewById(R.id.radio_group);
+        RadioGroup radioGroup = dialogView.findViewById(R.id.rg_create_user);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.rb_first) {
+                if (checkedId == R.id.rb_create_user_member) {
                     textInputEditText.setVisibility(View.GONE);
                     chosenUserType = 0;
-                } else if (checkedId == R.id.rb_second) {
+                } else if (checkedId == R.id.rb_create_user_organization) {
                     textInputEditText.setVisibility(View.VISIBLE);
                     chosenUserType = 1;
                 }
@@ -792,8 +792,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // TODO Maybe add a list of active invites for the organization (like the "Active Request(s)" in the menu)
-    // TODO Add 1) the sending of invites to the UserActivity of the sender and receiver and 2) the accepting / denying of the invite to the UserActivity of the sender and receiver
-    public void invite() {
+    // TODO Add 1) the sending of invites to the UserActivity of the sender and receiver and 2) the accepting / denying of the createInvite to the UserActivity of the sender and receiver
+    public void createInvite() {
         View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
 
         tietInviteMember = inviteDialogView.findViewById(R.id.memberEditText);
@@ -856,7 +856,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(adapterProcessInvite);
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Process invite(s)")
+                .setTitle("Process createInvite(s)")
                 .setView(dialogView)
                 .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     @Override

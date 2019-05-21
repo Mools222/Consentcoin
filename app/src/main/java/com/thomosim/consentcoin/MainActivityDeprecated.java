@@ -289,7 +289,7 @@
 //        } else if (id == R.id.nav_pending_invites) {
 //            processInvites();
 //        } else if (id == R.id.nav_invite) {
-//            invite();
+//            createInvite();
 //        } else if (id == R.id.nav_add_organization) {
 //            addOrganizationOrMember("organization");
 //        } else if (id == R.id.nav_add_member) {
@@ -1048,7 +1048,7 @@
 //
 //    }
 //
-//    public void invite() {
+//    public void createInvite() {
 //        View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
 //
 //        tietInviteMember = inviteDialogView.findViewById(R.id.memberEditText);
@@ -1077,7 +1077,7 @@
 //                                } else {
 //                                    organization = "testOrg";
 //                                }
-////                                dao.invite(inviteMemberList, organization);
+////                                dao.createInvite(inviteMemberList, organization);
 //                            }
 //                        }
 //
@@ -1116,7 +1116,7 @@
 //        recyclerView.setAdapter(adapterProcessInvite);
 //
 //        new MaterialAlertDialogBuilder(this)
-//                .setTitle("Process invite(s)")
+//                .setTitle("Process createInvite(s)")
 //                .setView(dialogView)
 //                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
 //                    @Override

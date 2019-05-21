@@ -7,20 +7,20 @@
     android:paddingRight="20dp">
 
     <RadioGroup
-        android:id="@+id/radio_group"
+        android:id="@+id/rg_create_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checkedButton="@+id/rb_first"
+        android:checkedButton="@+id/rb_create_user_member"
         android:orientation="vertical">
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rb_first"
+            android:id="@+id/rb_create_user_member"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Member" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rb_second"
+            android:id="@+id/rb_create_user_organization"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Organization" />

@@ -184,10 +184,10 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded) {
         DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
         String firebaseId = databaseReference.getKey(); // Get the auto generated key
-        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate);
+        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate, personsIncluded);
         databaseReference.setValue(permissionRequest);
     }
 

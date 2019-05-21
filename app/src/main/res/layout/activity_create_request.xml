@@ -1,152 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".View.CreateRequestActivity">
 
+    <!--A ScrollView can only have 1 child-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tv_create_request_we_at"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="We at " />
-
-        <TextView
-            android:id="@+id/tv_create_request_organization_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Zealand" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_create_request_would_like"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="would like to use pictures of the following members:" />
-
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checkedButton="@+id/rb_first"
         android:orientation="vertical">
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rb_first"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All members" />
+            android:fontFamily="@font/vollkorn"
+            android:text="Create Request"
+            android:textSize="20sp" />
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rb_second"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Selected members" />
-    </RadioGroup>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search for specific user">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_create_request"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!--If height isn't specified, the RecyclerView will push the views below it out of the screen when it becomes too big-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_create_request"
-        android:layout_width="match_parent"
-        android:layout_height="150dp" />
-
-    <TextView
-        android:id="@+id/tv_create_request_purpose"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="for the following purpose(s): " />
-
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/cb_create_request_commercial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Commercial use" />
-
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/cb_create_request_noncommercial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Non-commercial use" />
-
-    <TextView
-        android:id="@+id/tv_create_request_duration"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="for the following duration: " />
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Start date">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_create_request_start_date"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:editable="false"
-            android:focusable="false"
-            android:onClick="startDate"
-            android:text="Click to change date" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="horizontal">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="End date">
+            <TextView
+                android:id="@+id/tv_create_request_we_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="We at " />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_create_request_end_date"
+            <TextView
+                android:id="@+id/tv_create_request_organization_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zealand" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_create_request_would_like"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:editable="false"
-            android:focusable="false"
-            android:onClick="endDate"
-            android:text="Click to change date" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="would like to use pictures of the following person(s):" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        <RadioGroup
+            android:id="@+id/rg_create_request_persons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="send"
-            android:text="Send"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:checkedButton="@+id/rb_create_request_members"
+            android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rb_create_request_members"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Members" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rb_create_request_members_and_wards"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Members and their wards" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tv_create_request_purpose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="for the following purpose(s): " />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_create_request_commercial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="cancel"
-            android:text="Cancel"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:text="Commercial use" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cb_create_request_noncommercial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Non-commercial use" />
+
+        <TextView
+            android:id="@+id/tv_create_request_duration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="for the following duration: " />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Start date">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_create_request_start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="false"
+                android:onClick="startDate"
+                android:text="Click to change date" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="End date">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_create_request_end_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="false"
+                android:onClick="endDate"
+                android:text="Click to change date" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_create_request_persons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send this request to: " />
+
+        <RadioGroup
+            android:id="@+id/rg_create_request_receiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/rb_create_request_all"
+            android:orientation="vertical">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rb_create_request_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All members" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/rb_create_request_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selected members" />
+        </RadioGroup>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search for specific user">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_create_request"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!--If height isn't specified, the RecyclerView will push the views below it out of the screen when it becomes too big-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_create_request"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="send"
+                android:text="Send"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="cancel"
+                android:text="Cancel"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

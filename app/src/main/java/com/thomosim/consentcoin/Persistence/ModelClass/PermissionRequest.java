@@ -14,11 +14,12 @@ public class PermissionRequest implements Serializable {
     private Date creationDate;
     private Date permissionStartDate;
     private Date permissionEndDate;
+    private String personsIncluded;
 
     public PermissionRequest() {
     }
 
-    public PermissionRequest(String id, String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public PermissionRequest(String id, String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded) {
         this.id = id;
         this.organizationName = organizationName;
         this.organizationUid = organizationUid;
@@ -28,6 +29,7 @@ public class PermissionRequest implements Serializable {
         this.creationDate = creationDate;
         this.permissionStartDate = permissionStartDate;
         this.permissionEndDate = permissionEndDate;
+        this.personsIncluded = personsIncluded;
     }
 
     public String getId() {
@@ -101,5 +103,13 @@ public class PermissionRequest implements Serializable {
 
     public void setPermissionEndDate(Date permissionEndDate) {
         this.permissionEndDate = permissionEndDate;
+    }
+
+    public String getPersonsIncluded() {
+        return personsIncluded;
+    }
+
+    public void setPersonsIncluded(String personsIncluded) {
+        this.personsIncluded = personsIncluded;
     }
 }

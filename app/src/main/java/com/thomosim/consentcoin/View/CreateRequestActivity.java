@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,10 +32,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class CreateRequestActivity extends AppCompatActivity {
-    private TextInputEditText textInputEditTextStartDate;
-    private TextInputEditText textInputEditTextEndDate;
+    private TextView textViewOrganization;
     private MaterialCheckBox materialCheckBoxCommercial;
     private MaterialCheckBox materialCheckBoxNoncommercial;
+    private TextInputEditText textInputEditTextStartDate;
+    private TextInputEditText textInputEditTextEndDate;
     private AdapterCreateRequest adapterCreateRequest;
 
     private GregorianCalendar gregorianCalendar;
@@ -42,9 +44,11 @@ public class CreateRequestActivity extends AppCompatActivity {
     private User organization;
     private ArrayList<User> members;
     private boolean sendRequestToAllMembers;
+    private boolean permissionRegardsMembersOnly;
     private Date startDate;
     private Date endDate;
     private ContractTypeEnum permissionType;
+    private String personsIncluded;
 
     private Intent returnIntent;
 
@@ -57,18 +61,53 @@ public class CreateRequestActivity extends AppCompatActivity {
 
         myViewModel = MyViewModel.getInstance();
 
-        textInputEditTextStartDate = findViewById(R.id.et_create_request_start_date);
-        textInputEditTextEndDate = findViewById(R.id.et_create_request_end_date);
-        final RecyclerView recyclerView = findViewById(R.id.rv_create_request);
+        textViewOrganization = findViewById(R.id.tv_create_request_organization_name);
         materialCheckBoxCommercial = findViewById(R.id.cb_create_request_commercial);
         materialCheckBoxNoncommercial = findViewById(R.id.cb_create_request_noncommercial);
+        textInputEditTextStartDate = findViewById(R.id.et_create_request_start_date);
+        textInputEditTextEndDate = findViewById(R.id.et_create_request_end_date);
 
         Intent startIntent = getIntent();
-        if (startIntent.hasExtra("O") && startIntent.hasExtra("M")) {
-            organization = (User) startIntent.getSerializableExtra("O");
-            members = (ArrayList<User>) startIntent.getSerializableExtra("M");
-        }
+        organization = (User) startIntent.getSerializableExtra("O");
+        members = (ArrayList<User>) startIntent.getSerializableExtra("M");
 
+        textViewOrganization.setText(organization.getOrganizationName());
+
+        setPersons();
+        setDates();
+        setReceivers();
+
+        returnIntent = new Intent();
+    }
+
+    public void setPersons() {
+        permissionRegardsMembersOnly = true;
+        RadioGroup radioGroupPersons = findViewById(R.id.rg_create_request_persons);
+        radioGroupPersons.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.rb_create_request_members) {
+                    permissionRegardsMembersOnly = true;
+                } else if (checkedId == R.id.rb_create_request_members_and_wards) {
+                    permissionRegardsMembersOnly = false;
+                }
+            }
+        });
+    }
+
+    public void setDates() {
+        gregorianCalendar = new GregorianCalendar();
+        Date date = gregorianCalendar.getTime();
+        simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        textInputEditTextStartDate.setText(simpleDateFormat.format(date));
+        textInputEditTextEndDate.setText(simpleDateFormat.format(date));
+
+        startDate = new Date();
+        endDate = new Date();
+    }
+
+    public void setReceivers() {
+        final RecyclerView recyclerView = findViewById(R.id.rv_create_request);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
@@ -102,32 +141,21 @@ public class CreateRequestActivity extends AppCompatActivity {
         });
 
         sendRequestToAllMembers = true;
-        RadioGroup radioGroup = findViewById(R.id.radio_group);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        RadioGroup radioGroupReceiver = findViewById(R.id.rg_create_request_receiver);
+        radioGroupReceiver.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.rb_first) {
+                if (checkedId == R.id.rb_create_request_all) {
                     recyclerView.setVisibility(View.GONE);
                     textInputEditText.setVisibility(View.GONE);
                     sendRequestToAllMembers = true;
-                } else if (checkedId == R.id.rb_second) {
+                } else if (checkedId == R.id.rb_create_request_select) {
                     recyclerView.setVisibility(View.VISIBLE);
                     textInputEditText.setVisibility(View.VISIBLE);
                     sendRequestToAllMembers = false;
                 }
             }
         });
-
-        gregorianCalendar = new GregorianCalendar();
-        Date date = gregorianCalendar.getTime();
-        simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        textInputEditTextStartDate.setText(simpleDateFormat.format(date));
-        textInputEditTextEndDate.setText(simpleDateFormat.format(date));
-
-        startDate = new Date();
-        endDate = new Date();
-
-        returnIntent = new Intent();
     }
 
     public void startDate(View view) {
@@ -163,6 +191,8 @@ public class CreateRequestActivity extends AppCompatActivity {
         else if (materialCheckBoxNoncommercial.isChecked())
             permissionType = ContractTypeEnum.NON_COMMERCIAL_USE; // Non-commercial
 
+        personsIncluded = permissionRegardsMembersOnly ? "1" : "2"; // 1 = members only. 2 = members + wards
+
         if (permissionType == null)
             Toast.makeText(this, "Please select purpose(s)", Toast.LENGTH_SHORT).show();
         else {
@@ -183,7 +213,7 @@ public class CreateRequestActivity extends AppCompatActivity {
         for (int i = 0; i < memberList.size(); i++) {
             User member = memberList.get(i);
             String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
-            myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate); // Add the PermissionRequest to Firebase
+            myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
             ArrayList<UserActivity> userActivities = organization.getUserActivities();
             if (userActivities == null)
