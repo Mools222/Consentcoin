@@ -44,7 +44,7 @@ public class ProcessRequestActivity extends AppCompatActivity {
                 case COMMERCIAL_USE:
                     tvPurposes.setText("commercial purposes");
                     break;
-                case NON_COMMERCIAL_AND_COMERCIAL_USE:
+                case NON_COMMERCIAL_AND_COMMERCIAL_USE:
                     tvPurposes.setText("commercial and non-commercial purposes");
                     break;
             }

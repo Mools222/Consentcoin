@@ -294,6 +294,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
                 tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
+
+                if (adapterProcessInvite != null)
+                    adapterProcessInvite.updateData(pendingInviteRequests);
             }
         });
 
@@ -477,8 +480,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
-                    pendingInviteRequests.remove(inviteRequest);
-                    adapterProcessInvite.updateData(pendingInviteRequests);
                 }
             }
         } else if (requestCode == REQUEST_CODE_CREATE_REQUEST) {
