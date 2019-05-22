@@ -694,6 +694,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void displayConsentcoin(Consentcoin consentcoin) {
         Intent intent = new Intent(this, MyConsentcoinActivity.class);
         intent.putExtra("CC", consentcoin);
+
+        ConsentcoinReference consentcoinReference = null;
+        for (ConsentcoinReference consentcoinRef: consentcoinReferences) {
+            if (consentcoinRef.getContractId().equals(consentcoin.getContractId()))
+                consentcoinReference = consentcoinRef;
+        }
+
+        intent.putExtra("CR", consentcoinReference);
         startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
     }
 

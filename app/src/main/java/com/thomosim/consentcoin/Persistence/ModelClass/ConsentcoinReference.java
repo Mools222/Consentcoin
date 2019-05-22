@@ -1,21 +1,33 @@
 package com.thomosim.consentcoin.Persistence.ModelClass;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class ConsentcoinReference implements Serializable {
+    private String id;
     private String contractId;
     private String memberUid;
     private String organizationUid;
     private String storageUrl;
+    private Date revokedDate;
 
     public ConsentcoinReference() {
     }
 
-    public ConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl) {
+    public ConsentcoinReference(String id, String contractId, String memberUid, String organizationUid, String storageUrl) {
+        this.id = id;
         this.contractId = contractId;
         this.memberUid = memberUid;
         this.organizationUid = organizationUid;
         this.storageUrl = storageUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getContractId() {
@@ -48,5 +60,13 @@ public class ConsentcoinReference implements Serializable {
 
     public void setStorageUrl(String storageUrl) {
         this.storageUrl = storageUrl;
+    }
+
+    public Date getRevokedDate() {
+        return revokedDate;
+    }
+
+    public void setRevokedDate(Date revokedDate) {
+        this.revokedDate = revokedDate;
     }
 }
