@@ -888,8 +888,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (!inviteMemberAdapter.isEmpty()) {
                             if (validateMembers(inviteMemberList)) {
                                 String organization;
-                                if (uid != null) {
-                                    organization = uid;
+                                if (user.getOrganizationName() != null) {
+                                    organization = user.getOrganizationName();
                                 } else {
                                     organization = "testOrg";
                                 }

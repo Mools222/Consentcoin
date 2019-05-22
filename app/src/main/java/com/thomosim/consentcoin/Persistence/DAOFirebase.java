@@ -306,10 +306,10 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void addInviteRequest(ArrayList<String> members, String organization) {
-        for (String uid : members) {
+        for (String email : members) {
             DatabaseReference inviteRequestDatabaseReference = databaseReferenceInviteRequests.push();
             String inviteID = inviteRequestDatabaseReference.getKey();
-            InviteRequest inviteRequest = new InviteRequest(inviteID, organization, uid);
+            InviteRequest inviteRequest = new InviteRequest(inviteID, organization, email);
             inviteRequestDatabaseReference.setValue(inviteRequest);
         }
     }
