@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -292,6 +293,18 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void removeConsentcoin(Consentcoin consentcoin) {
+        // Getting specific file for deletion
+        storageReference.child("/" + consentcoin.getContractId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception exception) {
+                // Uh-oh, an error occurred!
+            }
+        });
     }
 
     @Override
