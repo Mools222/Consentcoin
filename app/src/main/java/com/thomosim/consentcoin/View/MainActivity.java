@@ -473,8 +473,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
 
                                 myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
+
+                                if(user.getUserActivities() != null){
+                                    user.getUserActivities().add(new UserActivity("RAIR",inviteRequest.getMember(),inviteRequest.getOrganization(), new Date()));
+                                }
+
+                                break;
                             }
                         }
+
+                        if(user.getUserActivities() != null){
+                            user.getUserActivities().add( new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                        }
+
                     } else {
                         Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
                     }
@@ -827,6 +838,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     organization = "testOrg";
                                 }
                                 myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
+                                if(user.getUserActivities() != null){
+                                    for(String member: inviteMemberList) {
+                                        user.getUserActivities().add(new UserActivity("CIR",member,user.getOrganizationName(), new Date() ));
+
+                                    }
+                                }
                             }
                         }
 

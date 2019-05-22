@@ -1,5 +1,6 @@
 package com.thomosim.consentcoin.View;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,7 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
         return new ViewHolderMainActivity(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull AdapterMainActivity.ViewHolderMainActivity holder, int position) {
         UserActivity userActivity = userActivities.get(position);
@@ -74,16 +76,16 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
                 holder.tvActivityText.setText("You sent a permission request to " + userActivity.getMemberName() + ".");
                 break;
             case "RPR":
-                holder.tvActivity.setText("Permission request recieved");
-                holder.tvActivityText.setText("You recieved a permission request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText("Permission request received");
+                holder.tvActivityText.setText("You received a permission request from " + userActivity.getOrganizationName() + ".");
                 break;
             case "APR":
-                holder.tvActivity.setText("Consentcoin recieved");
-                holder.tvActivityText.setText("You recieved a Consentcoin by accepting the permission request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText("Consentcoin received");
+                holder.tvActivityText.setText("You received a Consentcoin by accepting the permission request from " + userActivity.getOrganizationName() + ".");
                 break;
             case "RAPR":
-                holder.tvActivity.setText("Consentcoin recieved");
-                holder.tvActivityText.setText("You recieved a Consentcoin as " + userActivity.getMemberName() + " accepted your permission request.");
+                holder.tvActivity.setText("Consentcoin received");
+                holder.tvActivityText.setText("You received a Consentcoin as " + userActivity.getMemberName() + " accepted your permission request.");
                 break;
             case "DPR":
                 holder.tvActivity.setText("Permission request denied");
@@ -92,6 +94,30 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
             case "RDPR":
                 holder.tvActivity.setText("Permission request denied");
                 holder.tvActivityText.setText(userActivity.getMemberName() + " denied your permission request.");
+                break;
+            case "CIR":
+                holder.tvActivity.setText("Invite request sent");
+                holder.tvActivityText.setText("you sent an invite request to " + userActivity.getMemberName());
+                break;
+            case "RIR":
+                holder.tvActivity.setText("Invite request received");
+                holder.tvActivityText.setText("You received an invite request from " + userActivity.getOrganizationName());
+                break;
+            case "AIR":
+                holder.tvActivity.setText("Invite request accepted");
+                holder.tvActivityText.setText("You have accepted an invite request from " + userActivity.getOrganizationName());
+                break;
+            case "RAIR":
+                holder.tvActivity.setText("Invite request accepted");
+                holder.tvActivityText.setText("Your invite request to " + userActivity.getMemberName() + " has been accepted");
+                break;
+            case "DIR":
+                holder.tvActivity.setText("Invite request denied");
+                holder.tvActivityText.setText("You have denied an invite request from " + userActivity.getOrganizationName() );
+                break;
+            case "RDIR":
+                holder.tvActivity.setText("Invite request denied");
+                holder.tvActivityText.setText("Your invite request to " + userActivity.getMemberName() + " has been denied");
                 break;
         }
     }
