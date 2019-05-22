@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="addInviteMember"
-            android:text="+" />
+            android:text="@string/invite_add_member_btn_txt" />
     </LinearLayout>
 
 
