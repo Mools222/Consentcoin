@@ -276,9 +276,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
                 for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate()==null)
+                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
-                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate()==null)
+                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
                 }
             }
@@ -576,7 +576,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String userType = chosenUserType == 0 ? "Member" : "Organization";
                         String organizationName = textInputEditText.getText().toString();
                         myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName);
-                        Toast.makeText(CONTEXT, "Details saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CONTEXT, "User details saved", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setCancelable(false)
@@ -696,13 +696,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         intent.putExtra("CC", consentcoin);
 
         ConsentcoinReference consentcoinReference = null;
-        for (ConsentcoinReference consentcoinRef: consentcoinReferences) {
+        for (ConsentcoinReference consentcoinRef : consentcoinReferences) {
             if (consentcoinRef.getContractId().equals(consentcoin.getContractId()))
                 consentcoinReference = consentcoinRef;
         }
-
         intent.putExtra("CR", consentcoinReference);
+
+        intent.putExtra("CU", user);
+        intent.putExtra("OU", getUser(user.getType().equals("Member") ? consentcoinReference.getOrganizationUid() : consentcoinReference.getMemberUid()));
+
         startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
+    }
+
+    public User getUser(String uid) {
+        for (User user: users) {
+            if (user.getUid().equals(uid))
+                return user;
+        }
+        return null;
     }
 
     public void addOrganizationOrMember(final String userType) {

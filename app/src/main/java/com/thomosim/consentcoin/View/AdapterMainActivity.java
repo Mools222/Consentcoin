@@ -93,6 +93,14 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
                 holder.tvActivity.setText("Permission request denied");
                 holder.tvActivityText.setText(userActivity.getMemberName() + " denied your permission request.");
                 break;
+            case "DC":
+                holder.tvActivity.setText("Consentcoin revoked");
+                holder.tvActivityText.setText("Your Consentcoin agreement with " + userActivity.getOrganizationName() + " was revoked.");
+                break;
+            case "RDC":
+                holder.tvActivity.setText("Consentcoin revoked");
+                holder.tvActivityText.setText("Your Consentcoin agreement with " + userActivity.getMemberName() + " was revoked.");
+                break;
         }
     }
 
