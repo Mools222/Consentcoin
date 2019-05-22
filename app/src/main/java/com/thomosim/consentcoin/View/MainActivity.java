@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AdapterProcessRequest adapterProcessRequest;
     private AdapterProcessInvite adapterProcessInvite;
     private TextInputEditText tietInviteMember;
+    private View navigationDrawerHeader;
+    private NavigationView navigationView;
+    private RecyclerView recyclerView;
 
     private ArrayList<String> inviteMemberList;
     private ArrayAdapter<String> inviteMemberAdapter;
@@ -85,27 +88,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupNavigationView();
+        setupRecyclerView();
+
+        createSwipeFunction();
+
+        assignTextViews();
+        assignMenuItems();
+
+        setupViewModel();
+
+        Log.i("ZZZ", "onCreate");
+    }
+
+    public void setupNavigationView(){
         // Setting up the Navigation View
         // https://material.io/develop/android/components/navigation-view/
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.navigation);
-        View navigationDrawerHeader = navigationView.getHeaderView(0);
+        navigationView = findViewById(R.id.navigation);
+        navigationDrawerHeader = navigationView.getHeaderView(0);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
+    public void setupRecyclerView(){
         // Initialize references to views
-        RecyclerView recyclerView = findViewById(R.id.rv_main_activity);
+        recyclerView = findViewById(R.id.rv_main_activity);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 //        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
 //        recyclerView.addItemDecoration(dividerItemDecoration);
         adapterMainActivity = new AdapterMainActivity(this);
         recyclerView.setAdapter(adapterMainActivity);
+    }
 
+    public void createSwipeFunction(){
         // This ItemTouchHelper allows the user to delete UserActivity objects by swiping left or right
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -122,7 +143,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myViewModel.getDao().updateUser(uid, user);
             }
         }).attachToRecyclerView(recyclerView);
+    }
 
+    public void assignTextViews(){
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);
@@ -137,7 +160,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingInviteCounter.setTypeface(null, Typeface.BOLD);
         tvNavigationDrawerPendingInviteCounter.setTextColor(getResources().getColor(R.color.colorRed));
         tvNavigationDrawerPendingInviteCounter.setText("0");
+    }
 
+    public void assignMenuItems(){
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
         menuItemCreateRequest = navigationView.getMenu().findItem(R.id.nav_create_request);
         menuItemSentRequests = navigationView.getMenu().findItem(R.id.nav_active_requests);
@@ -388,28 +413,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_pending_requests) {
-            processRequest();
-        } else if (id == R.id.nav_create_request) {
-            createRequest();
-        } else if (id == R.id.nav_active_requests) {
-            displayActiveRequests();
-        } else if (id == R.id.nav_my_consentcoins) {
-            displayConsentcoinReferences();
-        } else if (id == R.id.nav_pending_invites) {
-            processInvites();
-        } else if (id == R.id.nav_invite) {
-            createInvite();
-        } else if (id == R.id.nav_add_organization) {
-            addOrganizationOrMember("organization");
-        } else if (id == R.id.nav_add_member) {
-            addOrganizationOrMember("member");
-        } else if (id == R.id.nav_my_organizations) {
-            displayOrganizationsOrMembers("organizations");
-        } else if (id == R.id.nav_my_members) {
-            displayOrganizationsOrMembers("members");
-        } else if (id == R.id.nav_settings) {
-            test();
+        switch(id) {
+            case R.id.nav_pending_requests:
+                processRequest();
+                break;
+            case R.id.nav_create_request:
+                createRequest();
+                break;
+            case R.id.nav_active_requests:
+                displayActiveRequests();
+                break;
+            case R.id.nav_my_consentcoins:
+                displayConsentcoinReferences();
+                break;
+            case R.id.nav_pending_invites:
+                processInvites();
+                break;
+            case R.id.nav_invite:
+                createInvite();
+                break;
+            case R.id.nav_add_organization:
+                addOrganizationOrMember("Organization");
+                break;
+            case R.id.nav_add_member:
+                addOrganizationOrMember("member");
+                break;
+            case R.id.nav_my_organizations:
+                displayOrganizationsOrMembers("organization");
+                break;
+            case R.id.nav_my_members:
+                displayOrganizationsOrMembers("member");
+                break;
+            case R.id.nav_settings:
+                test();
+                break;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -431,46 +468,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE_SIGN_IN) {
-            if (resultCode == RESULT_OK) { // Sign-in succeeded
-                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) { // Sign in was canceled by the user, finish the activity
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        } else if (requestCode == REQUEST_CODE_PROCESS_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                createOrDenyConsentcoin(data);
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == REQUEST_CODE_MY_CONSENTCOINS) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == REQUEST_CODE_PROCESS_INVITE) {
-            if (resultCode == RESULT_OK) {
-                if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
-                    InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                if (resultCode == RESULT_OK) { // Sign-in succeeded
+                    Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) { // Sign in was canceled by the user, finish the activity
+                    Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            case REQUEST_CODE_PROCESS_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    createOrDenyConsentcoin(data);
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_MY_CONSENTCOINS:
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_PROCESS_INVITE:
+                if (resultCode == RESULT_OK) {
+                    if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+                        InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
 
-                    boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
+                        boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
 
-                    if (inviteAccepted) {
-                        Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
+                        if (inviteAccepted) {
+                            Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
 
-                        for (User user : users) {
-                            if (user.getUid().equals(inviteRequest.getOrganization())) {
-                                ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
-                                if (associatedUsersUids == null)
-                                    associatedUsersUids = new ArrayList<>();
-                                if (!associatedUsersUids.contains(uid))
-                                    associatedUsersUids.add(uid);
+                            for (User user : users) {
+                                if (user.getUid().equals(inviteRequest.getOrganization())) {
+                                    ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
+                                    if (associatedUsersUids == null)
+                                        associatedUsersUids = new ArrayList<>();
+                                    if (!associatedUsersUids.contains(uid))
+                                        associatedUsersUids.add(uid);
 
-                                user.setAssociatedUsersUids(associatedUsersUids);
+                                    user.setAssociatedUsersUids(associatedUsersUids);
 
-                                Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
 
                                 myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
 
@@ -492,15 +533,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
                     }
 
-                    myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+                        myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+                    }
                 }
-            }
-        } else if (requestCode == REQUEST_CODE_CREATE_REQUEST) {
-            if (resultCode == RESULT_OK) {
+                break;
+            case REQUEST_CODE_CREATE_REQUEST:
+                if (resultCode == RESULT_OK) {
 //                Toast.makeText(this, "Permission request sent", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
+                } else if (resultCode == RESULT_CANCELED) {
 //                Toast.makeText(this, "Permission request canceled", Toast.LENGTH_SHORT).show();
-            }
+                }
+                break;
         }
     }
 
@@ -589,7 +632,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String userType = chosenUserType == 0 ? "Member" : "Organization";
                         String organizationName = textInputEditText.getText().toString();
                         myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName);
-                        Toast.makeText(CONTEXT, "Details saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CONTEXT, "User details saved", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setCancelable(false)
@@ -713,9 +756,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (consentcoinRef.getContractId().equals(consentcoin.getContractId()))
                 consentcoinReference = consentcoinRef;
         }
-
         intent.putExtra("CR", consentcoinReference);
+
+        intent.putExtra("CU", user);
+        intent.putExtra("OU", getUser(user.getType().equals("Member") ? consentcoinReference.getOrganizationUid() : consentcoinReference.getMemberUid()));
+
         startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
+    }
+
+    public User getUser(String uid) {
+        for (User user: users) {
+            if (user.getUid().equals(uid))
+                return user;
+        }
+        return null;
     }
 
     public void addOrganizationOrMember(final String userType) {

@@ -1,6 +1,5 @@
 package com.thomosim.consentcoin.View;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +57,6 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
         return new ViewHolderMainActivity(v);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull AdapterMainActivity.ViewHolderMainActivity holder, int position) {
         UserActivity userActivity = userActivities.get(position);
@@ -94,6 +92,14 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
             case "RDPR":
                 holder.tvActivity.setText("Permission request denied");
                 holder.tvActivityText.setText(userActivity.getMemberName() + " denied your permission request.");
+                break;
+            case "DC":
+                holder.tvActivity.setText("Consentcoin revoked");
+                holder.tvActivityText.setText("Your Consentcoin agreement with " + userActivity.getOrganizationName() + " was revoked.");
+                break;
+            case "RDC":
+                holder.tvActivity.setText("Consentcoin revoked");
+                holder.tvActivityText.setText("Your Consentcoin agreement with " + userActivity.getMemberName() + " was revoked.");
                 break;
             case "CIR":
                 holder.tvActivity.setText("Invite request sent");

@@ -23,13 +23,15 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
     private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
 
     public class ViewHolderProcessRequest extends RecyclerView.ViewHolder {
-        public TextView textView1;
-        public TextView textView2;
+        public TextView tvId;
+        public TextView tvSender;
+        public TextView tvDate;
 
         public ViewHolderProcessRequest(@NonNull View v) {
             super(v);
-            textView1 = v.findViewById(R.id.tv_process_request_id);
-            textView2 = v.findViewById(R.id.tv_process_request_sender);
+            tvId = v.findViewById(R.id.tv_process_request_id);
+            tvSender = v.findViewById(R.id.tv_process_request_sender);
+            tvDate = v.findViewById(R.id.tv_process_request_date);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -61,10 +63,11 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
     public void onBindViewHolder(@NonNull ViewHolderProcessRequest holder, int position) {
         PermissionRequest permissionRequest = pendingPermissionRequests.get(position);
         Date date = permissionRequest.getCreationDate();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        holder.textView1.setText(simpleDateFormat.format(date));
-        holder.textView2.setText(permissionRequest.getOrganizationName());
+        holder.tvId.setText(String.valueOf(position + 1));
+        holder.tvSender.setText("Sender: " + permissionRequest.getOrganizationName());
+        holder.tvDate.setText("Received: " + simpleDateFormat.format(date));
     }
 
     @Override

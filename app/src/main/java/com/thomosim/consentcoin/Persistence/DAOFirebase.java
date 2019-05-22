@@ -296,20 +296,7 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void removeConsentcoin(Consentcoin consentcoin) {
-        // To get the file for deletion
-        StorageReference deleteCoin = FirebaseStorage.getInstance().getReference().child("consentcoins/"+consentcoin.getContractId());
-        // Getting specific file for deletion
-        deleteCoin.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // File deleted successfully
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception exception) {
-                // Uh-oh, an error occurred!
-            }
-        });
+        storageReference.child(consentcoin.getContractId()).delete();
     }
 
     @Override
