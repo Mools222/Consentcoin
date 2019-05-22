@@ -50,7 +50,7 @@ public interface DAOInterface {
 
     void removeUser(User user);
 
-    void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate);
+    void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded);
 
     MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
 

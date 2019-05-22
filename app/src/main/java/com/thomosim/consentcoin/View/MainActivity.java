@@ -173,6 +173,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menuItemAddMember = navigationView.getMenu().findItem(R.id.nav_add_member);
         menuItemMyOrganizations = navigationView.getMenu().findItem(R.id.nav_my_organizations);
         menuItemMyMembers = navigationView.getMenu().findItem(R.id.nav_my_members);
+
+        Log.i("ZZZ", "onCreate");
+
+        setupViewModel();
     }
 
     /**
@@ -297,9 +301,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
                 for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid))
+                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
-                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid))
+                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
                 }
             }
@@ -426,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 processInvites();
                 break;
             case R.id.nav_invite:
-                invite();
+                createInvite();
                 break;
             case R.id.nav_add_organization:
                 addOrganizationOrMember("Organization");
@@ -591,14 +595,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_create_request);
         textInputEditText.setVisibility(View.GONE);
 
-        RadioGroup radioGroup = dialogView.findViewById(R.id.radio_group);
+        RadioGroup radioGroup = dialogView.findViewById(R.id.rg_create_user);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.rb_first) {
+                if (checkedId == R.id.rb_create_user_member) {
                     textInputEditText.setVisibility(View.GONE);
                     chosenUserType = 0;
-                } else if (checkedId == R.id.rb_second) {
+                } else if (checkedId == R.id.rb_create_user_organization) {
                     textInputEditText.setVisibility(View.VISIBLE);
                     chosenUserType = 1;
                 }
@@ -615,7 +619,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String userType = chosenUserType == 0 ? "Member" : "Organization";
                         String organizationName = textInputEditText.getText().toString();
                         myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName);
-                        Toast.makeText(CONTEXT, "Details saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CONTEXT, "User details saved", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setCancelable(false)
@@ -733,7 +737,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void displayConsentcoin(Consentcoin consentcoin) {
         Intent intent = new Intent(this, MyConsentcoinActivity.class);
         intent.putExtra("CC", consentcoin);
+
+        ConsentcoinReference consentcoinReference = null;
+        for (ConsentcoinReference consentcoinRef : consentcoinReferences) {
+            if (consentcoinRef.getContractId().equals(consentcoin.getContractId()))
+                consentcoinReference = consentcoinRef;
+        }
+        intent.putExtra("CR", consentcoinReference);
+
+        intent.putExtra("CU", user);
+        intent.putExtra("OU", getUser(user.getType().equals("Member") ? consentcoinReference.getOrganizationUid() : consentcoinReference.getMemberUid()));
+
         startActivityForResult(intent, REQUEST_CODE_MY_CONSENTCOINS);
+    }
+
+    public User getUser(String uid) {
+        for (User user: users) {
+            if (user.getUid().equals(uid))
+                return user;
+        }
+        return null;
     }
 
     public void addOrganizationOrMember(final String userType) {
@@ -831,8 +854,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // TODO Maybe add a list of active invites for the organization (like the "Active Request(s)" in the menu)
-    // TODO Add 1) the sending of invites to the UserActivity of the sender and receiver and 2) the accepting / denying of the invite to the UserActivity of the sender and receiver
-    public void invite() {
+    // TODO Add 1) the sending of invites to the UserActivity of the sender and receiver and 2) the accepting / denying of the createInvite to the UserActivity of the sender and receiver
+    public void createInvite() {
         View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
 
         tietInviteMember = inviteDialogView.findViewById(R.id.memberEditText);
@@ -895,7 +918,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(adapterProcessInvite);
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Process invite(s)")
+                .setTitle("Process createInvite(s)")
                 .setView(dialogView)
                 .setPositiveButton("Close", new DialogInterface.OnClickListener() {
                     @Override

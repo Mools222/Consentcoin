@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -184,10 +185,10 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded) {
         DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
         String firebaseId = databaseReference.getKey(); // Get the auto generated key
-        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate);
+        PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate, personsIncluded);
         databaseReference.setValue(permissionRequest);
     }
 
@@ -213,12 +214,15 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void addConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl) {
-        ConsentcoinReference consentcoinReference = new ConsentcoinReference(contractId, memberUid, organizationUid, storageUrl);
-        databaseReferenceConsentcoinReferences.push().setValue(consentcoinReference);
+        DatabaseReference databaseReference = databaseReferenceConsentcoinReferences.push(); // Creates blank record in the database
+        String firebaseId = databaseReference.getKey(); // Get the auto generated key
+        ConsentcoinReference consentcoinReference = new ConsentcoinReference(firebaseId, contractId, memberUid, organizationUid, storageUrl);
+        databaseReference.setValue(consentcoinReference);
     }
 
     @Override
     public void updateConsentcoinReference(String id, ConsentcoinReference consentcoinReference) {
+        databaseReferenceConsentcoinReferences.child(id).setValue(consentcoinReference);
     }
 
     @Override
@@ -292,6 +296,20 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void removeConsentcoin(Consentcoin consentcoin) {
+        // To get the file for deletion
+        StorageReference deleteCoin = FirebaseStorage.getInstance().getReference().child("consentcoins/"+consentcoin.getContractId());
+        // Getting specific file for deletion
+        deleteCoin.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception exception) {
+                // Uh-oh, an error occurred!
+            }
+        });
     }
 
     @Override
