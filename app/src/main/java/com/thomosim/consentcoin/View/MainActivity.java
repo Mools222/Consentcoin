@@ -276,9 +276,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
                 for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid))
+                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate()==null)
                         consentcoinReferences.add(consentcoinReference);
-                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid))
+                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate()==null)
                         consentcoinReferences.add(consentcoinReference);
                 }
             }
