@@ -297,7 +297,7 @@ public class DAOFirebase implements DAOInterface {
     @Override
     public void removeConsentcoin(Consentcoin consentcoin) {
         // Getting specific file for deletion
-        storageReference.child("/" + consentcoin.getContractId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+        storageReference.child(consentcoin.getContractId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 // File deleted successfully
