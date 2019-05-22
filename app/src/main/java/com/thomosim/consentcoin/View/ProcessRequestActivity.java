@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,38 +25,34 @@ public class ProcessRequestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_request);
 
-        TextView tvMember = findViewById(R.id.tv_process_request_member);
-        TextView tvOrganization = findViewById(R.id.tv_process_request_organization);
-        TextView tvPurposes = findViewById(R.id.tv_process_request_purposes);
-        TextView tvStartDate = findViewById(R.id.tv_process_request_startDate);
-        TextView tvEndDate = findViewById(R.id.tv_process_request_endDate);
+        TextView tvMember = findViewById(R.id.tv_show_contract);
+
 
         // The getIntent method returns the intent that started this activity. This intent was created in the constructor of the ViewHolderProcessRequest class found in the AdapterProcessRequest. The processRequest method of the MainActivity class creates an instance of the AdapterProcessRequest class
         Intent startIntent = getIntent();
         if (startIntent.hasExtra("PR") && startIntent.hasExtra("POS")) {
             PermissionRequest permissionRequest = (PermissionRequest) startIntent.getSerializableExtra("PR");
             position = startIntent.getIntExtra("POS", -1);
-            tvMember.setText(permissionRequest.getMemberName());
-            tvOrganization.setText(permissionRequest.getOrganizationName());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-            switch (permissionRequest.getPermissionType()) {
-                case NON_COMMERCIAL_USE:
-                    tvPurposes.setText("non-commercial purposes");
-                    break;
-                case COMMERCIAL_USE:
-                    tvPurposes.setText("commercial purposes");
-                    break;
-                case NON_COMMERCIAL_AND_COMMERCIAL_USE:
-                    tvPurposes.setText("commercial and non-commercial purposes");
-                    break;
+            String[] lines = new String[6];
+            lines[0] = getString(R.string.contract_text_part_one) + permissionRequest.getMemberName();
+            lines[1] = getString(R.string.contract_text_part_two) + permissionRequest.getOrganizationName();
+            lines[2] = getString(R.string.contract_text_part_three);
+            lines[3] = getString(R.string.contract_text_part_four) +
+                    permissionRequest.getPermissionType().getType() + getString(R.string.contract_text_part_five);
+            lines[4] = getString(R.string.contract_text_part_six);
+            lines[5] = simpleDateFormat.format(permissionRequest.getPermissionStartDate()) + getString(R.string.contract_text_part_seven)
+                    + simpleDateFormat.format(permissionRequest.getPermissionEndDate());
+
+            String completeContract = "";
+
+            for (int i = 0; i < lines.length; i++) {
+                completeContract += lines[i];
             }
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            tvStartDate.setText(simpleDateFormat.format(permissionRequest.getPermissionStartDate()));
-            tvEndDate.setText(simpleDateFormat.format(permissionRequest.getPermissionEndDate()));
-
+            tvMember.setText(completeContract);
         }
-
         returnIntent = new Intent();
         returnIntent.putExtra("POS", position);
     }
