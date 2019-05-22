@@ -87,7 +87,7 @@
 //    private FirebaseAuth.AuthStateListener authStateListener;
 //
 //    private TextInputEditText textInputEditText;
-//    private TextView textView1;
+//    private TextView tvDate;
 //    private TextView tvNavigationHeaderName, tvNavigationHeaderEmail;
 //    private TextView tvNavigationDrawerCounter;
 //    private TextView tvNavigationDrawerPendingPermissionsCounter;
@@ -689,12 +689,12 @@
 //        }
 //
 //        if (childEventListenerTest == null) {
-//            textView1.setText("");
+//            tvDate.setText("");
 //
 //            childEventListenerTest = new ChildEventListener() {
 //                @Override
 //                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                    textView1.append("Key: " + dataSnapshot.getKey() + "   Value: " + dataSnapshot.getValue() + "\n");
+//                    tvDate.append("Key: " + dataSnapshot.getKey() + "   Value: " + dataSnapshot.getValue() + "\n");
 //                }
 //
 //                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
