@@ -276,9 +276,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
                 for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate()==null)
+                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
-                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate()==null)
+                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
                 }
             }
@@ -474,16 +474,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                 myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
 
-                                if(user.getUserActivities() != null){
-                                    user.getUserActivities().add(new UserActivity("RAIR",inviteRequest.getMember(),inviteRequest.getOrganization(), new Date()));
+                                if (user.getUserActivities() != null) {
+                                    user.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                                    myViewModel.getDao().updateUser(user.getUid(), user);
                                 }
 
                                 break;
                             }
                         }
 
-                        if(user.getUserActivities() != null){
-                            user.getUserActivities().add( new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                        if (user.getUserActivities() != null) {
+                            user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                            myViewModel.getDao().updateUser(user.getUid(), user);
                         }
 
                     } else {
@@ -707,7 +709,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         intent.putExtra("CC", consentcoin);
 
         ConsentcoinReference consentcoinReference = null;
-        for (ConsentcoinReference consentcoinRef: consentcoinReferences) {
+        for (ConsentcoinReference consentcoinRef : consentcoinReferences) {
             if (consentcoinRef.getContractId().equals(consentcoin.getContractId()))
                 consentcoinReference = consentcoinRef;
         }
@@ -838,9 +840,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     organization = "testOrg";
                                 }
                                 myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
-                                if(user.getUserActivities() != null){
-                                    for(String member: inviteMemberList) {
-                                        user.getUserActivities().add(new UserActivity("CIR",member,user.getOrganizationName(), new Date() ));
+                                if (user.getUserActivities() != null) {
+                                    for (String member : inviteMemberList) {
+                                        user.getUserActivities().add(0, new UserActivity("CIR", member, user.getOrganizationName(), new Date()));
+                                        myViewModel.getDao().updateUser(user.getUid(), user);
+                                        for (User inviteMember : users) {
+                                            if (inviteMemberList.contains(inviteMember.getEmail())) {
+                                                if (inviteMember.getUserActivities() != null) {
+                                                    inviteMember.getUserActivities().add(0, new UserActivity("RIR", inviteMember.getFirstName() + " " + inviteMember.getLastName(), user.getOrganizationName(), new Date()));
+                                                    myViewModel.getDao().updateUser(inviteMember.getUid(), inviteMember);
+                                                }
+                                            }
+                                        }
 
                                     }
                                 }
