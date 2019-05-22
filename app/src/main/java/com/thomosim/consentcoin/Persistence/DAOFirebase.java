@@ -213,12 +213,15 @@ public class DAOFirebase implements DAOInterface {
 
     @Override
     public void addConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl) {
-        ConsentcoinReference consentcoinReference = new ConsentcoinReference(contractId, memberUid, organizationUid, storageUrl);
-        databaseReferenceConsentcoinReferences.push().setValue(consentcoinReference);
+        DatabaseReference databaseReference = databaseReferenceConsentcoinReferences.push(); // Creates blank record in the database
+        String firebaseId = databaseReference.getKey(); // Get the auto generated key
+        ConsentcoinReference consentcoinReference = new ConsentcoinReference(firebaseId, contractId, memberUid, organizationUid, storageUrl);
+        databaseReference.setValue(consentcoinReference);
     }
 
     @Override
     public void updateConsentcoinReference(String id, ConsentcoinReference consentcoinReference) {
+        databaseReferenceConsentcoinReferences.child(id).setValue(consentcoinReference);
     }
 
     @Override

@@ -9,11 +9,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
 import com.thomosim.consentcoin.R;
+import com.thomosim.consentcoin.ViewModel.MyViewModel;
+
+import java.util.Date;
 
 // TODO This whole activity
 public class MyConsentcoinActivity extends AppCompatActivity {
     private Intent returnIntent;
+    private Consentcoin consentcoin;
+    private ConsentcoinReference consentcoinReference;
+    private MyViewModel myViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,17 +29,22 @@ public class MyConsentcoinActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.tv_my_consentcoins);
 
+        myViewModel = MyViewModel.getInstance();
+
         Intent startIntent = getIntent();
-        if (startIntent.hasExtra("CC")) {
-            Consentcoin consentcoin = (Consentcoin) startIntent.getSerializableExtra("CC");
-            textView.setText("ID: " + consentcoin.getContractId() + "\nContractType: " + consentcoin.getPermissionType() + "\nMemID: " + consentcoin.getMemberUid() + "\nOrgID: " + consentcoin.getOrganizationUid());
-        }
+        consentcoin = (Consentcoin) startIntent.getSerializableExtra("CC");
+        consentcoinReference = (ConsentcoinReference) startIntent.getSerializableExtra("CR");
+
+        textView.setText("ID: " + consentcoin.getContractId() + "\nContractType: " + consentcoin.getPermissionType() + "\nMemID: " + consentcoin.getMemberUid() + "\nOrgID: " + consentcoin.getOrganizationUid());
 
         returnIntent = new Intent();
     }
 
     public void delete(View view) {
         setResult(Activity.RESULT_OK, returnIntent);
+        myViewModel.getDao().removeConsentcoin(consentcoin);
+        consentcoinReference.setRevokedDate(new Date());
+        myViewModel.getDao().updateConsentcoinReference(consentcoinReference.getId(), consentcoinReference);
         finish();
     }
 
