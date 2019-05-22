@@ -563,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if (permissionGranted) {
                 myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
-                        date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate()); // If the user chooses to give permission, create a Consentcoin
+                        date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded()); // If the user chooses to give permission, create a Consentcoin
 
                 ArrayList<UserActivity> userActivities = user.getUserActivities();
                 if (userActivities == null)

@@ -2,6 +2,7 @@ package com.thomosim.consentcoin.View;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -82,7 +83,7 @@ public class ProcessRequestActivity extends AppCompatActivity {
     //This method creates SpannableStringBuilders which have different colors, these will be added and appear as text
     public ArrayList<SpannableStringBuilder> createContractText(PermissionRequest pr){
         ArrayList<SpannableStringBuilder> completeContract = new ArrayList<>();
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "NotoSans-Black.ttf");
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.noto_sans);
 
         ArrayList<Object> contractElements = getContractElements(pr);
 

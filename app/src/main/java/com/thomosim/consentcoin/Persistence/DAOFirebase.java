@@ -252,9 +252,9 @@ public class DAOFirebase implements DAOInterface {
 
     // TODO Problem: The addConsentcoin method takes a Context parameter, which means the DAO knows the View?
     @Override
-    public void addConsentcoin(Context context, String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public void addConsentcoin(Context context, String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded) {
         // TODO Encrypt the Consentcoin object
-        final Consentcoin consentcoin = new Consentcoin(contractId, permissionType, organizationUid, memberUid, creationDate, permissionStartDate, permissionEndDate);
+        final Consentcoin consentcoin = new Consentcoin(contractId, permissionType, organizationUid, memberUid, creationDate, permissionStartDate, permissionEndDate, personsIncluded);
 
         String fileName = "consentcoin";
         final File file = new File(context.getFilesDir(), fileName);
