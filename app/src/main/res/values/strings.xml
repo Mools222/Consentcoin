@@ -12,7 +12,7 @@
     <string name="contract_text_part_two">"\nwould like to give "</string>
     <string name="contract_text_part_three">"\npermission to use images og myself and my wards for "</string>
     <string name="contract_text_part_four">" purposes.\nThe permission will be valid in the time between\n"</string>
-
+    <string name="contract_text_part_five">" and "</string>
 
     <!-- Strings for invite dialog -->
     <string name="invite_add_member_btn_txt">add</string>
