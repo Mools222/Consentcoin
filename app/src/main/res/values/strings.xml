@@ -3,7 +3,49 @@
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
 
+    <!-- Generals -->
+
+    <string name="member">Member</string>
+    <string name="organization">Organization</string>
+    <string name="create">Create</string>
+    <string name="close">Close</string>
+    <string name="yep">Yep</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
+    <!-- AlertDialog titles -->
+
+    <string name="title_specify_user_details">Specify user details</string>
+    <string name="title_process_request">Process request(s)</string>
+    <string name="title_requests_sent">Sent permission requests</string>
+    <string name="title_my_consentcoins">My Consenscoins</string>
+    <string name="title_add_with_space">"Add "</string>
+    <string name="title_my_with_space">"My "</string>
+    <string name="title_invite_members">Invite member(s)</string>
+    <string name="title_create_invites">Process createInvite(s)</string>
+
+
+    <!-- Toast messages -->
+
+    <string name="toast_signed_in">Signed in!</string>
+    <string name="toast_sign_in_cancelled">"Sign in canceled"</string>
+    <string name="toast_pr_not_processed">Permission request not yet processed</string>
+    <string name="toast_concentcoin_ok">Consentcoin RESULT_OK</string>
+    <string name="toast_concentcoin_cancelled">Consentcoin RESULT_CANCELED</string>
+    <string name="toast_invite_accepted">Invite Accepted</string>
+    <string name="toast_invite_declined">Invite declined</string>
+    <string name="toast_permission_given">Permission given</string>
+    <string name="toast_permission_denied">Permission denied</string>
+    <string name="toast_user_details_saved">User details saved</string>
+    <string name="toast_add_users_to_request">Add members before creating a request</string>
+    <string name="toast_no_active_requests">You have no active permission requests</string>
+    <string name="toast_getting_consentcoins">Getting Consentcoin. Please wait</string>
+    <string name="toast_no_consentcoins">You have no Consentcoins</string>
+    <string name="toast_you_have_no">"You have no "</string>
+
     <!-- Strings used in ContractTypeEnum -->
+
     <string name="contract_type_commercial">commercial</string>
     <string name="contract_type_non_commercial">non commercial</string>
     <string name="contract_type_commercial_and_non_commercial">commercial and non commercial</string>
@@ -13,6 +55,12 @@
     <string name="contract_text_part_three">"\npermission to use images og myself and my wards for "</string>
     <string name="contract_text_part_four">" purposes.\nThe permission will be valid in the time between\n"</string>
     <string name="contract_text_part_five">" and "</string>
+
+    <!-- Strings in arrays -->
+
+    <string name="array_id">"ID: "</string>
+    <string name="array_member">" Member: "</string>
+    <string name="array_org">" Org: "</string>
 
 
 </resources>

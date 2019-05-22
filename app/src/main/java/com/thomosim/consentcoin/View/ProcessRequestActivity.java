@@ -82,7 +82,7 @@ public class ProcessRequestActivity extends AppCompatActivity {
     //This method creates SpannableStringBuilders which have different colors, these will be added and appear as text
     public ArrayList<SpannableStringBuilder> createContractText(PermissionRequest pr){
         ArrayList<SpannableStringBuilder> completeContract = new ArrayList<>();
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "NotoSans-Black.ttf");
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "noto_sans.ttf");
 
         ArrayList<Object> contractElements = getContractElements(pr);
 
