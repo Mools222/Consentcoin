@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 createInvite();
                 break;
             case R.id.nav_add_organization:
-                addOrganizationOrMember("Organization");
+                addOrganizationOrMember("organization");
                 break;
             case R.id.nav_add_member:
                 addOrganizationOrMember("member");
@@ -772,15 +772,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return null;
     }
 
-    public void addOrganizationOrMember(final String userType) {
+    public void addOrganizationOrMember(final String userTypeInput) {
         final ArrayList<User> organizations = new ArrayList<>();
         final ArrayList<User> members = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
-            if (user.getType().equals("Organization") && userType.equals("organization"))
+            if (user.getType().equals("Organization") && userTypeInput.equals("organization"))
                 organizations.add(user);
-            else if (user.getType().equals("Member") && userType.equals("member"))
+            else if (user.getType().equals("Member") && userTypeInput.equals("member"))
                 members.add(user);
         }
 
@@ -788,7 +788,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_dialog_add_organization);
         final Context CONTEXT = this;
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Add " + userType)
+                .setTitle("Add " + userTypeInput)
                 .setView(dialogView)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
@@ -798,7 +798,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String email = textInputEditText.getText().toString();
                         User organizationOrMember = null;
 
-                        if (userType.equals("organization")) // If a member is trying to add an organization, check if the organization exists
+                        if (userTypeInput.equals("organization")) // If a member is trying to add an organization, check if the organization exists
                             for (int i = 0; i < organizations.size(); i++) {
                                 organizationOrMember = organizations.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -806,7 +806,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     break;
                                 }
                             }
-                        else if (userType.equals("member")) // If an organization is trying to add a member, check if the member exists
+                        else if (userTypeInput.equals("member")) // If an organization is trying to add a member, check if the member exists
                             for (int i = 0; i < members.size(); i++) {
                                 organizationOrMember = members.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -823,9 +823,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 associatedUsersUids.add(organizationOrMember.getUid());
                             user.setAssociatedUsersUids(associatedUsersUids);
                             myViewModel.getDao().updateUser(uid, user);
-                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, userTypeInput.substring(0, 1).toUpperCase() + userTypeInput.substring(1) + " added", Toast.LENGTH_SHORT).show();
                         } else // If the organization or member does not exist, display a toast
-                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, userTypeInput.substring(0, 1).toUpperCase() + userTypeInput.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

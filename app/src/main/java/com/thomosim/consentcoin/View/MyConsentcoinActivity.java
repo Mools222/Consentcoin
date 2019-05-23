@@ -52,7 +52,7 @@ public class MyConsentcoinActivity extends AppCompatActivity {
 
     public void confirm(View view) {
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Are you sure that you want to withdraw your permission")
+                .setTitle("Are you sure that you want to withdraw your permission?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
