@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("ZZZ", "onCreate");
     }
 
-    public void setupNavigationView(){
+    public void setupNavigationView() {
         // Setting up the Navigation View
         // https://material.io/develop/android/components/navigation-view/
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void setupRecyclerView(){
+    public void setupRecyclerView() {
         // Initialize references to views
         recyclerView = findViewById(R.id.rv_main_activity);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(adapterMainActivity);
     }
 
-    public void createSwipeFunction(){
+    public void createSwipeFunction() {
         // This ItemTouchHelper allows the user to delete UserActivity objects by swiping left or right
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }).attachToRecyclerView(recyclerView);
     }
 
-    public void assignTextViews(){
+    public void assignTextViews() {
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingInviteCounter.setText("0");
     }
 
-    public void assignMenuItems(){
+    public void assignMenuItems() {
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
         menuItemCreateRequest = navigationView.getMenu().findItem(R.id.nav_create_request);
         menuItemSentRequests = navigationView.getMenu().findItem(R.id.nav_active_requests);
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch(id) {
+        switch (id) {
             case R.id.nav_pending_requests:
                 processRequest();
                 break;
@@ -513,25 +513,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                     Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
 
-                                myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
+                                    myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
 
-                                if (user.getUserActivities() != null) {
-                                    user.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
-                                    myViewModel.getDao().updateUser(user.getUid(), user);
+                                    if (user.getUserActivities() != null) {
+                                        user.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                                        myViewModel.getDao().updateUser(user.getUid(), user);
+                                    }
+
+                                    break;
                                 }
-
-                                break;
                             }
-                        }
 
-                        if (user.getUserActivities() != null) {
-                            user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
-                            myViewModel.getDao().updateUser(user.getUid(), user);
-                        }
+                            if (user.getUserActivities() != null) {
+                                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                                myViewModel.getDao().updateUser(user.getUid(), user);
+                            }
 
-                    } else {
-                        Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
-                    }
+                        } else {
+                            Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
+                        }
 
                         myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
                     }
@@ -765,7 +765,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public User getUser(String uid) {
-        for (User user: users) {
+        for (User user : users) {
             if (user.getUid().equals(uid))
                 return user;
         }
@@ -887,28 +887,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onClick(DialogInterface dialog, int which) {
                         if (!inviteMemberAdapter.isEmpty()) {
                             inviteMemberList = validateMembers(inviteMemberList);
-                                String organization;
-                                if (user.getOrganizationName() != null) {
-                                    organization = user.getOrganizationName();
-                                } else {
-                                    organization = "testOrg";
-                                }
-                                myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
-                                if (user.getUserActivities() != null) {
-                                    for (String member : inviteMemberList) {
-                                        user.getUserActivities().add(0, new UserActivity("CIR", member, user.getOrganizationName(), new Date()));
-                                        myViewModel.getDao().updateUser(user.getUid(), user);
-                                        for (User inviteMember : users) {
-                                            if (inviteMemberList.contains(inviteMember.getEmail())) {
-                                                if (inviteMember.getUserActivities() != null) {
-                                                    inviteMember.getUserActivities().add(0, new UserActivity("RIR", inviteMember.getFirstName() + " " + inviteMember.getLastName(), user.getOrganizationName(), new Date()));
-                                                    myViewModel.getDao().updateUser(inviteMember.getUid(), inviteMember);
-                                                }
+                            String organization;
+                            if (user.getOrganizationName() != null) {
+                                organization = user.getOrganizationName();
+                            } else {
+                                organization = "testOrg";
+                            }
+                            myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
+                            if (user.getUserActivities() != null) {
+                                for (String member : inviteMemberList) {
+                                    user.getUserActivities().add(0, new UserActivity("CIR", member, user.getOrganizationName(), new Date()));
+                                    myViewModel.getDao().updateUser(user.getUid(), user);
+                                    for (User inviteMember : users) {
+                                        if (inviteMemberList.contains(inviteMember.getEmail())) {
+                                            if (inviteMember.getUserActivities() != null) {
+                                                inviteMember.getUserActivities().add(0, new UserActivity("RIR", inviteMember.getFirstName() + " " + inviteMember.getLastName(), user.getOrganizationName(), new Date()));
+                                                myViewModel.getDao().updateUser(inviteMember.getUid(), inviteMember);
                                             }
                                         }
-
                                     }
+
                                 }
+                            }
 
                         }
 
@@ -932,11 +932,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private ArrayList<String> validateMembers(ArrayList<String> userEmails) {
         ArrayList<String> emails = new ArrayList<>();
-        for (User user : users){
+        for (User user : users) {
             emails.add(user.getEmail());
         }
-        for (String email : userEmails){
-            if(!emails.contains(email)){
+        for (String email : userEmails) {
+            if (!emails.contains(email)) {
                 userEmails.remove(email);
             }
         }

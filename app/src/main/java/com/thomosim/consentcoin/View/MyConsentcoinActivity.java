@@ -1,13 +1,16 @@
 package com.thomosim.consentcoin.View;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
@@ -47,7 +50,25 @@ public class MyConsentcoinActivity extends AppCompatActivity {
         returnIntent = new Intent();
     }
 
-    public void delete(View view) {
+    public void confirm(View view) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Are you sure that you want to withdraw your permission")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        delete();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    public void delete() {
         setResult(Activity.RESULT_OK, returnIntent);
         myViewModel.getDao().removeConsentcoin(consentcoin); // Delete Consentcoin
         consentcoinReference.setRevokedDate(new Date()); // Set rekovedDate for ConsentcoinReference
