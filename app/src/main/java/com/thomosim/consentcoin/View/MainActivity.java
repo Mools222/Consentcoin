@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.i("ZZZ", "onCreate");
     }
 
-    public void setupNavigationView(){
+    public void setupNavigationView() {
         // Setting up the Navigation View
         // https://material.io/develop/android/components/navigation-view/
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void setupRecyclerView(){
+    public void setupRecyclerView() {
         // Initialize references to views
         recyclerView = findViewById(R.id.rv_main_activity);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(adapterMainActivity);
     }
 
-    public void createSwipeFunction(){
+    public void createSwipeFunction() {
         // This ItemTouchHelper allows the user to delete UserActivity objects by swiping left or right
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }).attachToRecyclerView(recyclerView);
     }
 
-    public void assignTextViews(){
+    public void assignTextViews() {
         tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingInviteCounter.setText("0");
     }
 
-    public void assignMenuItems(){
+    public void assignMenuItems() {
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
         menuItemCreateRequest = navigationView.getMenu().findItem(R.id.nav_create_request);
         menuItemSentRequests = navigationView.getMenu().findItem(R.id.nav_active_requests);
@@ -184,8 +184,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * 1) It creates a new MyViewModel object and assigns it to myViewModel class variable.
      * 2) It gets an instance of every ObservableData[Name] class, all of which are subclasses of MyObservable, which contains the observe and setValue methods.
      * 3) It calls the observe method found in these classes and passes an anonymous inner class of the interface MyObserver as a parameter to each of them. This
-     * combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added to the list of MyObserver object
-     * inside the various instances of ObservableData[Name].
+     * combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver objects inside the
+     * various instances of ObservableData[Name].
      * 4) When creating the anonymous inner classes, we implement the onChange method found in the interface. The onChanged method is used to initialize and
      * update various data fields and to create and manipulate certain views.
      * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. In most cases the setValue method is called by the
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch(id) {
+        switch (id) {
             case R.id.nav_pending_requests:
                 processRequest();
                 break;
@@ -514,8 +514,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
 
                                     myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
+
+                                    if (user.getUserActivities() != null) {
+                                        user.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                                        myViewModel.getDao().updateUser(user.getUid(), user);
+                                    }
+
+                                    break;
                                 }
                             }
+
+                            if (user.getUserActivities() != null) {
+                                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                                myViewModel.getDao().updateUser(user.getUid(), user);
+                            }
+
                         } else {
                             Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
                         }
@@ -550,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if (permissionGranted) {
                 myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
-                        date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate()); // If the user chooses to give permission, create a Consentcoin
+                        date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded()); // If the user chooses to give permission, create a Consentcoin
 
                 ArrayList<UserActivity> userActivities = user.getUserActivities();
                 if (userActivities == null)
@@ -758,7 +771,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public User getUser(String uid) {
-        for (User user: users) {
+        for (User user : users) {
             if (user.getUid().equals(uid))
                 return user;
         }
@@ -887,15 +900,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!inviteMemberAdapter.isEmpty()) {
-                            if (validateMembers(inviteMemberList)) {
-                                String organization;
-                                if (uid != null) {
-                                    organization = uid;
-                                } else {
-                                    organization = "testOrg";
-                                }
-                                myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
+                            inviteMemberList = validateMembers(inviteMemberList);
+                            String organization;
+                            if (user.getOrganizationName() != null) {
+                                organization = user.getOrganizationName();
+                            } else {
+                                organization = "testOrg";
                             }
+                            myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
+                            if (user.getUserActivities() != null) {
+                                for (String member : inviteMemberList) {
+                                    user.getUserActivities().add(0, new UserActivity("CIR", member, user.getOrganizationName(), new Date()));
+                                    myViewModel.getDao().updateUser(user.getUid(), user);
+                                    for (User inviteMember : users) {
+                                        if (inviteMemberList.contains(inviteMember.getEmail())) {
+                                            if (inviteMember.getUserActivities() != null) {
+                                                inviteMember.getUserActivities().add(0, new UserActivity("RIR", inviteMember.getFirstName() + " " + inviteMember.getLastName(), user.getOrganizationName(), new Date()));
+                                                myViewModel.getDao().updateUser(inviteMember.getUid(), inviteMember);
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+
                         }
 
                     }
@@ -916,9 +944,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private boolean validateMembers(ArrayList<String> users) {
-        //TODO: add a check to see if users exists
-        return true;
+    private ArrayList<String> validateMembers(ArrayList<String> userEmails) {
+        ArrayList<String> emails = new ArrayList<>();
+        for (User user : users) {
+            emails.add(user.getEmail());
+        }
+        for (String email : userEmails) {
+            if (!emails.contains(email)) {
+                userEmails.remove(email);
+            }
+        }
+        return userEmails;
     }
 
     private void processInvites() {

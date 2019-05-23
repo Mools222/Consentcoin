@@ -110,6 +110,30 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
                 text = context.getString(R.string.text_revoked_part_one) + userActivity.getMemberName() + context.getString(R.string.text_revoked_part_two);
                 holder.tvActivityText.setText(text);
                 break;
+            case "CIR":
+                holder.tvActivity.setText("Invite request sent");
+                holder.tvActivityText.setText("You sent an invite request to " + userActivity.getMemberName() + ".");
+                break;
+            case "RIR":
+                holder.tvActivity.setText("Invite request received");
+                holder.tvActivityText.setText("You received an invite request from " + userActivity.getOrganizationName() + ".");
+                break;
+            case "AIR":
+                holder.tvActivity.setText("Invite request accepted");
+                holder.tvActivityText.setText("You have accepted an invite request from " + userActivity.getOrganizationName() + ".");
+                break;
+            case "RAIR":
+                holder.tvActivity.setText("Invite request accepted");
+                holder.tvActivityText.setText("Your invite request to " + userActivity.getMemberName() + " has been accepted.");
+                break;
+            case "DIR":
+                holder.tvActivity.setText("Invite request denied");
+                holder.tvActivityText.setText("You have denied an invite request from " + userActivity.getOrganizationName() + ".");
+                break;
+            case "RDIR":
+                holder.tvActivity.setText("Invite request denied");
+                holder.tvActivityText.setText("Your invite request to " + userActivity.getMemberName() + " has been denied.");
+                break;
         }
     }
 

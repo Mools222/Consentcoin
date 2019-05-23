@@ -11,11 +11,12 @@ public class Consentcoin implements Serializable {
     private Date creationDate;
     private Date permissionStartDate;
     private Date permissionEndDate;
+    private String personsIncluded;
 
     public Consentcoin() {
     }
 
-    public Consentcoin(String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate) {
+    public Consentcoin(String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded) {
         this.contractId = contractId;
         this.permissionType = permissionType;
         this.organizationUid = organizationUid;
@@ -23,6 +24,7 @@ public class Consentcoin implements Serializable {
         this.creationDate = creationDate;
         this.permissionStartDate = permissionStartDate;
         this.permissionEndDate = permissionEndDate;
+        this.personsIncluded = personsIncluded;
     }
 
     public String getContractId() {
@@ -79,5 +81,13 @@ public class Consentcoin implements Serializable {
 
     public void setPermissionEndDate(Date permissionEndDate) {
         this.permissionEndDate = permissionEndDate;
+    }
+
+    public String getPersonsIncluded() {
+        return personsIncluded;
+    }
+
+    public void setPersonsIncluded(String personsIncluded) {
+        this.personsIncluded = personsIncluded;
     }
 }

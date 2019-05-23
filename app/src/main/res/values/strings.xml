@@ -105,5 +105,8 @@
     <string name="contract_text_part_four">" purposes.\nThe permission will be valid in the time between\n"</string>
     <string name="contract_text_part_five">" and "</string>
 
+    <!-- Strings for invite dialog -->
+    <string name="invite_add_member_btn_txt">add</string>
+
 
 </resources>

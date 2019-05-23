@@ -66,7 +66,7 @@ public interface DAOInterface {
 
     void removeConsentcoinReference(ConsentcoinReference consentcoinReference);
 
-    void addConsentcoin(Context context, String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate);
+    void addConsentcoin(Context context, String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded);
 
     void setConsentcoinUrl(String storageUrl);
 
