@@ -886,7 +886,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!inviteMemberAdapter.isEmpty()) {
-                            if (validateMembers(inviteMemberList)) {
+                            inviteMemberList = validateMembers(inviteMemberList);
                                 String organization;
                                 if (user.getOrganizationName() != null) {
                                     organization = user.getOrganizationName();
@@ -909,7 +909,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                     }
                                 }
-                            }
+
                         }
 
                     }
@@ -930,9 +930,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private boolean validateMembers(ArrayList<String> users) {
-        //TODO: add a check to see if users exists
-        return true;
+    private ArrayList<String> validateMembers(ArrayList<String> userEmails) {
+        ArrayList<String> emails = new ArrayList<>();
+        for (User user : users){
+            emails.add(user.getEmail());
+        }
+        for (String email : userEmails){
+            if(!emails.contains(email)){
+                userEmails.remove(email);
+            }
+        }
+        return userEmails;
     }
 
     private void processInvites() {
