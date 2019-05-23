@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/vollkorn"
-            android:text="Create Request"
+            android:text="@string/tv_create_request"
             android:textSize="20sp" />
 
         <LinearLayout
@@ -54,13 +54,13 @@
                 android:id="@+id/rb_create_request_members"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Members" />
+                android:text="@string/rb_members" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/rb_create_request_members_and_wards"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Members and their wards" />
+                android:text="@string/rb_members_and_wards" />
         </RadioGroup>
 
         <TextView
@@ -73,13 +73,13 @@
             android:id="@+id/cb_create_request_commercial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Commercial use" />
+            android:text="@string/rb_commercial" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cb_create_request_noncommercial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Non-commercial use" />
+            android:text="@string/rb_non_commercial" />
 
         <TextView
             android:id="@+id/tv_create_request_duration"
@@ -91,7 +91,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Start date">
+            android:hint="@string/tf_start_date">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_create_request_start_date"
@@ -101,14 +101,14 @@
                 android:editable="false"
                 android:focusable="false"
                 android:onClick="startDate"
-                android:text="Click to change date" />
+                android:text="@string/tf_change_date" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="End date">
+            android:hint="@string/tf_end_date">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_create_request_end_date"
@@ -118,14 +118,14 @@
                 android:editable="false"
                 android:focusable="false"
                 android:onClick="endDate"
-                android:text="Click to change date" />
+                android:text="@string/tf_change_date" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/tv_create_request_persons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send this request to: " />
+            android:text="@string/tv_send_request_to" />
 
         <RadioGroup
             android:id="@+id/rg_create_request_receiver"
@@ -138,20 +138,20 @@
                 android:id="@+id/rb_create_request_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All members" />
+                android:text="@string/rb_all_members" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/rb_create_request_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Selected members" />
+                android:text="@string/rb_selected_members" />
         </RadioGroup>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search for specific user">
+            android:hint="@string/tf_search_users">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_create_request"
@@ -175,7 +175,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="send"
-                android:text="Send"
+                android:text="@string/button_send"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <com.google.android.material.button.MaterialButton
@@ -183,7 +183,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="cancel"
-                android:text="Cancel"
+                android:text="@string/button_cancel"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
         </LinearLayout>
 
