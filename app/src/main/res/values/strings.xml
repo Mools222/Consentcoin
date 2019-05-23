@@ -3,6 +3,7 @@
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
 
+    <!-- MainActivity -->
     <!-- Generals -->
 
     <string name="member">Member</string>
@@ -44,7 +45,53 @@
     <string name="toast_no_consentcoins">You have no Consentcoins</string>
     <string name="toast_you_have_no">"You have no "</string>
 
-    <!-- Strings used in ContractTypeEnum -->
+    <!-- Strings in arrays -->
+
+    <string name="array_id">"ID: "</string>
+    <string name="array_member">" Member: "</string>
+    <string name="array_org">" Org: "</string>
+
+    <!-- AdapterMainActivity -->
+
+    <string name="dot">.</string>
+
+    <string name="toast_swipe_to_delete">Hint: Swipe to delete</string>
+
+    <string name="text_user_created">User created</string>
+    <string name="text_your_user_created">Your user was created.</string>
+    <string name="text_request_sent">Permission request sent</string>
+    <string name="text_your_request_sent">"You sent a permission request to "</string>
+    <string name="text_request_received">Permission request received</string>
+    <string name="text_you_received_request">"You received a permission request from "</string>
+    <string name="text_consentcoin_received">Consentcoin received</string>
+    <string name="text_user_received_consentcoin">"You received a Consentcoin by accepting the permission request from "</string>
+    <string name="text_org_received_consentcoin">"You received a Consentcoin as "</string>
+    <string name="text_user_accepted_request">" accepted your permission request."</string>
+    <string name="text_permission_denied">Permission request denied</string>
+    <string name="text_request_denied_user">"You denied the permission request from "</string>
+    <string name="text_request_denied_org">" denied your permission request."</string>
+    <string name="text_consentcoin_revoked">Consentcoin revoked</string>
+    <string name="text_revoked_part_one">"Your Consentcoin agreement with "</string>
+    <string name="text_revoked_part_two">" was revoked."</string>
+
+    <!-- AdapterProcess request -->
+
+    <string name="text_sender">"Sender: "</string>
+    <string name="text_received">"Received: "</string>
+
+    <!-- CreateRequestActivity -->
+
+    <string name="toast_select_purpose">Please select purpose(s)</string>
+    <string name="toast_request_sent">Request(s) sent!</string>
+
+    <!-- MyConsentcoinActivity -->
+
+    <string name="consentcoin_value_id">"ID: "</string>
+    <string name="consentcoin_value_contract_type">"\nContractType: "</string>
+    <string name="consentcoin_value_mem_id">"\nMemID: "</string>
+    <string name="consentcoin_value_org_id">"\nOrgID: " </string>
+
+    <!-- ContractTypeEnum -->
 
     <string name="contract_type_commercial">commercial</string>
     <string name="contract_type_non_commercial">non commercial</string>
@@ -55,12 +102,6 @@
     <string name="contract_text_part_three">"\npermission to use images og myself and my wards for "</string>
     <string name="contract_text_part_four">" purposes.\nThe permission will be valid in the time between\n"</string>
     <string name="contract_text_part_five">" and "</string>
-
-    <!-- Strings in arrays -->
-
-    <string name="array_id">"ID: "</string>
-    <string name="array_member">" Member: "</string>
-    <string name="array_org">" Org: "</string>
 
 
 </resources>

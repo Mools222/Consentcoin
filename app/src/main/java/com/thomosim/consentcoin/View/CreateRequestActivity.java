@@ -194,7 +194,7 @@ public class CreateRequestActivity extends AppCompatActivity {
         personsIncluded = permissionRegardsMembersOnly ? "1" : "2"; // 1 = members only. 2 = members + wards
 
         if (permissionType == null)
-            Toast.makeText(this, "Please select purpose(s)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_select_purpose), Toast.LENGTH_SHORT).show();
         else {
             if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members, we iterate through the members list and perform the necessary tasks
                 sendRequests(members);
@@ -202,7 +202,7 @@ public class CreateRequestActivity extends AppCompatActivity {
                 ArrayList<User> checkedUsers = adapterCreateRequest.getCheckedUsers();
                 sendRequests(checkedUsers);
             }
-            Toast.makeText(this, "Request(s) sent!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_request_sent), Toast.LENGTH_SHORT).show();
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
         }

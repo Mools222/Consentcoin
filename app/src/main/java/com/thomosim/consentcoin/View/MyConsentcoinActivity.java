@@ -42,7 +42,12 @@ public class MyConsentcoinActivity extends AppCompatActivity {
         currentUser = (User) startIntent.getSerializableExtra("CU");
         otherUser = (User) startIntent.getSerializableExtra("OU");
 
-        textView.setText("ID: " + consentcoin.getContractId() + "\nContractType: " + consentcoin.getPermissionType() + "\nMemID: " + consentcoin.getMemberUid() + "\nOrgID: " + consentcoin.getOrganizationUid());
+        String text = getString(R.string.consentcoin_value_id) + consentcoin.getContractId() +
+                getString(R.string.consentcoin_value_contract_type) + consentcoin.getPermissionType() +
+                getString(R.string.consentcoin_value_mem_id) + consentcoin.getMemberUid() +
+                getString(R.string.consentcoin_value_org_id) + consentcoin.getOrganizationUid();
+
+        textView.setText(text);
 
         returnIntent = new Intent();
     }

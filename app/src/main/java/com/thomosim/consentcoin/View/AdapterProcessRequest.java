@@ -66,8 +66,10 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         holder.tvId.setText(String.valueOf(position + 1));
-        holder.tvSender.setText("Sender: " + permissionRequest.getOrganizationName());
-        holder.tvDate.setText("Received: " + simpleDateFormat.format(date));
+        String text = context.getString(R.string.text_sender) + permissionRequest.getOrganizationName();
+        holder.tvSender.setText(text);
+        text = context.getString(R.string.text_received) + simpleDateFormat.format(date);
+        holder.tvDate.setText(text);
     }
 
     @Override
