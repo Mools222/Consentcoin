@@ -471,9 +471,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (requestCode) {
             case REQUEST_CODE_SIGN_IN:
                 if (resultCode == RESULT_OK) { // Sign-in succeeded
-                    Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.toast_signed_in), Toast.LENGTH_SHORT).show();
                 } else if (resultCode == RESULT_CANCELED) { // Sign in was canceled by the user, finish the activity
-                    Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.toast_sign_in_cancelled), Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 break;
@@ -481,14 +481,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (resultCode == RESULT_OK) {
                     createOrDenyConsentcoin(data);
                 } else if (resultCode == RESULT_CANCELED) {
-                    Toast.makeText(this, "Permission request not yet processed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.toast_pr_not_processed), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case REQUEST_CODE_MY_CONSENTCOINS:
                 if (resultCode == RESULT_OK) {
-                    Toast.makeText(this, "Consentcoin RESULT_OK", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.toast_concentcoin_ok), Toast.LENGTH_SHORT).show();
                 } else if (resultCode == RESULT_CANCELED) {
-                    Toast.makeText(this, "Consentcoin RESULT_CANCELED", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.toast_concentcoin_cancelled), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case REQUEST_CODE_PROCESS_INVITE:
@@ -499,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
 
                         if (inviteAccepted) {
-                            Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
 
                             for (User user : users) {
                                 if (user.getUid().equals(inviteRequest.getOrganization())) {
@@ -530,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
 
                         } else {
-                            Toast.makeText(this, "Invite declined", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
                         }
 
                         myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
@@ -579,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 organization.setUserActivities(userActivities);
                 myViewModel.getDao().updateUser(organization.getUid(), organization);
 
-                Toast.makeText(this, "Permission given", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_permission_given), Toast.LENGTH_SHORT).show();
             } else {
                 ArrayList<UserActivity> userActivities = user.getUserActivities();
                 if (userActivities == null)
@@ -595,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 organization.setUserActivities(userActivities);
                 myViewModel.getDao().updateUser(organization.getUid(), organization);
 
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_permission_denied, Toast.LENGTH_SHORT).show();
             }
 
             myViewModel.getDao().removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
@@ -624,15 +624,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         final Context CONTEXT = this;
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Specify user details")
+                .setTitle(getString(R.string.title_specify_user_details))
                 .setView(dialogView)
-                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.create), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String userType = chosenUserType == 0 ? "Member" : "Organization";
+                        String userType = chosenUserType == 0 ? getString(R.string.member) : getString(R.string.organization);
                         String organizationName = textInputEditText.getText().toString();
                         myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName);
-                        Toast.makeText(CONTEXT, "User details saved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setCancelable(false)
@@ -656,7 +656,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             intent.putExtra("M", members);
             startActivityForResult(intent, REQUEST_CODE_CREATE_REQUEST);
         } else
-            Toast.makeText(this, "Add members before creating a request", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_add_users_to_request), Toast.LENGTH_SHORT).show();
     }
 
     public void processRequest() {
@@ -670,9 +670,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(adapterProcessRequest);
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Process request(s)")
+                .setTitle(getString(R.string.title_process_request))
                 .setView(dialogView)
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -685,20 +685,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[pendingPermissionRequests.size()];
             for (int i = 0; i < pendingPermissionRequests.size(); i++) {
                 PermissionRequest permissionRequest = pendingPermissionRequests.get(i);
-                array[i] = "ID: " + permissionRequest.getId() + " Member: " + permissionRequest.getMemberUid();
+                array[i] = getString(R.string.array_member) + permissionRequest.getMemberName();
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
             final Context CONTEXT = this;
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
-                    .setTitle("Sent permission requests")
+                    .setTitle(getString(R.string.title_requests_sent))
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(CONTEXT, "Yep", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, getString(R.string.yep), Toast.LENGTH_SHORT).show();
                         }
                     })
-                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         }
@@ -710,7 +710,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             listView.setDividerHeight(5);
             alertDialog.show();
         } else
-            Toast.makeText(this, "You have no active permission requests", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_no_active_requests), Toast.LENGTH_SHORT).show();
     }
 
     public void displayConsentcoinReferences() {
@@ -718,21 +718,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[consentcoinReferences.size()];
             for (int i = 0; i < consentcoinReferences.size(); i++) {
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-                array[i] = "ID: " + consentcoinReference.getContractId() + " Member: " + consentcoinReference.getMemberUid() + " Org: " + consentcoinReference.getOrganizationUid();
-            }
+                //array[i] = getString(R.string.array_id) + consentcoinReference.getContractId() + getString(R.string.array_member) + consentcoinReference.getMemberUid() + getString(R.string.array_org) + consentcoinReference.getOrganizationUid();
+                for (User u: users) {
+                    if (u.getUid().equals(consentcoinReference.getOrganizationUid())){
+                        array[i] = getString(R.string.array_org) + u.getOrganizationName();
+                    }
+                }
+
+                }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
             final Context CONTEXT = this;
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
-                    .setTitle("My Consenscoins")
+                    .setTitle(getString(R.string.title_my_consentcoins))
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             myViewModel.getDao().setConsentcoinUrl(consentcoinReferences.get(which).getStorageUrl());
-                            Toast.makeText(CONTEXT, "Getting Consentcoin. Please wait.", Toast.LENGTH_SHORT).show(); // TODO Add something that prevents the user from clicking on stuff while the Consentcoin is being downloaded
+                            Toast.makeText(CONTEXT, getString(R.string.toast_getting_consentcoins), Toast.LENGTH_SHORT).show(); // TODO Add something that prevents the user from clicking on stuff while the Consentcoin is being downloaded
                         }
                     })
-                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         }
@@ -744,7 +750,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             listView.setDividerHeight(5);
             alertDialog.show();
         } else
-            Toast.makeText(this, "You have no Consenscoins", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_no_consentcoins), Toast.LENGTH_SHORT).show();
     }
 
     public void displayConsentcoin(Consentcoin consentcoin) {
@@ -772,15 +778,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return null;
     }
 
-    public void addOrganizationOrMember(final String userTypeInput) {
+    public void addOrganizationOrMember(final String userType) {
         final ArrayList<User> organizations = new ArrayList<>();
         final ArrayList<User> members = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
-            if (user.getType().equals("Organization") && userTypeInput.equals("organization"))
+            if (user.getType().equals("Organization") && userType.equals("organization"))
                 organizations.add(user);
-            else if (user.getType().equals("Member") && userTypeInput.equals("member"))
+            else if (user.getType().equals("Member") && userType.equals("member"))
                 members.add(user);
         }
 
@@ -788,9 +794,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_dialog_add_organization);
         final Context CONTEXT = this;
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Add " + userTypeInput)
+                .setTitle(getString(R.string.title_add_with_space) + userType)
                 .setView(dialogView)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         boolean existingOrganizationOrMember = false;
@@ -798,7 +804,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String email = textInputEditText.getText().toString();
                         User organizationOrMember = null;
 
-                        if (userTypeInput.equals("organization")) // If a member is trying to add an organization, check if the organization exists
+                        if (userType.equals("organization")) // If a member is trying to add an organization, check if the organization exists
                             for (int i = 0; i < organizations.size(); i++) {
                                 organizationOrMember = organizations.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -806,7 +812,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     break;
                                 }
                             }
-                        else if (userTypeInput.equals("member")) // If an organization is trying to add a member, check if the member exists
+                        else if (userType.equals("member")) // If an organization is trying to add a member, check if the member exists
                             for (int i = 0; i < members.size(); i++) {
                                 organizationOrMember = members.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -823,12 +829,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 associatedUsersUids.add(organizationOrMember.getUid());
                             user.setAssociatedUsersUids(associatedUsersUids);
                             myViewModel.getDao().updateUser(uid, user);
-                            Toast.makeText(CONTEXT, userTypeInput.substring(0, 1).toUpperCase() + userTypeInput.substring(1) + " added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " added", Toast.LENGTH_SHORT).show();
                         } else // If the organization or member does not exist, display a toast
-                            Toast.makeText(CONTEXT, userTypeInput.substring(0, 1).toUpperCase() + userTypeInput.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -841,17 +847,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (associatedUsersUids != null) {
             String[] array = new String[associatedUsersUids.size()];
-            associatedUsersUids.toArray(array);
+            for (int i = 0; i < array.length; i++) {
+                for (User u: users) {
+                    if(u.getUid().equals(associatedUsersUids.get(i))) {
+                        array[i] = userType.equals("member") ? u.getFirstName() + getString(R.string.space) +
+                                u.getMiddleName() + getString(R.string.space) + u.getLastName() : u.getOrganizationName();
+                    }
+                }
+            }
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
-                    .setTitle("My " + userType)
+                    .setTitle(getString(R.string.title_my_with_space) + userType)
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         }
                     })
-                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         }
@@ -863,7 +877,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             listView.setDividerHeight(5);
             alertDialog.show();
         } else
-            Toast.makeText(this, "You have no " + userType, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_you_have_no) + userType, Toast.LENGTH_SHORT).show();
     }
 
     // TODO Maybe add a list of active invites for the organization (like the "Active Request(s)" in the menu)
@@ -880,9 +894,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         listMember.setVisibility(View.VISIBLE);
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Invite member(s)")
+                .setTitle(getString(R.string.title_invite_members))
                 .setView(inviteDialogView)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!inviteMemberAdapter.isEmpty()) {
@@ -914,7 +928,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -954,9 +968,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(adapterProcessInvite);
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Process createInvite(s)")
+                .setTitle(getString(R.string.title_create_invites))
                 .setView(dialogView)
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }

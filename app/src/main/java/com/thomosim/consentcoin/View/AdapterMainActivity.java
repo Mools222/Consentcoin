@@ -38,7 +38,7 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "Hint: Swipe to delete", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.toast_swipe_to_delete), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -63,43 +63,52 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
         Date date = userActivity.getDate();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         holder.tvDate.setText(simpleDateFormat.format(date));
+        String text;
 
         switch (userActivity.getActivityCode()) {
             case "UC":
-                holder.tvActivity.setText("User created");
-                holder.tvActivityText.setText("Your user was created.");
+                holder.tvActivity.setText(context.getString(R.string.text_user_created));
+                holder.tvActivityText.setText(context.getString(R.string.text_your_user_created));
                 break;
             case "CPR":
-                holder.tvActivity.setText("Permission request sent");
-                holder.tvActivityText.setText("You sent a permission request to " + userActivity.getMemberName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_request_sent));
+                text = context.getString(R.string.text_your_request_sent) + userActivity.getMemberName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "RPR":
-                holder.tvActivity.setText("Permission request received");
-                holder.tvActivityText.setText("You received a permission request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_request_received));
+                text = context.getString(R.string.text_you_received_request) + userActivity.getOrganizationName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "APR":
-                holder.tvActivity.setText("Consentcoin received");
-                holder.tvActivityText.setText("You received a Consentcoin by accepting the permission request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_consentcoin_received));
+                text = context.getString(R.string.text_user_received_consentcoin) + userActivity.getOrganizationName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "RAPR":
-                holder.tvActivity.setText("Consentcoin received");
-                holder.tvActivityText.setText("You received a Consentcoin as " + userActivity.getMemberName() + " accepted your permission request.");
+                holder.tvActivity.setText(context.getString(R.string.text_consentcoin_received));
+                text = context.getString(R.string.text_org_received_consentcoin) + userActivity.getMemberName() + context.getString(R.string.text_user_accepted_request);
+                holder.tvActivityText.setText(text);
                 break;
             case "DPR":
-                holder.tvActivity.setText("Permission request denied");
-                holder.tvActivityText.setText("You denied the permission request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_permission_denied));
+                text = context.getString(R.string.text_request_denied_user) + userActivity.getOrganizationName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "RDPR":
-                holder.tvActivity.setText("Permission request denied");
-                holder.tvActivityText.setText(userActivity.getMemberName() + " denied your permission request.");
+                holder.tvActivity.setText(R.string.text_permission_denied);
+                text = userActivity.getMemberName() + context.getString(R.string.text_request_denied_org);
+                holder.tvActivityText.setText(text);
                 break;
             case "DC":
-                holder.tvActivity.setText("Consentcoin revoked");
-                holder.tvActivityText.setText("Your Consentcoin agreement with " + userActivity.getOrganizationName() + " was revoked.");
+                holder.tvActivity.setText(context.getString(R.string.text_consentcoin_revoked));
+                text = context.getString(R.string.text_revoked_part_one) + userActivity.getOrganizationName() + context.getString(R.string.text_revoked_part_two);
+                holder.tvActivityText.setText(text);
                 break;
             case "RDC":
-                holder.tvActivity.setText("Consentcoin revoked");
-                holder.tvActivityText.setText("Your Consentcoin agreement with " + userActivity.getMemberName() + " was revoked.");
+                holder.tvActivity.setText(context.getString(R.string.text_consentcoin_revoked));
+                text = context.getString(R.string.text_revoked_part_one) + userActivity.getMemberName() + context.getString(R.string.text_revoked_part_two);
+                holder.tvActivityText.setText(text);
                 break;
             case "CIR":
                 holder.tvActivity.setText("Invite request sent");
