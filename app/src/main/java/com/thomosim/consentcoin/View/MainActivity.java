@@ -672,7 +672,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[pendingPermissionRequests.size()];
             for (int i = 0; i < pendingPermissionRequests.size(); i++) {
                 PermissionRequest permissionRequest = pendingPermissionRequests.get(i);
-                array[i] = getString(R.string.array_id) + permissionRequest.getId() + getString(R.string.array_member) + permissionRequest.getMemberUid();
+                array[i] = getString(R.string.array_member) + permissionRequest.getMemberName();
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
@@ -705,8 +705,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[consentcoinReferences.size()];
             for (int i = 0; i < consentcoinReferences.size(); i++) {
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-                array[i] = getString(R.string.array_id) + consentcoinReference.getContractId() + getString(R.string.array_member) + consentcoinReference.getMemberUid() + getString(R.string.array_org) + consentcoinReference.getOrganizationUid();
-            }
+                //array[i] = getString(R.string.array_id) + consentcoinReference.getContractId() + getString(R.string.array_member) + consentcoinReference.getMemberUid() + getString(R.string.array_org) + consentcoinReference.getOrganizationUid();
+                for (User u: users) {
+                    if (u.getUid().equals(consentcoinReference.getOrganizationUid())){
+                        array[i] = getString(R.string.array_org) + u.getOrganizationName();
+                    }
+                }
+
+                }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
             final Context CONTEXT = this;
@@ -828,7 +834,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (associatedUsersUids != null) {
             String[] array = new String[associatedUsersUids.size()];
-            associatedUsersUids.toArray(array);
+            for (int i = 0; i < array.length; i++) {
+                for (User u: users) {
+                    if(u.getUid().equals(associatedUsersUids.get(i))) {
+                        array[i] = userType.equals("member") ? u.getFirstName() + getString(R.string.space) +
+                                u.getMiddleName() + getString(R.string.space) + u.getLastName() : u.getOrganizationName();
+                    }
+                }
+            }
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)

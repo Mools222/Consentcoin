@@ -14,6 +14,7 @@
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="space">" "</string>
 
     <!-- AlertDialog titles -->
 
@@ -24,7 +25,7 @@
     <string name="title_add_with_space">"Add "</string>
     <string name="title_my_with_space">"My "</string>
     <string name="title_invite_members">Invite member(s)</string>
-    <string name="title_create_invites">Process createInvite(s)</string>
+    <string name="title_create_invites">Pending invites</string>
 
 
     <!-- Toast messages -->
@@ -49,7 +50,8 @@
 
     <string name="array_id">"ID: "</string>
     <string name="array_member">" Member: "</string>
-    <string name="array_org">" Org: "</string>
+    <string name="array_org">" Organization: "</string>
+    <string name="array_end_date">" End Date: "</string>
 
     <!-- AdapterMainActivity -->
 
