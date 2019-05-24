@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 createInvite();
                 break;
             case R.id.nav_add_organization:
-                addOrganizationOrMember("Organization");
+                addOrganizationOrMember("organization");
                 break;
             case R.id.nav_add_member:
                 addOrganizationOrMember("member");
