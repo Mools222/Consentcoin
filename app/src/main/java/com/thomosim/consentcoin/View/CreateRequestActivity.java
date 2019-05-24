@@ -212,7 +212,7 @@ public class CreateRequestActivity extends AppCompatActivity {
         Date date = new Date();
         for (int i = 0; i < memberList.size(); i++) {
             User member = memberList.get(i);
-            String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
+            String memberName = member.getFirstName() + " " + (member.getMiddleName() == null ? " " : member.getMiddleName()) + member.getLastName();
             myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
             ArrayList<UserActivity> userActivities = organization.getUserActivities();

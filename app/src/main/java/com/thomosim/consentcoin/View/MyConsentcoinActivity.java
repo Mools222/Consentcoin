@@ -29,6 +29,8 @@ public class MyConsentcoinActivity extends AppCompatActivity {
     private MyViewModel myViewModel;
     private User currentUser;
     private User otherUser;
+    private User member;
+    private User organization;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +47,18 @@ public class MyConsentcoinActivity extends AppCompatActivity {
         currentUser = (User) startIntent.getSerializableExtra("CU");
         otherUser = (User) startIntent.getSerializableExtra("OU");
 
+        if (currentUser.getType().equals("Member")) {
+            member = currentUser;
+            organization = otherUser;
+        } else {
+            member = otherUser;
+            organization = currentUser;
+        }
+
         String text = getString(R.string.consentcoin_value_id) + consentcoin.getContractId() +
-                getString(R.string.consentcoin_value_contract_type) + consentcoin.getPermissionType() +
-                getString(R.string.consentcoin_value_mem_id) + consentcoin.getMemberUid() +
-                getString(R.string.consentcoin_value_org_id) + consentcoin.getOrganizationUid();
+                getString(R.string.consentcoin_value_contract_type) + consentcoin.getPermissionType().getType() +
+                getString(R.string.consentcoin_value_mem_id) + member.getFirstName() + " " + (member.getMiddleName() == null ? " " : member.getMiddleName()) + member.getLastName() +
+                getString(R.string.consentcoin_value_org_id) + organization.getOrganizationName();
 
         textView.setText(text);
 
@@ -83,16 +93,6 @@ public class MyConsentcoinActivity extends AppCompatActivity {
     }
 
     public void addUserActivity() {
-        User member;
-        User organization;
-        if (currentUser.getType().equals("Member")) {
-            member = currentUser;
-            organization = otherUser;
-        } else {
-            member = otherUser;
-            organization = currentUser;
-        }
-
         Date date = new Date();
         String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
         ArrayList<UserActivity> userActivities = organization.getUserActivities();
