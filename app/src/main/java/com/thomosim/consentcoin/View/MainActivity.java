@@ -97,8 +97,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         assignMenuItems();
 
         setupViewModel();
-
-        Log.i("ZZZ", "onCreate");
     }
 
     public void setupNavigationView() {
@@ -173,15 +171,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         menuItemAddMember = navigationView.getMenu().findItem(R.id.nav_add_member);
         menuItemMyOrganizations = navigationView.getMenu().findItem(R.id.nav_my_organizations);
         menuItemMyMembers = navigationView.getMenu().findItem(R.id.nav_my_members);
-
-        Log.i("ZZZ", "onCreate");
-
-        setupViewModel();
     }
 
     /**
      * This method sets up the view model.
-     * 1) It creates a new MyViewModel object and assigns it to myViewModel class variable.
+     * 1) It creates a new MyViewModel object and assigns it to myViewModel instance variable.
      * 2) It gets an instance of every ObservableData[Name] class, all of which are subclasses of MyObservable, which contains the observe and setValue methods.
      * 3) It calls the observe method found in these classes and passes an anonymous inner class of the interface MyObserver as a parameter to each of them. This
      * combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver objects inside the
@@ -333,35 +327,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    /**
+     * This method adds the AuthStateListener
+     */
+
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("ZZZ", "onResume + addAuthStateListener");
-
         myViewModel.getDao().addAuthStateListener();
     }
 
-    // onResume adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should remove both the AuthStateListener and EventListeners, so they are not added multiple times when the onResume method is called
+    /**
+     * The onResume method adds the AuthStateListener, which (if the user is signed in) adds the different EventListeners. Therefore the onPause method should
+     * remove both the AuthStateListener and EventListeners, to ensure they are not added multiple times when the onResume method is called
+     */
+
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i("ZZZ", "onPause + removeAuthStateListener + removeDatabaseListener");
-
         myViewModel.getDao().removeAuthStateListener();
         myViewModel.getDao().removeDatabaseListener();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("ZZZ", "onStop");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        myViewModel = null;
-        Log.i("ZZZ", "onDestroy");
     }
 
     /**
@@ -646,8 +631,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for (int i = 0; i < users.size(); i++) {
                 User user = users.get(i);
                 for (int j = 0; j < associatedUsersUids.size(); j++) {
-                    if (user.getUid().equals(associatedUsersUids.get(j)))
+                    if (user.getUid().equals(associatedUsersUids.get(j))) {
                         members.add(user);
+                        break;
+                    }
                 }
             }
 

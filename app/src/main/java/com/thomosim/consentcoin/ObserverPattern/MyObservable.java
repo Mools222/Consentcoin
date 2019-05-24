@@ -8,8 +8,6 @@ public class MyObservable<T> {
     }
 
     public void observe(MyObserver<T> myObserver) {
-        if (myObserver == null)
-            throw new NullPointerException();
         this.myObserver = myObserver;
     }
 }
