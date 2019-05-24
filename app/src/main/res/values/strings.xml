@@ -39,6 +39,23 @@
     <string name="tv_firstname_lastname">Firstname Lastname</string>
     <string name="tv_default_email">email@email.com</string>
 
+    <!-- Menu items -->
+
+    <string name="item_pending_requests">Pending Requests</string>
+    <string name="item_active_requests">Active Requests</string>
+    <string name="item_create_requests">Create Request</string>
+    <string name="item_my_consentcoins">My Consentcoins</string>
+    <string name="item_pending_invites">Pending Invites</string>
+    <string name="item_invite">Invite</string>
+    <string name="item_add_organization">Add Organization</string>
+    <string name="item_add_member">Add Member</string>
+    <string name="item_my_organizations">My Organizations</string>
+    <string name="item_my_members">My Members</string>
+    <string name="item_settings">Settings</string>
+    <string name="item_log_out">Log out</string>
+
+    <string name="title_communicate">Communicate</string>
+
 
     <!-- MainActivity -->
     <!-- Generals -->
@@ -56,9 +73,9 @@
     <!-- AlertDialog titles -->
 
     <string name="title_specify_user_details">Specify user details</string>
-    <string name="title_process_request">Process request(s)</string>
+    <string name="title_process_request">pending request(s)</string>
     <string name="title_requests_sent">Sent permission requests</string>
-    <string name="title_my_consentcoins">My Consenscoins</string>
+    <string name="title_my_consentcoins">My Consentcoins</string>
     <string name="title_add_with_space">"Add "</string>
     <string name="title_my_with_space">"My "</string>
     <string name="title_invite_members">Invite member(s)</string>
