@@ -22,7 +22,7 @@
         android:layout_marginEnd="30dp"
         android:layout_marginRight="30dp"
         android:onClick="readMore"
-        android:text="Read more"
+        android:text="@string/button_read_more"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.button.MaterialButton
@@ -34,7 +34,7 @@
         android:layout_marginEnd="30dp"
         android:layout_marginRight="30dp"
         android:onClick="accept"
-        android:text="Accept"
+        android:text="@string/button_accept"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.button.MaterialButton
@@ -46,7 +46,7 @@
         android:layout_marginEnd="30dp"
         android:layout_marginRight="30dp"
         android:onClick="deny"
-        android:text="Deny"
+        android:text="@string/button_deny"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.button.MaterialButton

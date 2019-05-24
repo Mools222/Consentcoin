@@ -3,6 +3,61 @@
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
 
+    <!-- layout.xml -->
+
+    <!-- Buttons -->
+    <string name="rb_member">Member</string>
+    <string name="rb_organization">Organization</string>
+    <string name="rb_members">Members</string>
+    <string name="rb_members_and_wards">Members and their wards</string>
+    <string name="rb_commercial">Commercial use</string>
+    <string name="rb_non_commercial">Non-commercial use</string>
+    <string name="rb_all_members">All members</string>
+    <string name="rb_selected_members">Selected members</string>
+    <string name="button_send">Send</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_accept">Accept</string>
+    <string name="button_deny">Deny</string>
+    <string name="button_decide_later">Decide later</string>
+    <string name="button_read_more">Read more</string>
+    <string name="button_back">Back</string>
+
+    <!-- TextView, ImageView and TextFields -->
+
+    <string name="tv_create_request">Create Request</string>
+    <string name="tf_start_date">End Date</string>
+    <string name="tf_end_date">Start Date</string>
+    <string name="tf_change_date">Click to change date</string>
+    <string name="tv_send_request_to">"Send this request to: "</string>
+    <string name="tf_search_users">Search for specific user</string>
+    <string name="tf_enter_organisation_mail">Enter organization e-mail</string>
+    <string name="tf_enter_organization">Enter organization name</string>
+
+    <string name="text_navigation_header">Navigation header</string>
+
+    <string name="tv_firstname_lastname">Firstname Lastname</string>
+    <string name="tv_default_email">email@email.com</string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+
+
+
     <!-- MainActivity -->
     <!-- Generals -->
 

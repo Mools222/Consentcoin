@@ -9,7 +9,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter organization e-mail">
+        android:hint="@string/tf_enter_organisation_mail">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_dialog_add_organization"

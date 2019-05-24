@@ -17,20 +17,20 @@
             android:id="@+id/rb_create_user_member"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Member" />
+            android:text="@string/member" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/rb_create_user_organization"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Organization" />
+            android:text="@string/organization" />
     </RadioGroup>
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter organization name">
+        android:hint="@string/tf_enter_organization">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_create_request"
