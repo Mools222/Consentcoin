@@ -134,8 +134,8 @@ public class CreateRequestActivity extends AppCompatActivity {
                     User member = members.get(i);
                     if (member.getEmail().contains(s))
                         membersSearch.add(member);
-                    adapterCreateRequest.updateData(membersSearch);
                 }
+                adapterCreateRequest.updateData(membersSearch);
             }
         });
 
@@ -181,7 +181,6 @@ public class CreateRequestActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    // TODO Create checks to make sure the user picked the purpose(s), correct dates, etc before sending.
     public void send(View view) {
         if (materialCheckBoxCommercial.isChecked() && materialCheckBoxNoncommercial.isChecked())
             permissionType = ContractTypeEnum.NON_COMMERCIAL_AND_COMMERCIAL_USE; // Commercial + non-commercial
@@ -192,8 +191,12 @@ public class CreateRequestActivity extends AppCompatActivity {
 
         personsIncluded = permissionRegardsMembersOnly ? "1" : "2"; // 1 = members only. 2 = members + wards
 
-        if (permissionType == null)
+        if (permissionType == null) // Check if permission type has been chosen
             Toast.makeText(this, getString(R.string.toast_select_purpose), Toast.LENGTH_SHORT).show();
+        else if (!sendRequestToAllMembers && adapterCreateRequest.getCheckedUsers().size() == 0) // Check if at least one receiver has been chosen
+            Toast.makeText(this, getString(R.string.toast_select_member), Toast.LENGTH_SHORT).show();
+        else if (startDate.compareTo(endDate) != -1) // Check if the end date comes after the start date
+            Toast.makeText(this, getString(R.string.toast_select_date), Toast.LENGTH_SHORT).show();
         else {
             if (sendRequestToAllMembers) { // If the organization wishes to send requests out to all of its associated members, we iterate through the members list and perform the necessary tasks
                 sendRequests(members);
@@ -211,7 +214,7 @@ public class CreateRequestActivity extends AppCompatActivity {
         Date date = new Date();
         for (int i = 0; i < memberList.size(); i++) {
             User member = memberList.get(i);
-            String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
+            String memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
             myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
             ArrayList<UserActivity> userActivities = organization.getUserActivities();

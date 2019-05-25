@@ -49,7 +49,6 @@ import java.util.Date;
 
 // TODO Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
 // TODO Make all named constants (keyword final) uppercase
-// TODO Use tasks to make sure the listeners are done reading the data before moving on (https://stackoverflow.com/questions/38966056/android-wait-for-firebase-valueeventlistener/40594607) - if that's even possible
 // TODO Add a nice UI for "Active Request(s)"
 // TODO Add a nice UI for "My Consentcoins"
 // TODO Add a nice UI for "My Members"
