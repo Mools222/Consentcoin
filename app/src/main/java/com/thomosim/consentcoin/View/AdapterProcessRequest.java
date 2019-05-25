@@ -23,13 +23,11 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
     private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
 
     public class ViewHolderProcessRequest extends RecyclerView.ViewHolder {
-        public TextView tvId;
         public TextView tvSender;
         public TextView tvDate;
 
         public ViewHolderProcessRequest(@NonNull View v) {
             super(v);
-            tvId = v.findViewById(R.id.tv_process_request_id);
             tvSender = v.findViewById(R.id.tv_process_request_sender);
             tvDate = v.findViewById(R.id.tv_process_request_date);
 
@@ -65,11 +63,10 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
         Date date = permissionRequest.getCreationDate();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        holder.tvId.setText(String.valueOf(position + 1));
         String text = context.getString(R.string.text_sender) + permissionRequest.getOrganizationName();
         holder.tvSender.setText(text);
         text = context.getString(R.string.text_received) + simpleDateFormat.format(date);
-        holder.tvDate.setText(text);
+        //holder.tvDate.setText(text);
     }
 
     @Override

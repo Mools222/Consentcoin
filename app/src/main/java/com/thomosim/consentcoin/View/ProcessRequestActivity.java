@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -41,11 +40,9 @@ public class ProcessRequestActivity extends AppCompatActivity {
             PermissionRequest permissionRequest = (PermissionRequest) startIntent.getSerializableExtra("PR");
             position = startIntent.getIntExtra("POS", -1);
 
-            ArrayList<SpannableStringBuilder> contract = createContractText(permissionRequest);
+            SpannableStringBuilder contract = new SpannableContractBuilder(this).displayPermissionRquest(permissionRequest);
 
-            for (SpannableStringBuilder s: contract) {
-                tvShowContract.append(s);
-            }
+            tvShowContract.setText(contract);
         }
         returnIntent = new Intent();
         returnIntent.putExtra("POS", position);
@@ -81,8 +78,8 @@ public class ProcessRequestActivity extends AppCompatActivity {
     }
 
     //This method creates SpannableStringBuilders which have different colors, these will be added and appear as text
-    public ArrayList<SpannableStringBuilder> createContractText(PermissionRequest pr){
-        ArrayList<SpannableStringBuilder> completeContract = new ArrayList<>();
+    public SpannableStringBuilder createContractText(PermissionRequest pr){
+        SpannableStringBuilder completeContract = new SpannableStringBuilder();
         Typeface typeface = ResourcesCompat.getFont(this, R.font.noto_sans);
 
         ArrayList<Object> contractElements = getContractElements(pr);
@@ -94,7 +91,6 @@ public class ProcessRequestActivity extends AppCompatActivity {
                     element = (SpannableStringBuilder) o;
                     element = setColorOfElement(element, R.color.colorBitterLemon);
 
-
                 } else if (o instanceof String) {
                     element = new SpannableStringBuilder((String) o);
                     element = setColorOfElement(element, R.color.colorRichBlack);
@@ -102,7 +98,7 @@ public class ProcessRequestActivity extends AppCompatActivity {
             }
             element.setSpan(new CustomTypefaceSpan("", typeface), 0 , element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             element.setSpan(new RelativeSizeSpan(1.2f), 0, element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
-            completeContract.add(element);
+            completeContract.append(element);
         }
 
         return completeContract;
@@ -119,10 +115,12 @@ public class ProcessRequestActivity extends AppCompatActivity {
         contract.add(getString(R.string.contract_text_part_two));
         contract.add(new SpannableStringBuilder(pr.getOrganizationName()));
         contract.add(getString(R.string.contract_text_part_three));
-        contract.add(new SpannableStringBuilder(pr.getPermissionType().getType()));
+        contract.add(new SpannableStringBuilder(pr.getPersonsIncluded().getScope()));
         contract.add(getString(R.string.contract_text_part_four));
-        contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionStartDate())));
+        contract.add(new SpannableStringBuilder(pr.getPermissionType().getType()));
         contract.add(getString(R.string.contract_text_part_five));
+        contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionStartDate())));
+        contract.add(getString(R.string.contract_text_part_six));
         contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionEndDate())));
 
         return contract;

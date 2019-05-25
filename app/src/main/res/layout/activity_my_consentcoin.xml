@@ -11,14 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/vollkorn"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="confirm"
-        android:text="Delete"
+        android:text="@string/button_delete"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.button.MaterialButton
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="cancel"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </LinearLayout>

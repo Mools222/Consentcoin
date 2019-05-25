@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ public class MyConsentcoinActivity extends AppCompatActivity {
     private MyViewModel myViewModel;
     private User currentUser;
     private User otherUser;
+    private User member;
+    private User organization;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +48,18 @@ public class MyConsentcoinActivity extends AppCompatActivity {
         currentUser = (User) startIntent.getSerializableExtra("CU");
         otherUser = (User) startIntent.getSerializableExtra("OU");
 
-        String text = getString(R.string.consentcoin_value_id) + consentcoin.getContractId() +
-                getString(R.string.consentcoin_value_contract_type) + consentcoin.getPermissionType() +
-                getString(R.string.consentcoin_value_mem_id) + consentcoin.getMemberUid() +
-                getString(R.string.consentcoin_value_org_id) + consentcoin.getOrganizationUid();
+        if (currentUser.getType().equals("Member")) {
+            member = currentUser;
+            organization = otherUser;
+        } else {
+            member = otherUser;
+            organization = currentUser;
+        }
+
+        String memberName = member.getFirstName() + " " + (member.getMiddleName() == null ? " " : member.getMiddleName()) + member.getLastName();
+
+        SpannableStringBuilder text = new SpannableContractBuilder(this).displayConsentcoin(consentcoin.getContractId(),
+                memberName, organization.getOrganizationName(), consentcoin.getPermissionType().getType());
 
         textView.setText(text);
 
@@ -83,16 +94,6 @@ public class MyConsentcoinActivity extends AppCompatActivity {
     }
 
     public void addUserActivity() {
-        User member;
-        User organization;
-        if (currentUser.getType().equals("Member")) {
-            member = currentUser;
-            organization = otherUser;
-        } else {
-            member = otherUser;
-            organization = currentUser;
-        }
-
         Date date = new Date();
         String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
         ArrayList<UserActivity> userActivities = organization.getUserActivities();

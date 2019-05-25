@@ -3,6 +3,59 @@
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
 
+    <!-- layout.xml -->
+
+    <!-- Buttons -->
+    <string name="rb_member">Member</string>
+    <string name="rb_organization">Organization</string>
+    <string name="rb_members">Members</string>
+    <string name="rb_members_and_wards">Members and their wards</string>
+    <string name="rb_commercial">Commercial use</string>
+    <string name="rb_non_commercial">Non-commercial use</string>
+    <string name="rb_all_members">All members</string>
+    <string name="rb_selected_members">Selected members</string>
+    <string name="button_send">Send</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_accept">Accept</string>
+    <string name="button_deny">Deny</string>
+    <string name="button_decide_later">Decide later</string>
+    <string name="button_read_more">Read more</string>
+    <string name="button_back">Back</string>
+
+    <!-- TextView, ImageView and TextFields -->
+
+    <string name="tv_create_request">Create Request</string>
+    <string name="tf_start_date">End Date</string>
+    <string name="tf_end_date">Start Date</string>
+    <string name="tv_send_request_to">"Send this request to: "</string>
+    <string name="tf_search_users">Search for specific user</string>
+    <string name="tf_enter_organisation_mail">Enter organization e-mail</string>
+    <string name="tf_enter_organization">Enter organization name</string>
+
+    <string name="text_navigation_header">Navigation header</string>
+
+    <string name="tv_firstname_lastname">Firstname Lastname</string>
+    <string name="tv_default_email">email@email.com</string>
+
+    <!-- Menu items -->
+
+    <string name="item_pending_requests">Pending Requests</string>
+    <string name="item_active_requests">Active Requests</string>
+    <string name="item_create_requests">Create Request</string>
+    <string name="item_my_consentcoins">My Consentcoins</string>
+    <string name="item_pending_invites">Pending Invites</string>
+    <string name="item_invite">Invite</string>
+    <string name="item_add_organization">Add Organization</string>
+    <string name="item_add_member">Add Member</string>
+    <string name="item_my_organizations">My Organizations</string>
+    <string name="item_my_members">My Members</string>
+    <string name="item_settings">Settings</string>
+    <string name="item_log_out">Log out</string>
+
+    <string name="title_communicate">Communicate</string>
+
+
     <!-- MainActivity -->
     <!-- Generals -->
 
@@ -19,9 +72,9 @@
     <!-- AlertDialog titles -->
 
     <string name="title_specify_user_details">Specify user details</string>
-    <string name="title_process_request">Process request(s)</string>
+    <string name="title_process_request">pending request(s)</string>
     <string name="title_requests_sent">Sent permission requests</string>
-    <string name="title_my_consentcoins">My Consenscoins</string>
+    <string name="title_my_consentcoins">My Consentcoins</string>
     <string name="title_add_with_space">"Add "</string>
     <string name="title_my_with_space">"My "</string>
     <string name="title_invite_members">Invite member(s)</string>
@@ -90,10 +143,10 @@
 
     <!-- MyConsentcoinActivity -->
 
-    <string name="consentcoin_value_id">"ID: "</string>
+    <string name="consentcoin_value_id">"Coin-ID: "</string>
     <string name="consentcoin_value_contract_type">"\nContractType: "</string>
-    <string name="consentcoin_value_mem_id">"\nMemID: "</string>
-    <string name="consentcoin_value_org_id">"\nOrgID: " </string>
+    <string name="consentcoin_value_mem">"\nMember: "</string>
+    <string name="consentcoin_value_org">"\nOrganization: " </string>
 
     <!-- ContractTypeEnum -->
 
@@ -101,11 +154,21 @@
     <string name="contract_type_non_commercial">non commercial</string>
     <string name="contract_type_commercial_and_non_commercial">commercial and non commercial</string>
 
+    <!-- CreateRequestActivity -->
+
+    <string name="contract_myself">myself</string>
+    <string name="contract_myself_and_wards">myself and my wards</string>
+
     <string name="contract_text_part_one">"I "</string>
     <string name="contract_text_part_two">"\nwould like to give "</string>
-    <string name="contract_text_part_three">"\npermission to use images og myself and my wards for "</string>
-    <string name="contract_text_part_four">" purposes.\nThe permission will be valid in the time between\n"</string>
-    <string name="contract_text_part_five">" and "</string>
+    <string name="contract_text_part_three">"\npermission to use images of "</string>
+    <string name="contract_text_part_four">" for "</string>
+    <string name="contract_text_part_five">" purposes.\nThe permission will be valid in the time between\n"</string>
+    <string name="contract_text_part_six">" and "</string>
+
+    <!-- Strings for ProcessInviteActivity -->
+
+    <string name="invite_message">" has invited you to become a memeber of their organization</string>
 
     <!-- Strings for invite dialog -->
     <string name="invite_add_member_btn_txt">add</string>

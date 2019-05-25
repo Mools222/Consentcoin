@@ -547,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if (permissionGranted) {
                 myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
-                        date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded()); // If the user chooses to give permission, create a Consentcoin
+                        date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded().getScope()); // If the user chooses to give permission, create a Consentcoin
 
                 ArrayList<UserActivity> userActivities = user.getUserActivities();
                 if (userActivities == null)
@@ -704,14 +704,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[consentcoinReferences.size()];
             for (int i = 0; i < consentcoinReferences.size(); i++) {
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-                //array[i] = getString(R.string.array_id) + consentcoinReference.getContractId() + getString(R.string.array_member) + consentcoinReference.getMemberUid() + getString(R.string.array_org) + consentcoinReference.getOrganizationUid();
-                for (User u: users) {
-                    if (u.getUid().equals(consentcoinReference.getOrganizationUid())){
+                for (User u : users) {
+                    if (u.getUid().equals(consentcoinReference.getOrganizationUid())) {
                         array[i] = getString(R.string.array_org) + u.getOrganizationName();
                     }
                 }
 
-                }
+            }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
             final Context CONTEXT = this;
@@ -830,20 +829,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void displayOrganizationsOrMembers(String userType) {
         ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
-
         if (associatedUsersUids != null) {
             String[] array = new String[associatedUsersUids.size()];
             for (int i = 0; i < array.length; i++) {
-                for (User u: users) {
-                    if(u.getUid().equals(associatedUsersUids.get(i))) {
-                        array[i] = userType.equals("member") ? u.getFirstName() + getString(R.string.space) +
-                                u.getMiddleName() + getString(R.string.space) + u.getLastName() : u.getOrganizationName();
+                for (User u : users) {
+                    if (u.getUid().equals(associatedUsersUids.get(i))) {
+                        array[i] = userType.equals("member") ? (u.getMiddleName() == null ? u.getFirstName() + getString(R.string.space) + u.getLastName() : u.getFirstName() +
+                                getString(R.string.space) + u.getMiddleName() + getString(R.string.space) + u.getLastName()) : u.getOrganizationName();
                     }
                 }
             }
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
-
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.title_my_with_space) + userType)
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {

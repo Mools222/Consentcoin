@@ -10,53 +10,53 @@
         <item
             android:id="@+id/nav_pending_requests"
             android:icon="@drawable/icon_pending_requests"
-            android:title="Pending Requests"
+            android:title="@string/item_pending_requests"
             app:actionViewClass="android.widget.TextView" />
         <item
             android:id="@+id/nav_create_request"
             android:icon="@drawable/icon_create_request"
-            android:title="Create Request" />
+            android:title="@string/item_create_requests" />
         <item
             android:id="@+id/nav_active_requests"
             android:icon="@drawable/icon_sent_requests"
-            android:title="Active Request(s)" />
+            android:title="@string/item_active_requests" />
         <item
             android:id="@+id/nav_my_consentcoins"
             android:icon="@drawable/icon_my_consentcoins"
-            android:title="My Consentcoins" />
+            android:title="@string/item_my_consentcoins" />
         <item
             android:id="@+id/nav_pending_invites"
             android:icon="@drawable/icon_pending_requests"
-            android:title="Pending Invites"
+            android:title="@string/item_pending_invites"
             app:actionViewClass="android.widget.TextView"/>
         <item
             android:id="@+id/nav_invite"
             android:icon="@drawable/icon_invite"
-            android:title="Invite" />
+            android:title="@string/item_invite" />
         <item
             android:id="@+id/nav_add_organization"
             android:icon="@drawable/icon_add"
-            android:title="Add Organization" />
+            android:title="@string/item_add_organization" />
         <item
             android:id="@+id/nav_add_member"
             android:icon="@drawable/icon_add"
-            android:title="Add Member" />
+            android:title="@string/item_add_member" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/title_communicate">
         <menu>
             <item
                 android:id="@+id/nav_my_organizations"
                 android:icon="@drawable/ic_menu_share"
-                android:title="My Organizations" />
+                android:title="@string/item_my_organizations" />
             <item
                 android:id="@+id/nav_my_members"
                 android:icon="@drawable/ic_menu_share"
-                android:title="My Members" />
+                android:title="@string/item_my_members" />
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Settings" />
+                android:title="@string/item_settings" />
         </menu>
     </item>
 
