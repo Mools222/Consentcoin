@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class CreateRequestActivity extends AppCompatActivity {
-    private TextView textViewOrganization;
     private MaterialCheckBox materialCheckBoxCommercial;
     private MaterialCheckBox materialCheckBoxNoncommercial;
     private TextInputEditText textInputEditTextStartDate;
@@ -62,7 +61,7 @@ public class CreateRequestActivity extends AppCompatActivity {
 
         myViewModel = MyViewModel.getInstance();
 
-        textViewOrganization = findViewById(R.id.tv_create_request_organization_name);
+        TextView textViewOrganization = findViewById(R.id.tv_create_request_organization_name);
         materialCheckBoxCommercial = findViewById(R.id.cb_create_request_commercial);
         materialCheckBoxNoncommercial = findViewById(R.id.cb_create_request_noncommercial);
         textInputEditTextStartDate = findViewById(R.id.et_create_request_start_date);
