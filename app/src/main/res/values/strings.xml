@@ -142,10 +142,10 @@
 
     <!-- MyConsentcoinActivity -->
 
-    <string name="consentcoin_value_id">"ID: "</string>
+    <string name="consentcoin_value_id">"Coin-ID: "</string>
     <string name="consentcoin_value_contract_type">"\nContractType: "</string>
-    <string name="consentcoin_value_mem_id">"\nMemID: "</string>
-    <string name="consentcoin_value_org_id">"\nOrgID: " </string>
+    <string name="consentcoin_value_mem">"\nMember: "</string>
+    <string name="consentcoin_value_org">"\nOrganization: " </string>
 
     <!-- ContractTypeEnum -->
 

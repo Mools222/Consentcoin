@@ -40,11 +40,9 @@ public class ProcessRequestActivity extends AppCompatActivity {
             PermissionRequest permissionRequest = (PermissionRequest) startIntent.getSerializableExtra("PR");
             position = startIntent.getIntExtra("POS", -1);
 
-            ArrayList<SpannableStringBuilder> contract = createContractText(permissionRequest);
+            SpannableStringBuilder contract = new SpannableContractBuilder(this).displayPermissionRquest(permissionRequest);
 
-            for (SpannableStringBuilder s: contract) {
-                tvShowContract.append(s);
-            }
+            tvShowContract.setText(contract);
         }
         returnIntent = new Intent();
         returnIntent.putExtra("POS", position);
@@ -80,8 +78,8 @@ public class ProcessRequestActivity extends AppCompatActivity {
     }
 
     //This method creates SpannableStringBuilders which have different colors, these will be added and appear as text
-    public ArrayList<SpannableStringBuilder> createContractText(PermissionRequest pr){
-        ArrayList<SpannableStringBuilder> completeContract = new ArrayList<>();
+    public SpannableStringBuilder createContractText(PermissionRequest pr){
+        SpannableStringBuilder completeContract = new SpannableStringBuilder();
         Typeface typeface = ResourcesCompat.getFont(this, R.font.noto_sans);
 
         ArrayList<Object> contractElements = getContractElements(pr);
@@ -100,7 +98,7 @@ public class ProcessRequestActivity extends AppCompatActivity {
             }
             element.setSpan(new CustomTypefaceSpan("", typeface), 0 , element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             element.setSpan(new RelativeSizeSpan(1.2f), 0, element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
-            completeContract.add(element);
+            completeContract.append(element);
         }
 
         return completeContract;

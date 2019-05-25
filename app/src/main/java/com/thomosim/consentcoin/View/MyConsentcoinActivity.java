@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,10 +56,10 @@ public class MyConsentcoinActivity extends AppCompatActivity {
             organization = currentUser;
         }
 
-        String text = getString(R.string.consentcoin_value_id) + consentcoin.getContractId() +
-                getString(R.string.consentcoin_value_contract_type) + consentcoin.getPermissionType().getType() +
-                getString(R.string.consentcoin_value_mem_id) + member.getFirstName() + " " + (member.getMiddleName() == null ? " " : member.getMiddleName()) + member.getLastName() +
-                getString(R.string.consentcoin_value_org_id) + organization.getOrganizationName();
+        String memberName = member.getFirstName() + " " + (member.getMiddleName() == null ? " " : member.getMiddleName()) + member.getLastName();
+
+        SpannableStringBuilder text = new SpannableContractBuilder(this).displayConsentcoin(consentcoin.getContractId(),
+                memberName, organization.getOrganizationName(), consentcoin.getPermissionType().getType());
 
         textView.setText(text);
 

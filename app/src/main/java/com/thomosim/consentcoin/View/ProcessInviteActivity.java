@@ -29,9 +29,8 @@ public class ProcessInviteActivity extends AppCompatActivity {
         if (startIntent.hasExtra("PI") && startIntent.hasExtra("POS")) {
             InviteRequest inviteRequest = (InviteRequest) startIntent.getSerializableExtra("PI");
             position = startIntent.getIntExtra("POS", -1);
-            SpannableStringBuilder org = new SpannableStringBuilder(inviteRequest.getOrganization());
 
-            String text = inviteRequest.getOrganization() + getString(R.string.invite_message);
+            SpannableStringBuilder text = new SpannableContractBuilder(this).displayInviteRequest(inviteRequest.getOrganization());
             textView.setText(text);
         }
 
