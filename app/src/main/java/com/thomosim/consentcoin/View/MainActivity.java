@@ -705,7 +705,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[consentcoinReferences.size()];
             for (int i = 0; i < consentcoinReferences.size(); i++) {
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-                //array[i] = getString(R.string.array_id) + consentcoinReference.getContractId() + getString(R.string.array_member) + consentcoinReference.getMemberUid() + getString(R.string.array_org) + consentcoinReference.getOrganizationUid();
                 for (User u: users) {
                     if (u.getUid().equals(consentcoinReference.getOrganizationUid())){
                         array[i] = getString(R.string.array_org) + u.getOrganizationName();

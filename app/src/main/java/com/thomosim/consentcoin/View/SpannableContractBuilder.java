@@ -6,7 +6,6 @@ import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.res.ResourcesCompat;
@@ -43,7 +42,7 @@ public class SpannableContractBuilder {
         contractElements.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionEndDate())));
 
 
-        return createContractText(contractElements, R.color.colorBitterLemon, 1.2f, R.font.noto_sans);
+        return createContractText(contractElements, R.color.colorBitterLemon, R.font.noto_sans);
     }
 
     public SpannableStringBuilder displayInviteRequest(String orgName){
@@ -52,7 +51,7 @@ public class SpannableContractBuilder {
         inviteElements.add(new SpannableStringBuilder(orgName));
         inviteElements.add(context.getString(R.string.invite_message));
 
-        return createContractText(inviteElements, R.color.colorBitterLemon, 1.2f, R.font.noto_sans);
+        return createContractText(inviteElements, R.color.colorBitterLemon, R.font.noto_sans);
 
     }
 
@@ -68,12 +67,12 @@ public class SpannableContractBuilder {
         coinElements.add(context.getString(R.string.consentcoin_value_contract_type));
         coinElements.add(new SpannableStringBuilder(type));
 
-        return createContractText(coinElements, R.color.colorBitterLemon, 1f, R.font.noto_sans);
+        return createContractText(coinElements, R.color.colorBitterLemon, R.font.noto_sans);
 
     }
 
     //This method creates SpannableStringBuilders which have different colors, these will be added and appear as text
-    public SpannableStringBuilder createContractText(ArrayList<Object> contractElements, int color, float fontSize, int font){
+    public SpannableStringBuilder createContractText(ArrayList<Object> contractElements, int color, int font){
         SpannableStringBuilder completeContract = new SpannableStringBuilder();
         Typeface typeface = ResourcesCompat.getFont(context, font);
 
@@ -90,7 +89,6 @@ public class SpannableContractBuilder {
                 }
             }
             element.setSpan(new CustomTypefaceSpan("", typeface), 0 , element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            element.setSpan(new RelativeSizeSpan(fontSize), 0, element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
             completeContract.append(element);
         }
 

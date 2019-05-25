@@ -12,5 +12,6 @@
         android:id="@+id/tv_process_invite_sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/vollkorn"/>
+        android:fontFamily="@font/vollkorn"
+        android:textSize="20sp"/>
 </LinearLayout>
