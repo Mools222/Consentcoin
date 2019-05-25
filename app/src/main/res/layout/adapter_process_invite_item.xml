@@ -9,20 +9,8 @@
     style="@style/SelectableItemBackground">
 
     <TextView
-        android:id="@+id/tv_process_invite_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:fontFamily="@font/vollkorn"
-        android:text="test" />
-
-    <TextView
         android:id="@+id/tv_process_invite_sender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/vollkorn"
-        android:text="test" />
+        android:fontFamily="@font/vollkorn"/>
 </LinearLayout>

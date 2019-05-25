@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -94,7 +93,6 @@ public class ProcessRequestActivity extends AppCompatActivity {
                     element = (SpannableStringBuilder) o;
                     element = setColorOfElement(element, R.color.colorBitterLemon);
 
-
                 } else if (o instanceof String) {
                     element = new SpannableStringBuilder((String) o);
                     element = setColorOfElement(element, R.color.colorRichBlack);
@@ -119,10 +117,12 @@ public class ProcessRequestActivity extends AppCompatActivity {
         contract.add(getString(R.string.contract_text_part_two));
         contract.add(new SpannableStringBuilder(pr.getOrganizationName()));
         contract.add(getString(R.string.contract_text_part_three));
-        contract.add(new SpannableStringBuilder(pr.getPermissionType().getType()));
+        contract.add(new SpannableStringBuilder(pr.getPersonsIncluded().getScope()));
         contract.add(getString(R.string.contract_text_part_four));
-        contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionStartDate())));
+        contract.add(new SpannableStringBuilder(pr.getPermissionType().getType()));
         contract.add(getString(R.string.contract_text_part_five));
+        contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionStartDate())));
+        contract.add(getString(R.string.contract_text_part_six));
         contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionEndDate())));
 
         return contract;

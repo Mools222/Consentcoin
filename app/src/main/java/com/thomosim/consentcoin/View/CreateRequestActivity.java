@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
+import com.thomosim.consentcoin.Persistence.ModelClass.ContractScopeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
 import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
@@ -48,7 +49,7 @@ public class CreateRequestActivity extends AppCompatActivity {
     private Date startDate;
     private Date endDate;
     private ContractTypeEnum permissionType;
-    private String personsIncluded;
+    private ContractScopeEnum personsIncluded;
 
     private Intent returnIntent;
 
@@ -191,7 +192,7 @@ public class CreateRequestActivity extends AppCompatActivity {
         else if (materialCheckBoxNoncommercial.isChecked())
             permissionType = ContractTypeEnum.NON_COMMERCIAL_USE; // Non-commercial
 
-        personsIncluded = permissionRegardsMembersOnly ? "1" : "2"; // 1 = members only. 2 = members + wards
+        personsIncluded = permissionRegardsMembersOnly ? ContractScopeEnum.MYSELF : ContractScopeEnum.MYSELF_AND_WARDS; // 1 = members only. 2 = members + wards
 
         if (permissionType == null)
             Toast.makeText(this, getString(R.string.toast_select_purpose), Toast.LENGTH_SHORT).show();
@@ -212,7 +213,7 @@ public class CreateRequestActivity extends AppCompatActivity {
         Date date = new Date();
         for (int i = 0; i < memberList.size(); i++) {
             User member = memberList.get(i);
-            String memberName = member.getFirstName() + " " + (member.getMiddleName() == null ? " " : member.getMiddleName()) + member.getLastName();
+            String memberName = member.getFirstName() + " " + (member.getMiddleName() == null ? "" : member.getMiddleName()) + member.getLastName();
             myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
             ArrayList<UserActivity> userActivities = organization.getUserActivities();

@@ -3,6 +3,7 @@ package com.thomosim.consentcoin.View;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,20 +15,24 @@ import com.thomosim.consentcoin.R;
 public class ProcessInviteActivity extends AppCompatActivity {
     private Intent returnIntent;
     private int position;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_invite);
 
-        TextView textView = findViewById(R.id.tv_process_invite);
+        textView = findViewById(R.id.tv_process_invite);
 
         // The getIntent method returns the intent that started this activity. This intent was created in the constructor of the ViewHolderProcessRequest class found in the AdapterProcessRequest. The processRequest method of the MainActivity class creates an instance of the AdapterProcessRequest class
         Intent startIntent = getIntent();
         if (startIntent.hasExtra("PI") && startIntent.hasExtra("POS")) {
             InviteRequest inviteRequest = (InviteRequest) startIntent.getSerializableExtra("PI");
             position = startIntent.getIntExtra("POS", -1);
-            textView.setText("ID: " + inviteRequest.getId());
+            SpannableStringBuilder org = new SpannableStringBuilder(inviteRequest.getOrganization());
+
+            String text = inviteRequest.getOrganization() + getString(R.string.invite_message);
+            textView.setText(text);
         }
 
         returnIntent = new Intent();

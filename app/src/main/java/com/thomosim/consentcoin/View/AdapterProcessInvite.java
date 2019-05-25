@@ -22,13 +22,11 @@ public class AdapterProcessInvite extends RecyclerView.Adapter<AdapterProcessInv
     private static final int REQUEST_CODE_PROCESS_INVITE = 4;
 
     public class ViewHolderProcessInvite extends RecyclerView.ViewHolder {
-        public TextView textView1;
-        public TextView textView2;
+        public TextView textView;
 
         public ViewHolderProcessInvite(@NonNull View v) {
             super(v);
-            textView1 = v.findViewById(R.id.tv_process_invite_id);
-            textView2 = v.findViewById(R.id.tv_process_invite_sender);
+            textView = v.findViewById(R.id.tv_process_invite_sender);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -36,7 +34,7 @@ public class AdapterProcessInvite extends RecyclerView.Adapter<AdapterProcessInv
                     InviteRequest inviteRequest = pendingInviteRequests.get(getAdapterPosition());
 
                     Intent intent = new Intent(context, ProcessInviteActivity.class);
-                    intent.putExtra("PR", inviteRequest);
+                    intent.putExtra("PI", inviteRequest);
                     intent.putExtra("POS", getAdapterPosition());
                     ((MainActivity) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_INVITE);
                 }
@@ -59,8 +57,9 @@ public class AdapterProcessInvite extends RecyclerView.Adapter<AdapterProcessInv
     @Override
     public void onBindViewHolder(@NonNull AdapterProcessInvite.ViewHolderProcessInvite holder, int position) {
         InviteRequest inviteRequest = pendingInviteRequests.get(position);
+        String text = context.getString(R.string.text_sender) + inviteRequest.getOrganization();
 
-        holder.textView2.setText(inviteRequest.getOrganization());
+        holder.textView.setText(text);
     }
 
     @Override

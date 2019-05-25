@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.ContractScopeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
@@ -50,7 +51,7 @@ public interface DAOInterface {
 
     void removeUser(User user);
 
-    void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded);
+    void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, ContractScopeEnum personsIncluded);
 
     MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
 

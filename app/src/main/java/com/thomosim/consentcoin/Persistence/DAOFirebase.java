@@ -17,6 +17,7 @@ import com.google.firebase.storage.UploadTask;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.ContractScopeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.ContractTypeEnum;
 import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
@@ -185,7 +186,7 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded) {
+    public void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, ContractScopeEnum personsIncluded) {
         DatabaseReference databaseReference = databaseReferencePermissionRequests.push(); // Creates blank record in the database
         String firebaseId = databaseReference.getKey(); // Get the auto generated key
         PermissionRequest permissionRequest = new PermissionRequest(firebaseId, organizationName, organizationUid, memberName, memberUid, permissionType, creationDate, permissionStartDate, permissionEndDate, personsIncluded);
