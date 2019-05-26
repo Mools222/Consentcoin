@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -11,30 +11,53 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/vollkorn"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        android:layout_margin="10dp"/>
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="accept"
-        android:text="@string/button_accept"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:id="@+id/linear_layout_invite1"
+        android:layout_below="@id/tv_process_invite">
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="accept"
+            android:text="@string/button_accept"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_margin="10dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="deny"
-        android:text="@string/button_deny"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:weightSum="2"
+        android:id="@+id/linear_layout_invite2"
+        android:layout_below="@id/linear_layout_invite1">
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="later"
-        android:text="@string/button_decide_later"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="later"
+            android:text="@string/button_decide_later"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_margin="10dp"
+            android:layout_weight="1"/>
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="deny"
+            android:text="@string/button_deny"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/colorRed"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+</RelativeLayout>

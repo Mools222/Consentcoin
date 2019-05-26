@@ -22,6 +22,7 @@
     <string name="button_decide_later">Decide later</string>
     <string name="button_read_more">Read more</string>
     <string name="button_back">Back</string>
+    <string name="button_delete_consentcoin">Delete Consentcoin</string>
 
     <!-- TextView, ImageView and TextFields -->
 

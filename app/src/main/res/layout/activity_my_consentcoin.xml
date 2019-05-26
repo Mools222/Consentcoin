@@ -11,22 +11,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/vollkorn"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:layout_margin="10dp"/>
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="confirm"
-        android:text="@string/button_delete"
+        android:layout_margin="10dp"
+        android:text="@string/button_delete_consentcoin"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:onClick="cancel"
-        android:text="@string/cancel"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:text="@string/button_back"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:backgroundTint="@color/colorRed"/>
 
 </LinearLayout>
