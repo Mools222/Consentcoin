@@ -8,7 +8,7 @@ Consentcoin is an app that allows users to send and receive permission requests 
 
 ## Setup
 
-Setup requires downloading the app.
+Setup requires downloading the app and creating a user.
 
 ## License
 
