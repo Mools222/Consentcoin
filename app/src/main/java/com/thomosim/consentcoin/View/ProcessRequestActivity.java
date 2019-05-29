@@ -40,7 +40,7 @@ public class ProcessRequestActivity extends AppCompatActivity {
             PermissionRequest permissionRequest = (PermissionRequest) startIntent.getSerializableExtra("PR");
             position = startIntent.getIntExtra("POS", -1);
 
-            SpannableStringBuilder contract = new SpannableContractBuilder(this).displayPermissionRquest(permissionRequest);
+            SpannableStringBuilder contract = new SpannableContractBuilder(this).displayPermissionRequest(permissionRequest);
 
             tvShowContract.setText(contract);
         }
@@ -75,63 +75,5 @@ public class ProcessRequestActivity extends AppCompatActivity {
     }
 
     public void readMore(View view) {
-    }
-
-    //This method creates SpannableStringBuilders which have different colors, these will be added and appear as text
-    public SpannableStringBuilder createContractText(PermissionRequest pr){
-        SpannableStringBuilder completeContract = new SpannableStringBuilder();
-        Typeface typeface = ResourcesCompat.getFont(this, R.font.noto_sans);
-
-        ArrayList<Object> contractElements = getContractElements(pr);
-
-        for (Object o: contractElements) {
-            SpannableStringBuilder element = null;
-            if(Build.VERSION.SDK_INT > 22) {
-                if (o instanceof SpannableStringBuilder) {
-                    element = (SpannableStringBuilder) o;
-                    element = setColorOfElement(element, R.color.colorBitterLemon);
-
-                } else if (o instanceof String) {
-                    element = new SpannableStringBuilder((String) o);
-                    element = setColorOfElement(element, R.color.colorRichBlack);
-                }
-            }
-            element.setSpan(new CustomTypefaceSpan("", typeface), 0 , element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            element.setSpan(new RelativeSizeSpan(1.2f), 0, element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
-            completeContract.append(element);
-        }
-
-        return completeContract;
-    }
-
-    //Class for putting all the text elements of the contract in to a single ArrayList
-    //If the text is userspecific it will be added as a SpannableStringBuilder, if it is generic text from the strings.xml file it wil be added as a String
-    private ArrayList<Object> getContractElements(PermissionRequest pr) {
-        ArrayList<Object> contract = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
-        contract.add(getString(R.string.contract_text_part_one));
-        contract.add(new SpannableStringBuilder(pr.getMemberName()));
-        contract.add(getString(R.string.contract_text_part_two));
-        contract.add(new SpannableStringBuilder(pr.getOrganizationName()));
-        contract.add(getString(R.string.contract_text_part_three));
-        contract.add(new SpannableStringBuilder(pr.getPersonsIncluded().getScope()));
-        contract.add(getString(R.string.contract_text_part_four));
-        contract.add(new SpannableStringBuilder(pr.getPermissionType().getType()));
-        contract.add(getString(R.string.contract_text_part_five));
-        contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionStartDate())));
-        contract.add(getString(R.string.contract_text_part_six));
-        contract.add(new SpannableStringBuilder(simpleDateFormat.format(pr.getPermissionEndDate())));
-
-        return contract;
-    }
-
-    //Simple method to change color of elements of the contract
-    //The method was created to avoid phones with API less than 23 to see their invites
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public SpannableStringBuilder setColorOfElement(SpannableStringBuilder e, int color){
-        e.setSpan(new ForegroundColorSpan(getColor(color)), 0, e.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return e;
     }
 }

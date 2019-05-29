@@ -24,7 +24,15 @@ public class SpannableContractBuilder {
         this.context = context;
     }
 
-    public SpannableStringBuilder displayPermissionRquest(PermissionRequest pr){
+    /**
+     * Returns a SpannableStringBuilder containing a String representation of the PermissionRequest given as a parameter.
+     * The customizable parts of the contract such as name, date and so on, will be shown with Bitter Lemon color.
+     * This method is called from the ProcessRequestActivity class, when a user selects a pending PermissionRequest.
+     *
+     * @param pr A PermissionRequest Object
+     * @return A SpannableStringBuilder Object
+     */
+    public SpannableStringBuilder displayPermissionRequest(PermissionRequest pr){
         ArrayList<Object> contractElements = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -44,6 +52,13 @@ public class SpannableContractBuilder {
         return createContractText(contractElements, R.color.colorBitterLemon, R.font.noto_sans);
     }
 
+    /**
+     * Returns a SpannableStringBuilder Object with the String parameter shown in the color Bitter Lemon
+     * This method is called from the ProcessInviteActivity class when the user selects a pending InviteRequest
+     *
+     * @param orgName A String representation of the name of an organisation
+     * @return A SpannableStringBuilder Object
+     */
     public SpannableStringBuilder displayInviteRequest(String orgName){
         ArrayList<Object> inviteElements = new ArrayList<>();
 
@@ -53,6 +68,17 @@ public class SpannableContractBuilder {
         return createContractText(inviteElements, R.color.colorBitterLemon, R.font.noto_sans);
     }
 
+    /**
+     * Returns a SpannableStringBuilder containing a String representation of the Strings given as parameters.
+     * The parameters will be shown with Bitter Lemon color.
+     * This method is called from the MyConsentcoinActivity class, when a user selects a Consentcoin.
+     *
+     * @param id A String with the ID of a Consentcoin
+     * @param mem A string with the name of af Member
+     * @param org A String with the name of an organization
+     * @param type A String with the type of contract
+     * @return A SpannableStringBuilder Object
+     */
     public SpannableStringBuilder displayConsentcoin(String id, String mem, String org, String type){
         ArrayList<Object> coinElements = new ArrayList<>();
 
@@ -68,7 +94,22 @@ public class SpannableContractBuilder {
         return createContractText(coinElements, R.color.colorBitterLemon, R.font.noto_sans);
     }
 
-    //This method creates SpannableStringBuilders which have different colors, these will be added and appear as text
+    /**
+     * Returns a single SpannableStringBuilder with all the Strings and SpannableStringBuilderObjects from
+     * the contractElements ArrayList. It iterates through the ArrayList using the instanceof operator
+     * to check whether an Object from the ArrayList is String or a spannableStringBuilder.
+     * If it is a String it wil set its color to Rich Black, and if it is a SpannableStringBuilder it
+     * will set its color to the color specified in the parameters.
+     * After the color is changed all Objects is set to the specified font from the parameters, and
+     * then added to new SpannableStringBuilder, which is returned when the foreach loop is done
+     *
+     * NOTE: The color will only change if the device running the app is running API 23 or higher
+     *
+     * @param contractElements An ArrayList of Objects, either Strings or SpannableStringBuilders
+     * @param color The int representation of a color from the colors.xml file
+     * @param font The int representation of a font from the res/font folder
+     * @return A SpannableStringBuilder Object
+     */
     public SpannableStringBuilder createContractText(ArrayList<Object> contractElements, int color, int font){
         SpannableStringBuilder completeContract = new SpannableStringBuilder();
         Typeface typeface = ResourcesCompat.getFont(context, font);
@@ -92,8 +133,15 @@ public class SpannableContractBuilder {
         return completeContract;
     }
 
-    //Simple method to change color of elements of the contract
-    //The method was created to avoid phones with API less than 23 to see their invites
+    /**
+     * Returns a SpannableStringBuilder in the color specified from the parameter.
+     *
+     * NOTE: This method will only be used if the device running the app is running API 23 or higher
+     *
+     * @param e A SpannableStringBuilder Object
+     * @param color The int representation of a color from colors.xml
+     * @return A SpannableStringBuilder
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public SpannableStringBuilder setColorOfElement(SpannableStringBuilder e, int color){
         e.setSpan(new ForegroundColorSpan(context.getColor(color)), 0, e.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
