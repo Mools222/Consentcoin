@@ -105,36 +105,84 @@ public interface DAOInterface {
      */
     void removeUser(User user);
 
+    /**
+     * This method creates a PermissionRequest and store it in the database
+     */
     void addPermissionRequest(String organizationName, String organizationUid, String memberName, String memberUid, ContractTypeEnum permissionType, Date creationDate, Date permissionStartDate, Date permissionEndDate, ContractScopeEnum personsIncluded);
 
+    /**
+     * This method returns an Arraylist of PermissionRequests.
+     */
     MyObservable<ArrayList<PermissionRequest>> getPermissionRequests();
 
+    /**
+     * This method updates a existing PermissionRequest
+     */
     void updatePermissionRequest(String id, PermissionRequest permissionRequest);
 
+    /**
+     * This method removes an existing PermissionRequest from the database
+     */
     void removePermissionRequest(String id);
 
+    /**
+     * This method returns an Arraylist of ConsentcinReferences
+     */
     MyObservable<ArrayList<ConsentcoinReference>> getConsentcoinReferences();
 
+    /**
+     * This method creates a ConsentcoinReference and stores it in the database
+     */
     void addConsentcoinReference(String contractId, String memberUid, String organizationUid, String storageUrl);
 
+    /**
+     * This method updates existing ConsentcoinReference
+     */
     void updateConsentcoinReference(String id, ConsentcoinReference consentcoinReference);
 
+    /**
+     * This method removes a consentcoinReference from the database
+     */
     void removeConsentcoinReference(ConsentcoinReference consentcoinReference);
 
+    /**
+     * This method creates a Consentcoin object and stores it in the database
+     */
     void addConsentcoin(Context context, String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded);
 
+    /**
+     * This method sets the storageURL for the consentcoin
+     */
     void setConsentcoinUrl(String storageUrl);
 
+    /**
+     * This method returns a consentcoin
+     */
     MyObservable<Consentcoin> getConsentcoin();
 
+    /**
+     * This method returns an Arraylist of consentcoin objects
+     */
     MyObservable<ArrayList<Consentcoin>> getConsentcoins();
 
+    /**
+     * This method removes a consentcoin from the database
+     */
     void removeConsentcoin(Consentcoin consentcoin);
 
+    /**
+     * This method returns an Arraylist of InviteRequest objects
+     */
     MyObservable<ArrayList<InviteRequest>> getInviteRequests();
 
+    /**
+     * This method creates an InviteRequest and stores it in the database
+     */
     void addInviteRequest(ArrayList<String> members, final String organization);
 
+    /**
+     * This method removes a InviteRequest from the database.
+     */
     void removeInviteRequest(String id);
 
 }
