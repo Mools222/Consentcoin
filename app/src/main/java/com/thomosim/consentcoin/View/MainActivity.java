@@ -616,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onClick(DialogInterface dialog, int which) {
                         String userType = chosenUserType == 0 ? getString(R.string.member) : getString(R.string.organization);
                         String organizationName = textInputEditText.getText().toString();
-                        myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName);
+                        myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName.toLowerCase().matches("asshole|shit") ? "BadOrg" : organizationName);
                         Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();}
                 })
                 .setCancelable(false)

@@ -1,5 +1,7 @@
 package com.thomosim.consentcoin.Persistence.ModelClass;
 
+import com.thomosim.consentcoin.Persistence.ModelClass.Exceptions.ErroneousDatesException;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -93,16 +95,28 @@ public class PermissionRequest implements Serializable {
         return permissionStartDate;
     }
 
-    public void setPermissionStartDate(Date permissionStartDate) {
-        this.permissionStartDate = permissionStartDate;
+    public void setPermissionStartDate(Date permissionStartDate) throws ErroneousDatesException {
+        if (permissionEndDate != null) {
+            if (permissionStartDate.compareTo(permissionEndDate) != -1)
+                throw new ErroneousDatesException("End date must be later than start date");
+            else
+                this.permissionStartDate = permissionStartDate;
+        } else
+            this.permissionStartDate = permissionStartDate;
     }
 
     public Date getPermissionEndDate() {
         return permissionEndDate;
     }
 
-    public void setPermissionEndDate(Date permissionEndDate) {
-        this.permissionEndDate = permissionEndDate;
+    public void setPermissionEndDate(Date permissionEndDate) throws ErroneousDatesException {
+        if (permissionStartDate != null) {
+            if (permissionStartDate.compareTo(permissionEndDate) != -1)
+                throw new ErroneousDatesException("End date must be later than start date");
+            else
+                this.permissionEndDate = permissionEndDate;
+        } else
+            this.permissionEndDate = permissionEndDate;
     }
 
     public ContractScopeEnum getPersonsIncluded() {
