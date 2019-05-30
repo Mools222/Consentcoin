@@ -7,6 +7,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
+import com.thomosim.consentcoin.Persistence.ModelClass.Exception.ProfanityException;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
 
 public class ObservableDataUser extends MyObservable<User> {
@@ -33,7 +34,7 @@ public class ObservableDataUser extends MyObservable<User> {
 
     private class MyValueEventListener implements ValueEventListener {
         @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot){
             setValue(dataSnapshot.getValue(User.class));
         }
 

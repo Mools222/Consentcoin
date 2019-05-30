@@ -43,9 +43,7 @@ public class User implements Serializable {
         return email;
     }
 
-    public void setEmail(String email) throws ProfanityException {
-        if (email.toLowerCase().contains("fuck")){throw new ProfanityException();}
-        else
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -61,9 +59,7 @@ public class User implements Serializable {
         return firstName;
     }
 
-    public void setFirstName(String firstName) throws ProfanityException {
-        if (firstName.toLowerCase().contains("fuck")){throw new ProfanityException();}
-        else
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
@@ -71,19 +67,15 @@ public class User implements Serializable {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) throws ProfanityException {
-        if (middleName.toLowerCase().contains("fuck")){throw new ProfanityException();}
-        else
-            this.middleName = middleName;
+    public void setMiddleName(String middleName)  {
+        this.middleName = middleName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) throws ProfanityException {
-        if (lastName.toLowerCase().contains("fuck")){throw new ProfanityException();}
-        else
+    public void setLastName(String lastName)  {
             this.lastName = lastName;
     }
 
@@ -91,9 +83,7 @@ public class User implements Serializable {
         return organizationName;
     }
 
-    public void setOrganizationName(String organizationName) throws ProfanityException {
-        if (organizationName.toLowerCase().contains("fuck")){throw new ProfanityException();}
-        else
+    public void setOrganizationName(String organizationName)  {
             this.organizationName = organizationName;
     }
 
