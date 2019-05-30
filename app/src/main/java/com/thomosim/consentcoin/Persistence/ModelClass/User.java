@@ -59,6 +59,7 @@ public class User implements Serializable {
         return firstName;
     }
 
+    //TODO IMPLEMENT Profanity better.
     public void setFirstName(String firstName) throws ProfanityException {
         if (firstName.toLowerCase().contains("fuck")){throw new ProfanityException(firstName);}
         this.firstName = firstName;
