@@ -1,5 +1,7 @@
 package com.thomosim.consentcoin.Persistence.ModelClass;
 
+import com.thomosim.consentcoin.Persistence.ModelClass.Exception.ProfanityException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -57,7 +59,8 @@ public class User implements Serializable {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName) throws ProfanityException {
+        if (firstName.toLowerCase().contains("fuck")){throw new ProfanityException(firstName);}
         this.firstName = firstName;
     }
 
