@@ -61,7 +61,8 @@ public class User implements Serializable {
 
     //TODO IMPLEMENT Profanity better.
     public void setFirstName(String firstName) throws ProfanityException {
-        if (firstName.toLowerCase().contains("fuck")){throw new ProfanityException(firstName);}
+        if (firstName.toLowerCase().contains("fuck")){throw new ProfanityException();}
+        else
         this.firstName = firstName;
     }
 
@@ -69,24 +70,30 @@ public class User implements Serializable {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
+    public void setMiddleName(String middleName) throws ProfanityException {
+        if (middleName.toLowerCase().contains("fuck")){throw new ProfanityException();}
+        else
+            this.middleName = middleName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastName(String lastName) throws ProfanityException {
+        if (lastName.toLowerCase().contains("fuck")){throw new ProfanityException();}
+        else
+            this.lastName = lastName;
     }
 
     public String getOrganizationName() {
         return organizationName;
     }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
+    public void setOrganizationName(String organizationName) throws ProfanityException {
+        if (organizationName.toLowerCase().contains("fuck")){throw new ProfanityException();}
+        else
+            this.organizationName = organizationName;
     }
 
     public ArrayList<String> getAssociatedUsersUids() {

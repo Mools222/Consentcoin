@@ -1,7 +1,6 @@
 package com.thomosim.consentcoin.Persistence.ModelClass.Exception;
 
 public class ProfanityException extends Exception {
-
     public ProfanityException( ){
         super();
         }
