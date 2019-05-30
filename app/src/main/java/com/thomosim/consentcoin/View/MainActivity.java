@@ -38,7 +38,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.ObserverPattern.MyObserver;
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
-import com.thomosim.consentcoin.Persistence.ModelClass.Exception.ProfanityException;
 import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;

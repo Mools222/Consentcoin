@@ -1,7 +1,5 @@
 package com.thomosim.consentcoin.Persistence.ModelClass;
 
-import com.thomosim.consentcoin.Persistence.ModelClass.Exception.ProfanityException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
