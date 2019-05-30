@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.ObserverPattern.MyObserver;
 import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
+import com.thomosim.consentcoin.Persistence.ModelClass.Exception.ProfanityException;
 import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;
@@ -225,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 user = currentUser;
 
                 if (user == null) {
-                    addUser();
+                        addUser();
                 } else {
                     myViewModel.getDao().addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
                     Log.i("ZZZ", "addDatabaseListener ");
@@ -617,8 +618,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String userType = chosenUserType == 0 ? getString(R.string.member) : getString(R.string.organization);
                         String organizationName = textInputEditText.getText().toString();
                         myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName);
-                        Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();
-                    }
+                        Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();}
                 })
                 .setCancelable(false)
                 .show();

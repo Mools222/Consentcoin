@@ -1,5 +1,7 @@
 package com.thomosim.consentcoin.Persistence.ModelClass;
 
+import com.thomosim.consentcoin.Persistence.ModelClass.Exception.ProfanityException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -65,7 +67,7 @@ public class User implements Serializable {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) {
+    public void setMiddleName(String middleName)  {
         this.middleName = middleName;
     }
 
@@ -73,16 +75,16 @@ public class User implements Serializable {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastName(String lastName)  {
+            this.lastName = lastName;
     }
 
     public String getOrganizationName() {
         return organizationName;
     }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
+    public void setOrganizationName(String organizationName)  {
+            this.organizationName = organizationName;
     }
 
     public ArrayList<String> getAssociatedUsersUids() {
