@@ -22,6 +22,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);
         tvNavigationDrawerPendingPermissionsCounter.setTypeface(null, Typeface.BOLD);
-        tvNavigationDrawerPendingPermissionsCounter.setTextColor(getResources().getColor(R.color.colorRed));
+        tvNavigationDrawerPendingPermissionsCounter.setTextColor(ContextCompat.getColor(this, R.color.colorRed));
 //        tvNavigationDrawerPendingPermissionsCounter.setBackground(getResources().getDrawable(R.drawable.navigation_drawer_counter_red_circle));
         tvNavigationDrawerPendingPermissionsCounter.setText("0");
         tvNavigationHeaderName = navigationDrawerHeader.findViewById(R.id.tv_navigation_header_name);
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingInviteCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_invites).getActionView();
         tvNavigationDrawerPendingInviteCounter.setGravity(Gravity.CENTER_VERTICAL);
         tvNavigationDrawerPendingInviteCounter.setTypeface(null, Typeface.BOLD);
-        tvNavigationDrawerPendingInviteCounter.setTextColor(getResources().getColor(R.color.colorRed));
+        tvNavigationDrawerPendingInviteCounter.setTextColor(ContextCompat.getColor(this, R.color.colorRed));
         tvNavigationDrawerPendingInviteCounter.setText("0");
     }
 
@@ -681,7 +682,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(CONTEXT, getString(R.string.yep), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, "Show the thing clicked", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
@@ -692,7 +693,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .create();
 
             ListView listView = alertDialog.getListView();
-            listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
+            listView.setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.colorOuterSpace)));
             listView.setDividerHeight(5);
             alertDialog.show();
         } else
@@ -704,12 +705,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[consentcoinReferences.size()];
             for (int i = 0; i < consentcoinReferences.size(); i++) {
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
-                for (User u : users) {
-                    if (u.getUid().equals(consentcoinReference.getOrganizationUid())) {
-                        array[i] = getString(R.string.array_org) + u.getOrganizationName();
+                if (user.getType().equals("Member"))
+                    for (User u : users) {
+                        if (u.getUid().equals(consentcoinReference.getOrganizationUid())) {
+                            array[i] = getString(R.string.array_org) + u.getOrganizationName();
+                        }
                     }
-                }
-
+                else
+                    for (User u : users) {
+                        if (u.getUid().equals(consentcoinReference.getMemberUid())) {
+                            array[i] = getString(R.string.array_member) + u.getFirstName() + " " + u.getLastName();
+                        }
+                    }
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
@@ -731,7 +738,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .create();
 
             ListView listView = alertDialog.getListView();
-            listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
+            listView.setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.colorOuterSpace)));
             listView.setDividerHeight(5);
             alertDialog.show();
         } else
@@ -856,7 +863,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .create();
 
             ListView listView = alertDialog.getListView();
-            listView.setDivider(new ColorDrawable(getResources().getColor(R.color.colorOuterSpace)));
+            listView.setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.colorOuterSpace)));
             listView.setDividerHeight(5);
             alertDialog.show();
         } else

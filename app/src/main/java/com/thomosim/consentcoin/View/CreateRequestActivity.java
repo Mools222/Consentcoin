@@ -131,8 +131,7 @@ public class CreateRequestActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 membersSearch.clear();
-                for (int i = 0; i < members.size(); i++) {
-                    User member = members.get(i);
+                for (User member: members) {
                     if (member.getEmail().contains(s))
                         membersSearch.add(member);
                 }
@@ -213,8 +212,7 @@ public class CreateRequestActivity extends AppCompatActivity {
 
     public void sendRequests(ArrayList<User> memberList) {
         Date date = new Date();
-        for (int i = 0; i < memberList.size(); i++) {
-            User member = memberList.get(i);
+        for (User member: memberList) {
             String memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
             myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
