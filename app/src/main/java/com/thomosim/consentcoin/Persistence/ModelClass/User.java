@@ -19,7 +19,6 @@ public class User implements Serializable {
     public User() {
     }
 
-    //TODO Use set methods in constructor to be able to use Exception.
     public User(String uid, String email, String type, String firstName, String middleName, String lastName, String organizationName, ArrayList<String> associatedUsersUids, ArrayList<UserActivity> userActivities) {
         this.uid = uid;
         this.email = email;
@@ -44,7 +43,9 @@ public class User implements Serializable {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email) throws ProfanityException {
+        if (email.toLowerCase().contains("fuck")){throw new ProfanityException();}
+        else
         this.email = email;
     }
 
@@ -60,7 +61,6 @@ public class User implements Serializable {
         return firstName;
     }
 
-    //TODO IMPLEMENT Profanity better.
     public void setFirstName(String firstName) throws ProfanityException {
         if (firstName.toLowerCase().contains("fuck")){throw new ProfanityException();}
         else
