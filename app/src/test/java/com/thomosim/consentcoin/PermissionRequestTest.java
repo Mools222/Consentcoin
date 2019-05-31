@@ -3,6 +3,7 @@ package com.thomosim.consentcoin;
 import com.thomosim.consentcoin.Persistence.ModelClass.Exceptions.ErroneousDatesException;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -35,4 +36,36 @@ public class PermissionRequestTest {
         permissionRequest.setPermissionEndDate(endDate.getTime());
     }
 
+    @Test
+    public void testSetPermissionEndDateDan() throws ErroneousDatesException {
+        GregorianCalendar startDate = new GregorianCalendar(2001, 1, 1);
+        GregorianCalendar endDate = new GregorianCalendar(2019, 5, 25);
+
+
+        PermissionRequest permissionRequest = new PermissionRequest();
+        permissionRequest.setPermissionStartDate(startDate.getTime());
+        Boolean caught = false;
+        try {
+            permissionRequest.setPermissionEndDate(endDate.getTime());
+        }catch (ErroneousDatesException e){
+            caught = true;
+        }
+        Assert.assertFalse(caught);
+    }
+
+    @Test
+    public void testSetPermissionEndDateDan2() throws ErroneousDatesException {
+        GregorianCalendar startDate = new GregorianCalendar(2019, 5, 25);
+        GregorianCalendar endDate = new GregorianCalendar(2001, 1, 1);
+
+        PermissionRequest permissionRequest = new PermissionRequest();
+        permissionRequest.setPermissionStartDate(startDate.getTime());
+        Boolean caught = false;
+        try {
+            permissionRequest.setPermissionEndDate(endDate.getTime());
+        }catch (ErroneousDatesException e){
+            caught = true;
+        }
+        Assert.assertTrue(caught);
+    }
 }

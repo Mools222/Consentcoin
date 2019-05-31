@@ -49,6 +49,7 @@ public class UserTest {
             caught = true;
         }
         Assert.assertFalse(caught);
+        //To check if the name gets set
+        Assert.assertTrue(d.getOrganizationName() == orgName);
     }
-    //TODO ADD UNIT TEST FOR UserClass.
 }
