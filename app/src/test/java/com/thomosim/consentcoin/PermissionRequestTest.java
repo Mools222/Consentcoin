@@ -20,11 +20,11 @@ public class PermissionRequestTest {
 
         PermissionRequest permissionRequest = new PermissionRequest();
         permissionRequest.setPermissionEndDate(endDate.getTime());
-        exception.expect(ErroneousDatesException.class);
+        exception.expect(ErroneousDatesException.class); // An ErroneousDatesException is expected to be thrown by the next method
         permissionRequest.setPermissionStartDate(startDate.getTime());
     }
 
-    @Test(expected = Test.None.class)
+    @Test(expected = Test.None.class) // No exceptions are expected to be thrown
     public void testSetPermissionStartDate2() throws ErroneousDatesException {
         GregorianCalendar startDate = new GregorianCalendar(2019, 5, 25);
         GregorianCalendar endDate = new GregorianCalendar(2022, 1, 1);
@@ -41,11 +41,11 @@ public class PermissionRequestTest {
 
         PermissionRequest permissionRequest = new PermissionRequest();
         permissionRequest.setPermissionStartDate(startDate.getTime());
-        exception.expect(ErroneousDatesException.class);
+        exception.expect(ErroneousDatesException.class); // An ErroneousDatesException is expected to be thrown by the next method
         permissionRequest.setPermissionEndDate(endDate.getTime());
     }
 
-    @Test(expected = Test.None.class)
+    @Test(expected = Test.None.class) // No exceptions are expected to be thrown
     public void testSetPermissionEndDate2() throws ErroneousDatesException {
         GregorianCalendar startDate = new GregorianCalendar(2019, 5, 25);
         GregorianCalendar endDate = new GregorianCalendar(2022, 1, 1);
