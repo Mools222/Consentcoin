@@ -67,10 +67,7 @@ public class User implements Serializable {
         return middleName;
     }
 
-    public void setMiddleName(String middleName) throws ProfanityException {
-        if (middleName.toLowerCase().contains("fuck"))
-            throw new ProfanityException("Profanity found!!!");
-        else
+    public void setMiddleName(String middleName){
             this.middleName = middleName;
     }
 
