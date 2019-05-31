@@ -101,9 +101,8 @@ public class CreateRequestActivity extends AppCompatActivity {
         simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         textInputEditTextStartDate.setText(simpleDateFormat.format(date));
         textInputEditTextEndDate.setText(simpleDateFormat.format(date));
-
-        startDate = new Date();
-        endDate = new Date();
+        startDate = date;
+        endDate = date;
     }
 
     public void setReceivers() {

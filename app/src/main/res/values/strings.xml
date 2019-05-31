@@ -27,8 +27,8 @@
     <!-- TextView, ImageView and TextFields -->
 
     <string name="tv_create_request">Create Request</string>
-    <string name="tf_start_date">End Date</string>
-    <string name="tf_end_date">Start Date</string>
+    <string name="tf_start_date">Start Date</string>
+    <string name="tf_end_date">End Date</string>
     <string name="tv_send_request_to">"Send this request to: "</string>
     <string name="tf_search_users">Search for specific user</string>
     <string name="tf_enter_organisation_mail">Enter organization e-mail</string>

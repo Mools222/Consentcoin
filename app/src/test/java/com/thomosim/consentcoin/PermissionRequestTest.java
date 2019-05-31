@@ -24,6 +24,16 @@ public class PermissionRequestTest {
         permissionRequest.setPermissionStartDate(startDate.getTime());
     }
 
+    @Test(expected = Test.None.class)
+    public void testSetPermissionStartDate2() throws ErroneousDatesException {
+        GregorianCalendar startDate = new GregorianCalendar(2019, 5, 25);
+        GregorianCalendar endDate = new GregorianCalendar(2022, 1, 1);
+
+        PermissionRequest permissionRequest = new PermissionRequest();
+        permissionRequest.setPermissionEndDate(endDate.getTime());
+        permissionRequest.setPermissionStartDate(startDate.getTime());
+    }
+
     @Test
     public void testSetPermissionEndDate() throws ErroneousDatesException {
         GregorianCalendar startDate = new GregorianCalendar(2019, 5, 25);
@@ -35,4 +45,13 @@ public class PermissionRequestTest {
         permissionRequest.setPermissionEndDate(endDate.getTime());
     }
 
+    @Test(expected = Test.None.class)
+    public void testSetPermissionEndDate2() throws ErroneousDatesException {
+        GregorianCalendar startDate = new GregorianCalendar(2019, 5, 25);
+        GregorianCalendar endDate = new GregorianCalendar(2022, 1, 1);
+
+        PermissionRequest permissionRequest = new PermissionRequest();
+        permissionRequest.setPermissionStartDate(startDate.getTime());
+        permissionRequest.setPermissionEndDate(endDate.getTime());
+    }
 }
