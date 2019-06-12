@@ -13,3 +13,7 @@ Setup requires downloading the app and creating a user.
 ## License
 
 See [LICENSE](LICENSE)
+
+## Javadoc
+
+https://mools222.github.io/Consentcoin/
