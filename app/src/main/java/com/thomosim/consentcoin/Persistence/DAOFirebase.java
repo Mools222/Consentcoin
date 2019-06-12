@@ -158,6 +158,12 @@ public class DAOFirebase implements DAOInterface {
                 user = new User(uid, userEmail, userType, userNameSplit[0], null, userNameSplit[1], organizationName.length() == 0 ? null : organizationName, null, null);
             else if (userNameSplit.length == 3)
                 user = new User(uid, userEmail, userType, userNameSplit[0], userNameSplit[1], userNameSplit[2], organizationName.length() == 0 ? null : organizationName, null, null);
+            else if (userNameSplit.length > 3) {
+                String middleNames = "";
+                for (int i = 1; i < userNameSplit.length - 1; i++)
+                    middleNames += userNameSplit[i] + (i == userNameSplit.length - 2 ? "" : " ");
+                user = new User(uid, userEmail, userType, userNameSplit[0], middleNames, userNameSplit[userNameSplit.length - 1], organizationName.length() == 0 ? null : organizationName, null, null);
+            }
         }
         ArrayList<UserActivity> userActivities = new ArrayList<>();
         userActivities.add(0, new UserActivity("UC", userDisplayName, organizationName.length() == 0 ? null : organizationName, new Date())); // Create a "UC" (User Created) UserActivity and add it to the new user

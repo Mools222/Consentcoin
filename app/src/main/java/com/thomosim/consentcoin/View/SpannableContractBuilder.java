@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class SpannableContractBuilder {
-
     private Context context;
 
     public SpannableContractBuilder(Context context) {

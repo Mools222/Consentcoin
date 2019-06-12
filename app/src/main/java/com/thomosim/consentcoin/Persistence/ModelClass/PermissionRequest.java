@@ -96,13 +96,10 @@ public class PermissionRequest implements Serializable {
     }
 
     public void setPermissionStartDate(Date permissionStartDate) throws ErroneousDatesException {
-        if (permissionEndDate != null) {
+        if (permissionEndDate != null)
             if (permissionStartDate.compareTo(permissionEndDate) != -1)
                 throw new ErroneousDatesException("End date must be later than start date");
-            else
-                this.permissionStartDate = permissionStartDate;
-        } else
-            this.permissionStartDate = permissionStartDate;
+        this.permissionStartDate = permissionStartDate;
     }
 
     public Date getPermissionEndDate() {
@@ -110,13 +107,10 @@ public class PermissionRequest implements Serializable {
     }
 
     public void setPermissionEndDate(Date permissionEndDate) throws ErroneousDatesException {
-        if (permissionStartDate != null) {
+        if (permissionStartDate != null)
             if (permissionStartDate.compareTo(permissionEndDate) != -1)
                 throw new ErroneousDatesException("End date must be later than start date");
-            else
-                this.permissionEndDate = permissionEndDate;
-        } else
-            this.permissionEndDate = permissionEndDate;
+        this.permissionEndDate = permissionEndDate;
     }
 
     public ContractScopeEnum getPersonsIncluded() {

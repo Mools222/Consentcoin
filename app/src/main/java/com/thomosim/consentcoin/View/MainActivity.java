@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.ObserverPattern.MyObserver;
@@ -48,12 +49,11 @@ import com.thomosim.consentcoin.ViewModel.MyViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
-// TODO Make all named constants (keyword final) uppercase
 // TODO Add a nice UI for "Active Request(s)"
 // TODO Add a nice UI for "My Consentcoins"
 // TODO Add a nice UI for "My Members"
 // TODO Add "Settings"
+// TODO Denying an invite request doesn't seem to produce a UserActivity
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail, tvNavigationDrawerCounter, tvNavigationDrawerPendingPermissionsCounter, tvNavigationDrawerPendingInviteCounter;
     private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemSentRequests, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
@@ -64,23 +64,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private View navigationDrawerHeader;
     private NavigationView navigationView;
     private RecyclerView recyclerView;
-
     private ArrayList<String> inviteMemberList;
     private ArrayAdapter<String> inviteMemberAdapter;
     private String userDisplayName, userEmail, uid;
     private User user;
     private int chosenUserType; // int default value = 0
-    private static final int REQUEST_CODE_SIGN_IN = 1;
-    private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
-    private static final int REQUEST_CODE_MY_CONSENTCOINS = 3;
-    private static final int REQUEST_CODE_PROCESS_INVITE = 4;
-    private static final int REQUEST_CODE_CREATE_REQUEST = 5;
-
+    private static final int REQUEST_CODE_SIGN_IN = 1, REQUEST_CODE_PROCESS_REQUEST = 2, REQUEST_CODE_MY_CONSENTCOINS = 3, REQUEST_CODE_PROCESS_INVITE = 4, REQUEST_CODE_CREATE_REQUEST = 5;
     private ArrayList<User> users;
     private ArrayList<ConsentcoinReference> consentcoinReferences;
     private ArrayList<PermissionRequest> pendingPermissionRequests;
     private ArrayList<InviteRequest> pendingInviteRequests;
-
     private MyViewModel myViewModel;
 
     @Override
@@ -225,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 user = currentUser;
 
                 if (user == null) {
-                        addUser();
+                    addUser();
                 } else {
                     myViewModel.getDao().addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
                     Log.i("ZZZ", "addDatabaseListener ");
@@ -590,18 +583,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void addUser() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_user, null);
 
-        final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_create_request);
-        textInputEditText.setVisibility(View.GONE);
+        final TextInputEditText TEXT_INPUT_EDIT_TEXT = dialogView.findViewById(R.id.et_create_request);
+        TEXT_INPUT_EDIT_TEXT.setVisibility(View.GONE);
 
         RadioGroup radioGroup = dialogView.findViewById(R.id.rg_create_user);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rb_create_user_member) {
-                    textInputEditText.setVisibility(View.GONE);
+                    TEXT_INPUT_EDIT_TEXT.setVisibility(View.GONE);
                     chosenUserType = 0;
                 } else if (checkedId == R.id.rb_create_user_organization) {
-                    textInputEditText.setVisibility(View.VISIBLE);
+                    TEXT_INPUT_EDIT_TEXT.setVisibility(View.VISIBLE);
                     chosenUserType = 1;
                 }
             }
@@ -615,9 +608,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String userType = chosenUserType == 0 ? getString(R.string.member) : getString(R.string.organization);
-                        String organizationName = textInputEditText.getText().toString();
-                        myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName.toLowerCase().matches("asshole|shit") ? "BadOrg" : organizationName);
-                        Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();}
+                        String organizationName = TEXT_INPUT_EDIT_TEXT.getText().toString();
+                        myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName.toLowerCase().matches(".*asshole.*|.*shit.*") ? "BadOrg" : organizationName);
+                        Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .setCancelable(false)
                 .show();
@@ -769,33 +763,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return null;
     }
 
-    public void addOrganizationOrMember(final String userType) {
+    public void addOrganizationOrMember(final String USER_TYPE) {
         final ArrayList<User> organizations = new ArrayList<>();
         final ArrayList<User> members = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
-            if (user.getType().equals("Organization") && userType.equals("organization"))
+            if (user.getType().equals("Organization") && USER_TYPE.equals("organization"))
                 organizations.add(user);
-            else if (user.getType().equals("Member") && userType.equals("member"))
+            else if (user.getType().equals("Member") && USER_TYPE.equals("member"))
                 members.add(user);
         }
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_organization, null);
-        final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_dialog_add_organization);
+        final TextInputEditText TEXT_INPUT_EDIT_TEXT = dialogView.findViewById(R.id.et_dialog_add);
+        TextInputLayout textInputLayout = dialogView.findViewById(R.id.til_dialog_add);
+        if (USER_TYPE.equals("organization"))
+            textInputLayout.setHint(getString(R.string.tf_enter_organisation_mail));
+        else
+            textInputLayout.setHint(getString(R.string.tf_enter_member_mail));
         final Context CONTEXT = this;
         new MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.title_add_with_space) + userType)
+                .setTitle(getString(R.string.title_add_with_space) + USER_TYPE)
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         boolean existingOrganizationOrMember = false;
 //                        if (textInputEditText.getText().length() > 0)
-                        String email = textInputEditText.getText().toString();
+                        String email = TEXT_INPUT_EDIT_TEXT.getText().toString();
                         User organizationOrMember = null;
 
-                        if (userType.equals("organization")) // If a member is trying to add an organization, check if the organization exists
+                        if (USER_TYPE.equals("organization")) // If a member is trying to add an organization, check if the organization exists
                             for (int i = 0; i < organizations.size(); i++) {
                                 organizationOrMember = organizations.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -803,7 +802,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     break;
                                 }
                             }
-                        else if (userType.equals("member")) // If an organization is trying to add a member, check if the member exists
+                        else if (USER_TYPE.equals("member")) // If an organization is trying to add a member, check if the member exists
                             for (int i = 0; i < members.size(); i++) {
                                 organizationOrMember = members.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -820,9 +819,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 associatedUsersUids.add(organizationOrMember.getUid());
                             user.setAssociatedUsersUids(associatedUsersUids);
                             myViewModel.getDao().updateUser(uid, user);
-                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, USER_TYPE.substring(0, 1).toUpperCase() + USER_TYPE.substring(1) + " added", Toast.LENGTH_SHORT).show();
                         } else // If the organization or member does not exist, display a toast
-                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, USER_TYPE.substring(0, 1).toUpperCase() + USER_TYPE.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
