@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://coolors.co/464f51-fdfdff-c2e812-02111b-76bf2d + #E83212-->
+<resources>
+    <color name="colorOuterSpace">#464f51</color>
+    <color name="colorWhite">#fdfdff</color>
+    <color name="colorBitterLemon">#c2e812</color>
+    <color name="colorRichBlack">#02111b</color>
+    <color name="colorGreen">#76bf2d</color>
+    <color name="colorRed">#E83212</color>
+</resources>

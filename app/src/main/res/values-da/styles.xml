@@ -1,0 +1,32 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <!--Doesn't work anymore. See: https://material.io/develop/android/docs/getting-started/ under "4. Change your app theme to inherit from a Material Components theme"-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorGreen</item>
+        <item name="colorPrimaryDark">@color/colorBitterLemon</item>
+        <item name="colorAccent">@color/colorRed</item>
+    </style>
+
+    <!--NoActionBar is chosen, because we make our own-->
+    <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorGreen</item>
+        <item name="colorPrimaryDark">@color/colorBitterLemon</item>
+        <item name="colorAccent">@color/colorOuterSpace</item>
+    </style>
+
+    <style name="LightTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+    <style name="LightTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
+
+    <!--Adds color to the ripple effect when an item displayed by a RecyclerView adapter is clicked-->
+    <style name="SelectableItemTheme">
+        <item name="colorControlHighlight">@color/colorGreen</item>
+    </style>
+    <style name="SelectableItemBackground">
+        <item name="android:theme">@style/SelectableItemTheme</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+</resources>
