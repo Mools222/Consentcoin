@@ -13,7 +13,6 @@ import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.R;
 
 public class ProcessRequestActivity extends AppCompatActivity {
-
     private Intent returnIntent;
     private int position;
 
@@ -31,7 +30,6 @@ public class ProcessRequestActivity extends AppCompatActivity {
             position = startIntent.getIntExtra("POS", -1);
 
             SpannableStringBuilder contract = new SpannableContractBuilder(this).displayPermissionRequest(permissionRequest);
-
             tvShowContract.setText(contract);
         }
         returnIntent = new Intent();

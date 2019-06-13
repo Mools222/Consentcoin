@@ -33,7 +33,7 @@ public class ObservableDataUser extends MyObservable<User> {
 
     private class MyValueEventListener implements ValueEventListener {
         @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot){
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             setValue(dataSnapshot.getValue(User.class));
         }
 

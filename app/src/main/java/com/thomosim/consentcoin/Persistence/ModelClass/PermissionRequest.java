@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class PermissionRequest implements Serializable {
-
     private String id;
     private String organizationName;
     private String organizationUid;

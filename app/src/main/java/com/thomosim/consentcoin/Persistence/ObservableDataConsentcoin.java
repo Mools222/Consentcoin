@@ -12,7 +12,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ObservableDataConsentcoin extends MyObservable<Consentcoin> {
-
     public void setConsentcoinUrl(String storageUrl) {
         try {
             URL url = new URL(storageUrl);

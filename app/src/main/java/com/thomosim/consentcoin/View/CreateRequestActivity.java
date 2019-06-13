@@ -38,7 +38,6 @@ public class CreateRequestActivity extends AppCompatActivity {
     private TextInputEditText textInputEditTextStartDate;
     private TextInputEditText textInputEditTextEndDate;
     private AdapterCreateRequest adapterCreateRequest;
-
     private GregorianCalendar gregorianCalendar;
     private SimpleDateFormat simpleDateFormat;
     private User organization;
@@ -49,9 +48,7 @@ public class CreateRequestActivity extends AppCompatActivity {
     private Date endDate;
     private ContractTypeEnum permissionType;
     private ContractScopeEnum personsIncluded;
-
     private Intent returnIntent;
-
     private MyViewModel myViewModel;
 
     @Override
@@ -130,7 +127,7 @@ public class CreateRequestActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 membersSearch.clear();
-                for (User member: members) {
+                for (User member : members) {
                     if (member.getEmail().contains(s))
                         membersSearch.add(member);
                 }
@@ -211,7 +208,7 @@ public class CreateRequestActivity extends AppCompatActivity {
 
     public void sendRequests(ArrayList<User> memberList) {
         Date date = new Date();
-        for (User member: memberList) {
+        for (User member : memberList) {
             String memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
             myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 

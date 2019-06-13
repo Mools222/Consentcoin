@@ -7,10 +7,9 @@ public enum ContractScopeEnum {
 
     ContractScopeEnum(String scope) {
         SCOPE = scope;
-
     }
 
-    public String getScope(){
+    public String getScope() {
         return SCOPE;
     }
 }

@@ -170,9 +170,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * This method sets up the view model.
      * 1) It creates a new MyViewModel object and assigns it to myViewModel instance variable.
      * 2) It gets an instance of every ObservableData[Name] class, all of which are subclasses of MyObservable, which contains the observe and setValue methods.
-     * 3) It calls the observe method found in these classes and passes an anonymous inner class of the interface MyObserver as a parameter to each of them. This
-     * combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver objects inside the
-     * various instances of ObservableData[Name].
+     * 3) It calls the observe method found in these classes and passes an anonymous inner class, which implements the interface MyObserver, as a parameter to
+     * each of them. This combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver
+     * objects inside the various instances of ObservableData[Name].
      * 4) When creating the anonymous inner classes, we implement the onChange method found in the interface. The onChanged method is used to initialize and
      * update various data fields and to create and manipulate certain views.
      * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. In most cases the setValue method is called by the
@@ -700,19 +700,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
                 if (user.getType().equals("Member"))
                     for (User u : users) {
-                        if (u.getUid().equals(consentcoinReference.getOrganizationUid())) {
+                        if (u.getUid().equals(consentcoinReference.getOrganizationUid()))
                             array[i] = getString(R.string.array_org) + u.getOrganizationName();
-                        }
                     }
                 else
                     for (User u : users) {
-                        if (u.getUid().equals(consentcoinReference.getMemberUid())) {
+                        if (u.getUid().equals(consentcoinReference.getMemberUid()))
                             array[i] = getString(R.string.array_member) + u.getFirstName() + " " + u.getLastName();
-                        }
                     }
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
             final Context CONTEXT = this;
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.title_my_consentcoins))
