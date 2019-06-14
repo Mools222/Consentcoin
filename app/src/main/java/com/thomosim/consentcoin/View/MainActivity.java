@@ -270,9 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
                 pendingPermissionRequests = new ArrayList<>();
                 for (PermissionRequest permissionRequest : permissionRequests) {
-                    if (user.getType().equals("Member") && permissionRequest.getMemberUid().equals(uid))
-                        pendingPermissionRequests.add(permissionRequest);
-                    else if (user.getType().equals("Organization") && permissionRequest.getOrganizationUid().equals(uid))
+                    if (permissionRequest.getMemberUid().equals(uid) || permissionRequest.getOrganizationUid().equals(uid))
                         pendingPermissionRequests.add(permissionRequest);
                 }
                 tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
@@ -288,9 +286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
                 for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
-                        consentcoinReferences.add(consentcoinReference);
-                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
+                    if ((consentcoinReference.getMemberUid().equals(uid) || consentcoinReference.getOrganizationUid().equals(uid)) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
                 }
             }
@@ -526,9 +522,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void createOrDenyConsentcoin(Intent data) {
-        if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+        if (data.hasExtra("BOOLEAN") && data.hasExtra("PR")) {
             boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
-            PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
+            PermissionRequest permissionRequest = (PermissionRequest) data.getSerializableExtra("PR");
             Date date = new Date();
 
             User organization = null;
@@ -543,41 +539,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
                         date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded().getScope()); // If the user chooses to give permission, create a Consentcoin
 
-                ArrayList<UserActivity> userActivities = user.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("APR", userDisplayName, organization.getOrganizationName(), date)); // "APR" = Accept Permission Request
-                user.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(uid, user);
-
-                userActivities = organization.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("RAPR", userDisplayName, organization.getOrganizationName(), date)); // "RAPR" = Receive Accepted Permission Request
-                organization.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
+                addUserActivity(user, uid, user.getUserActivities(), "APR", userDisplayName, organization.getOrganizationName(), date); // "APR" = Accept Permission Request
+                addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RAPR", userDisplayName, organization.getOrganizationName(), date); // "RAPR" = Receive Accepted Permission Request
 
                 Toast.makeText(this, getString(R.string.toast_permission_given), Toast.LENGTH_SHORT).show();
             } else {
-                ArrayList<UserActivity> userActivities = user.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("DPR", userDisplayName, organization.getOrganizationName(), date)); // "DPR" = Deny Permission Request
-                user.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(uid, user);
-
-                userActivities = organization.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("RDPR", userDisplayName, organization.getOrganizationName(), date)); // "RDPR" = Receive Denied Permission Request
-                organization.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
+                addUserActivity(user, uid, user.getUserActivities(), "DPR", userDisplayName, organization.getOrganizationName(), date); // "DPR" = Deny Permission Request
+                addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RDPR", userDisplayName, organization.getOrganizationName(), date); // "RDPR" = Receive Denied Permission Request
 
                 Toast.makeText(this, R.string.toast_permission_denied, Toast.LENGTH_SHORT).show();
             }
 
             myViewModel.getDao().removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
         }
+    }
+
+    public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
+        if (userActivities == null)
+            userActivities = new ArrayList<>();
+        userActivities.add(0, new UserActivity(activityCode, memberName, organizationName, date));
+        user.setUserActivities(userActivities);
+        myViewModel.getDao().updateUser(uid, user);
     }
 
     public void addUser() {
