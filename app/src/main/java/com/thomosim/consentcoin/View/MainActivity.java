@@ -469,40 +469,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (resultCode == RESULT_OK) {
                     if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
                         InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
-
                         boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
 
                         if (inviteAccepted) {
                             Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
+                            Date date = new Date();
 
                             for (User user : users) {
-                                if (user.getUid().equals(inviteRequest.getOrganization())) {
-                                    ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
-                                    if (associatedUsersUids == null)
-                                        associatedUsersUids = new ArrayList<>();
-                                    if (!associatedUsersUids.contains(uid))
-                                        associatedUsersUids.add(uid);
-
-                                    user.setAssociatedUsersUids(associatedUsersUids);
-
-                                    Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
-
-                                    myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
-
-                                    if (user.getUserActivities() != null) {
-                                        user.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                                if (user.getOrganizationName() != null)
+                                    if (user.getOrganizationName().equals(inviteRequest.getOrganization())) {
+                                        ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
+                                        if (associatedUsersUids == null)
+                                            associatedUsersUids = new ArrayList<>();
+                                        if (!associatedUsersUids.contains(uid))
+                                            associatedUsersUids.add(uid);
+                                        user.setAssociatedUsersUids(associatedUsersUids);
                                         myViewModel.getDao().updateUser(user.getUid(), user);
+
+                                        addUserActivity(user, user.getUid(), user.getUserActivities(), "RAIR", userDisplayName, user.getOrganizationName(), date);
+                                        addUserActivity(this.user, uid, this.user.getUserActivities(), "AIR", userDisplayName, user.getOrganizationName(), date);
+
+                                        break;
                                     }
-
-                                    break;
-                                }
                             }
-
-                            if (user.getUserActivities() != null) {
-                                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
-                                myViewModel.getDao().updateUser(user.getUid(), user);
-                            }
-
                         } else {
                             Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
                         }
