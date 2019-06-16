@@ -129,6 +129,18 @@
     <string name="text_consentcoin_revoked">Consentcoin tilbagekaldt</string>
     <string name="text_revoked_part_one">"Din Consentcoin aftale med "</string>
     <string name="text_revoked_part_two">" blev tilbagekaldt."</string>
+    <string name="text_invite_sent">Invitation sendt</string>
+    <string name="text_your_invite_sent">Du har sendt en invitation til </string>
+    <string name="text_invite_received">Invitation modtaget</string>
+    <string name="text_you_received_invite">Du har modtaget en invitation fra </string>
+    <string name="text_invite_accepted">Invitation accepteret</string>
+    <string name="text_you_accepted_invite">Du har accepteret en invitation fra </string>
+    <string name="text_org_accepted_invite_part_one">Din invitation til </string>
+    <string name="text_org_accepted_invite_part_two"> blec accepteret.</string>
+    <string name="text_invite_decnied">Invitation afvist</string>
+    <string name="text_you_denied_invite">Du har afslået en invitation fra </string>
+    <string name="text_org_denied_invite_part_one">Din invitation til </string>
+    <string name="text_org_denied_invite_part_two"> blev afslået.</string>
 
     <!-- AdapterProcess request -->
 

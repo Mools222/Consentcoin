@@ -111,28 +111,34 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
                 holder.tvActivityText.setText(text);
                 break;
             case "CIR":
-                holder.tvActivity.setText("Invite request sent");
-                holder.tvActivityText.setText("You sent an invite request to " + userActivity.getMemberName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_invite_sent));
+                text = context.getString(R.string.text_your_invite_sent) + userActivity.getMemberName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "RIR":
-                holder.tvActivity.setText("Invite request received");
-                holder.tvActivityText.setText("You received an invite request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_invite_received));
+                text = context.getString(R.string.text_you_received_invite) + userActivity.getOrganizationName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "AIR":
-                holder.tvActivity.setText("Invite request accepted");
-                holder.tvActivityText.setText("You have accepted an invite request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_invite_accepted));
+                text = context.getString(R.string.text_you_accepted_invite) + userActivity.getOrganizationName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "RAIR":
-                holder.tvActivity.setText("Invite request accepted");
-                holder.tvActivityText.setText("Your invite request to " + userActivity.getMemberName() + " has been accepted.");
+                holder.tvActivity.setText(context.getString(R.string.text_invite_accepted));
+                text = context.getString(R.string.text_org_accepted_invite_part_one) + userActivity.getMemberName() + context.getString(R.string.text_org_accepted_invite_part_two);
+                holder.tvActivityText.setText(text);
                 break;
             case "DIR":
-                holder.tvActivity.setText("Invite request denied");
-                holder.tvActivityText.setText("You have denied an invite request from " + userActivity.getOrganizationName() + ".");
+                holder.tvActivity.setText(context.getString(R.string.text_invite_decnied));
+                text = context.getString(R.string.text_you_denied_invite) + userActivity.getOrganizationName() + context.getString(R.string.dot);
+                holder.tvActivityText.setText(text);
                 break;
             case "RDIR":
-                holder.tvActivity.setText("Invite request denied");
-                holder.tvActivityText.setText("Your invite request to " + userActivity.getMemberName() + " has been denied.");
+                holder.tvActivity.setText(context.getString(R.string.text_invite_decnied));
+                text = context.getString(R.string.text_org_denied_invite_part_one) + userActivity.getMemberName() + context.getString(R.string.text_org_denied_invite_part_two);
+                holder.tvActivityText.setText(text);
                 break;
         }
     }
