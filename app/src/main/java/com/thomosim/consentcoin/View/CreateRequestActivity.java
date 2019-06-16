@@ -212,20 +212,17 @@ public class CreateRequestActivity extends AppCompatActivity {
             String memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
             myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
-            ArrayList<UserActivity> userActivities = organization.getUserActivities();
-            if (userActivities == null)
-                userActivities = new ArrayList<>();
-            userActivities.add(0, new UserActivity("CPR", memberName, organization.getOrganizationName(), date)); // "CPR" = Create Permission Request
-            organization.setUserActivities(userActivities);
-            myViewModel.getDao().updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
-
-            userActivities = member.getUserActivities();
-            if (userActivities == null)
-                userActivities = new ArrayList<>();
-            userActivities.add(0, new UserActivity("RPR", memberName, organization.getOrganizationName(), date)); // "RPR" = Receive Permission Request
-            member.setUserActivities(userActivities);
-            myViewModel.getDao().updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
+            addUserActivity(member, member.getUid(), member.getUserActivities(), "RPR", memberName, organization.getOrganizationName(), date); // "RPR" = Receive Permission Request
+            addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "CPR", memberName, organization.getOrganizationName(), date); // "CPR" = Create Permission Request
         }
+    }
+
+    public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
+        if (userActivities == null)
+            userActivities = new ArrayList<>();
+        userActivities.add(0, new UserActivity(activityCode, memberName, organizationName, date));
+        user.setUserActivities(userActivities);
+        myViewModel.getDao().updateUser(uid, user);
     }
 
     public void cancel(View view) {

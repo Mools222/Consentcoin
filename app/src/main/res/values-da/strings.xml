@@ -148,6 +148,9 @@
     <string name="consentcoin_value_contract_type">"\nKontraktType: "</string>
     <string name="consentcoin_value_mem">"\nMedlem: "</string>
     <string name="consentcoin_value_org">"\nOrganisation: " </string>
+    <string name="consentcoin_value_confirm">"Er du sikker på at du vil tilbagetrække dit samtykke?"</string>
+    <string name="consentcoin_value_y">"Ja"</string>
+    <string name="consentcoin_value_n">"Nej"</string>
 
     <!-- ContractTypeEnum -->
 
