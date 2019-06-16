@@ -30,7 +30,7 @@ public class ProcessInviteActivity extends AppCompatActivity {
             InviteRequest inviteRequest = (InviteRequest) startIntent.getSerializableExtra("PI");
             position = startIntent.getIntExtra("POS", -1);
 
-            SpannableStringBuilder text = new SpannableContractBuilder(this).displayInviteRequest(inviteRequest.getOrganization());
+            SpannableStringBuilder text = new SpannableContractBuilder(this).displayInviteRequest(inviteRequest.getOrganizationName());
             textView.setText(text);
         }
 

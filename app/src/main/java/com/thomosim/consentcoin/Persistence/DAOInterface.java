@@ -179,7 +179,7 @@ public interface DAOInterface {
     /**
      * This method creates an InviteRequest and stores it in the database
      */
-    void addInviteRequest(ArrayList<String> members, final String organization);
+    void addInviteRequest(ArrayList<String> members, final String organizationName, final String organizationUID);
 
     /**
      * This method removes a InviteRequest from the database.

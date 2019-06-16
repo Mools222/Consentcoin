@@ -311,11 +311,11 @@ public class DAOFirebase implements DAOInterface {
     }
 
     @Override
-    public void addInviteRequest(ArrayList<String> members, String organization) {
+    public void addInviteRequest(ArrayList<String> members, String organizationName, String organizationUID) {
         for (String email : members) {
             DatabaseReference inviteRequestDatabaseReference = databaseReferenceInviteRequests.push();
             String inviteID = inviteRequestDatabaseReference.getKey();
-            InviteRequest inviteRequest = new InviteRequest(inviteID, organization, email);
+            InviteRequest inviteRequest = new InviteRequest(inviteID, organizationName, organizationUID, email);
             inviteRequestDatabaseReference.setValue(inviteRequest);
         }
     }

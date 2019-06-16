@@ -4,15 +4,17 @@ import java.io.Serializable;
 
 public class InviteRequest implements Serializable {
     private String id;
-    private String organization;
+    private String organizationName;
+    private String organizationUID;
     private String member;
 
     public InviteRequest() {
     }
 
-    public InviteRequest(String id, String organization, String member) {
+    public InviteRequest(String id, String organizationName, String organizationUID, String member) {
         this.id = id;
-        this.organization = organization;
+        this.organizationName = organizationName;
+        this.organizationUID = organizationUID;
         this.member = member;
     }
 
@@ -24,12 +26,12 @@ public class InviteRequest implements Serializable {
         this.id = id;
     }
 
-    public String getOrganization() {
-        return organization;
+    public String getOrganizationName() {
+        return organizationName;
     }
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
     }
 
     public String getMember() {
@@ -39,4 +41,13 @@ public class InviteRequest implements Serializable {
     public void setMember(String member) {
         this.member = member;
     }
+
+    public String getOrganizationUID() {
+        return organizationUID;
+    }
+
+    public void setOrganizationUID(String organizationUID) {
+        this.organizationUID = organizationUID;
+    }
+
 }

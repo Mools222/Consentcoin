@@ -471,32 +471,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
                         boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
 
-                        if (inviteAccepted) {
-                            Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
-                            Date date = new Date();
-
-                            for (User user : users) {
-                                if (user.getOrganizationName() != null)
-                                    if (user.getOrganizationName().equals(inviteRequest.getOrganization())) {
-                                        ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
-                                        if (associatedUsersUids == null)
-                                            associatedUsersUids = new ArrayList<>();
-                                        if (!associatedUsersUids.contains(uid))
-                                            associatedUsersUids.add(uid);
-                                        user.setAssociatedUsersUids(associatedUsersUids);
-                                        myViewModel.getDao().updateUser(user.getUid(), user);
-
-                                        addUserActivity(user, user.getUid(), user.getUserActivities(), "RAIR", userDisplayName, user.getOrganizationName(), date);
-                                        addUserActivity(this.user, uid, this.user.getUserActivities(), "AIR", userDisplayName, user.getOrganizationName(), date);
-
-                                        break;
-                                    }
-                            }
-                        } else {
-                            Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
-                        }
-
-                        myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+                        acceptOrDenyInviteRequest(inviteRequest, inviteAccepted);
                     }
                 }
                 break;
@@ -541,6 +516,65 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             myViewModel.getDao().removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
         }
+    }
+
+    public void acceptOrDenyInviteRequest(InviteRequest inviteRequest, boolean inviteAccepted) {
+
+        User organization = null;
+        for (User user : users) {
+
+            if (user.getUid().equals(inviteRequest.getOrganizationUID())) {
+                organization = user;
+                break;
+            }
+
+        }
+
+
+        if (inviteAccepted) {
+            Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
+
+
+            ArrayList<String> associatedUsersUids = organization.getAssociatedUsersUids();
+            if (associatedUsersUids == null)
+                associatedUsersUids = new ArrayList<>();
+            if (!associatedUsersUids.contains(uid))
+                associatedUsersUids.add(uid);
+
+            organization.setAssociatedUsersUids(associatedUsersUids);
+
+            myViewModel.getDao().updateUser(organization.getUid(), organization);
+
+            if (organization.getUserActivities() != null) {
+                organization.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(organization.getUid(), organization);
+            }
+
+
+            if (user.getUserActivities() != null) {
+                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(user.getUid(), user);
+            }
+
+        } else {
+            if (user.getUserActivities() != null) {
+                user.getUserActivities().add(0, new UserActivity("DIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(user.getUid(), user);
+
+            }
+
+            if (organization.getUserActivities() != null) {
+                organization.getUserActivities().add(0, new UserActivity("RDIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(organization.getUid(), organization);
+
+            }
+
+
+            Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
+        }
+
+        myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+
     }
 
     public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
@@ -864,7 +898,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             } else {
                                 organization = "testOrg";
                             }
-                            myViewModel.getDao().addInviteRequest(inviteMemberList, organization);
+                            myViewModel.getDao().addInviteRequest(inviteMemberList, organization, user.getUid());
                             if (user.getUserActivities() != null) {
                                 for (String member : inviteMemberList) {
                                     user.getUserActivities().add(0, new UserActivity("CIR", member, user.getOrganizationName(), new Date()));

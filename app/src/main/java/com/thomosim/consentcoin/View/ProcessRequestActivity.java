@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.R;
 

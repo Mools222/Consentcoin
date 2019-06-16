@@ -1,0 +1,179 @@
+<resources>
+    <string name="app_name">Consentcoin</string>
+    <string name="navigation_drawer_open">Åben</string>
+    <string name="navigation_drawer_close">Luk</string>
+
+    <!-- layout.xml -->
+
+    <!-- Buttons -->
+    <string name="rb_member">Medlem</string>
+    <string name="rb_organization">Organisation</string>
+    <string name="rb_members">Medlemmer</string>
+    <string name="rb_members_and_wards">Medlemmer og deres myndlinge</string>
+    <string name="rb_commercial">Kommerciel brug</string>
+    <string name="rb_non_commercial">Ikke-kommerciel brug</string>
+    <string name="rb_all_members">Alle medlemmer</string>
+    <string name="rb_selected_members">Udvalgte medlemmer</string>
+    <string name="button_send">Send</string>
+    <string name="button_cancel">Anuller</string>
+    <string name="button_delete">Slet</string>
+    <string name="button_accept">Accepter</string>
+    <string name="button_deny">Afslå</string>
+    <string name="button_decide_later">Vælg senere</string>
+    <string name="button_read_more">Læs mere</string>
+    <string name="button_back">Tilbage</string>
+    <string name="button_delete_consentcoin">Slet Consentcoin</string>
+
+    <!-- TextView, ImageView and TextFields -->
+
+    <string name="tv_create_request">Opret Anmodning</string>
+    <string name="tf_start_date">Start Dato</string>
+    <string name="tf_end_date">Slut Dato</string>
+    <string name="tv_send_request_to">"Send denne anmodning til: "</string>
+    <string name="tf_search_users">Søg efter specifik bruger</string>
+    <string name="tf_enter_organisation_mail">Indtast organisations e-mail</string>
+    <string name="tf_enter_member_mail">Indtast medlems e-mail</string>
+    <string name="tf_enter_organization">Indtast organisations navn</string>
+
+    <string name="text_navigation_header">Navigation sidehoved</string>
+
+    <string name="tv_firstname_lastname">Fornavn Eftername</string>
+    <string name="tv_default_email">email@email.dk</string>
+
+    <!-- Menu items -->
+
+    <string name="item_pending_requests">Ventende Anmodninger</string>
+    <string name="item_active_requests">Aktive Anmodninger</string>
+    <string name="item_create_requests">Opret Anmodning</string>
+    <string name="item_my_consentcoins">Mine Consentcoins</string>
+    <string name="item_pending_invites">Ventende Invitationer</string>
+    <string name="item_invite">Inviter</string>
+    <string name="item_add_organization">Tilføg Organisation</string>
+    <string name="item_add_member">Tilføj Medlemmer</string>
+    <string name="item_my_organizations">Mine Organisationer</string>
+    <string name="item_my_members">Mine Medlemmer</string>
+    <string name="item_settings">Indstilliger</string>
+    <string name="item_log_out">Log ud</string>
+
+    <string name="title_communicate">Kommuniker</string>
+
+
+    <!-- MainActivity -->
+    <!-- Generals -->
+
+    <string name="member">Medlem</string>
+    <string name="organization">Organisation</string>
+    <string name="create">Opret</string>
+    <string name="close">Luk</string>
+    <string name="add">Tilføj</string>
+    <string name="cancel">Anuller</string>
+    <string name="ok">OK</string>
+    <string name="space">" "</string>
+
+    <!-- AlertDialog titles -->
+
+    <string name="title_specify_user_details">Specificier bruger oplysninger</string>
+    <string name="title_process_request">ventende anmodning(er)</string>
+    <string name="title_requests_sent">Sendte tilladelses anmodninger</string>
+    <string name="title_my_consentcoins">Mine Consentcoins</string>
+    <string name="title_add_with_space">"Tilføj "</string>
+    <string name="title_my_with_space">"Mine "</string>
+    <string name="title_invite_members">Inviter medlem(mer)</string>
+    <string name="title_create_invites">Ventende invitationer</string>
+
+
+    <!-- Toast messages -->
+
+    <string name="toast_signed_in">Logget ind!</string>
+    <string name="toast_sign_in_cancelled">"Log ind anulleret"</string>
+    <string name="toast_pr_not_processed">Tilladelses anmodning er ikke behandlet</string>
+    <string name="toast_concentcoin_ok">Consentcoin RESULTAT_OK</string>
+    <string name="toast_concentcoin_cancelled">Consentcoin RESULTAT_ANULLERET</string>
+    <string name="toast_invite_accepted">Invitation Accepteret</string>
+    <string name="toast_invite_declined">Invitation Afvist</string>
+    <string name="toast_permission_given">Tilladelse Givet</string>
+    <string name="toast_permission_denied">Tilladelse Afvist</string>
+    <string name="toast_user_details_saved">Bruger oplysninger gemt</string>
+    <string name="toast_add_users_to_request">Tilføj medlemmer før oprettelse af anmodning</string>
+    <string name="toast_no_active_requests">Du har ingen aktive tilladelses anmodninger</string>
+    <string name="toast_getting_consentcoins">Henter Consentcoin. Vent venligst</string>
+    <string name="toast_no_consentcoins">Fu har ingen Consentcoins</string>
+    <string name="toast_you_have_no">"Du har ingen "</string>
+
+    <!-- Strings in arrays -->
+
+    <string name="array_id">"ID: "</string>
+    <string name="array_member">" Medlem: "</string>
+    <string name="array_org">" Organisation: "</string>
+    <string name="array_end_date">" Slut Dato: "</string>
+
+    <!-- AdapterMainActivity -->
+
+    <string name="dot">.</string>
+
+    <string name="toast_swipe_to_delete">Hint: Swipe for at slette</string>
+
+    <string name="text_user_created">Bruger oprettet</string>
+    <string name="text_your_user_created">Din bruger blev oprettet.</string>
+    <string name="text_request_sent">Tilladelses anmodning sendt</string>
+    <string name="text_your_request_sent">"Du sendte en tiladelses anmodning til "</string>
+    <string name="text_request_received">Tilladelses anmodning modtaget</string>
+    <string name="text_you_received_request">"Du har modtaget en tilladelses anmodning fra "</string>
+    <string name="text_consentcoin_received">Consentcoin modtaget</string>
+    <string name="text_user_received_consentcoin">"Du har modtaget en Consentcoin ved at acceptere tilladelses anmodningen fra "</string>
+    <string name="text_org_received_consentcoin">"Du har modtaget en Consentcoin som "</string>
+    <string name="text_user_accepted_request">" har accepterede din tilladelses anmodning."</string>
+    <string name="text_permission_denied">Tilladelses anmodning afvist</string>
+    <string name="text_request_denied_user">"Du afviste tilladelses anmodningen fra "</string>
+    <string name="text_request_denied_org">" har afvist din tilladelses anmodning."</string>
+    <string name="text_consentcoin_revoked">Consentcoin tilbagekaldt</string>
+    <string name="text_revoked_part_one">"Din Consentcoin aftale med "</string>
+    <string name="text_revoked_part_two">" blev tilbagekaldt."</string>
+
+    <!-- AdapterProcess request -->
+
+    <string name="text_sender">"Afsender: "</string>
+    <string name="text_received">"Modtager: "</string>
+
+    <!-- CreateRequestActivity -->
+
+    <string name="toast_select_purpose">Venligts vælg formål</string>
+    <string name="toast_select_member">Venligt vælg mindst ét medlem</string>
+    <string name="toast_select_date">Slut dato skal være efter start dato</string>
+    <string name="toast_request_sent">Anmodning(er) sendt!</string>
+
+    <!-- MyConsentcoinActivity -->
+
+    <string name="consentcoin_value_id">"Coin-ID: "</string>
+    <string name="consentcoin_value_contract_type">"\nKontraktType: "</string>
+    <string name="consentcoin_value_mem">"\nMedlem: "</string>
+    <string name="consentcoin_value_org">"\nOrganisation: " </string>
+
+    <!-- ContractTypeEnum -->
+
+    <string name="contract_type_commercial">kommerciel</string>
+    <string name="contract_type_non_commercial">ikke kommerciel</string>
+    <string name="contract_type_commercial_and_non_commercial">kommerciel og ikke kommerciel</string>
+
+    <!-- CreateRequestActivity -->
+
+    <string name="contract_myself">migselv</string>
+    <string name="contract_myself_and_wards">migselv og mine myndlinge</string>
+
+    <string name="contract_text_part_one">"Jeg "</string>
+    <string name="contract_text_part_two">"\nvil gerne give "</string>
+    <string name="contract_text_part_three">"\ntilladelse til at bruge billeder af "</string>
+    <string name="contract_text_part_four">" for "</string>
+    <string name="contract_text_part_five">" formål.\nTilladelsen vil være gyldig i tiden mellem\n"</string>
+    <string name="contract_text_part_six">" og "</string>
+
+    <!-- Strings for ProcessInviteActivity -->
+
+    <string name="invite_message">" har inviteret dig til at blive et medlem af deres organisation</string>
+
+    <!-- Strings for invite dialog -->
+    <string name="invite_add_member_btn_txt">tilføj</string>
+    <string name="informationText">Information vil komme senere</string>
+
+
+</resources>
