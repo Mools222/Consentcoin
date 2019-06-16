@@ -1,6 +1,7 @@
 package com.thomosim.consentcoin.View;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.thomosim.consentcoin.Persistence.ModelClass.UserActivity;
 import com.thomosim.consentcoin.R;
 
@@ -21,7 +23,6 @@ import java.util.Date;
 public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivity.ViewHolderMainActivity> {
     private Context context;
     private ArrayList<UserActivity> userActivities;
-
     public class ViewHolderMainActivity extends RecyclerView.ViewHolder {
         public TextView tvDate;
         public TextView tvActivity;
@@ -34,6 +35,12 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
             tvActivity = v.findViewById(R.id.tv_cardView_activity);
             tvActivityText = v.findViewById(R.id.tv_cardView_activity_text);
             mbReadMore = v.findViewById(R.id.mb_cardView_read_more);
+            mbReadMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context, context.getString(R.string.informationText),Toast.LENGTH_LONG).show();
+                }
+            });
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override

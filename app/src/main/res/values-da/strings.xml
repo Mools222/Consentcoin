@@ -185,6 +185,7 @@
 
     <!-- Strings for invite dialog -->
     <string name="invite_add_member_btn_txt">tilføj</string>
+    <string name="informationText">Information vil komme senere</string>
 
 
 </resources>
