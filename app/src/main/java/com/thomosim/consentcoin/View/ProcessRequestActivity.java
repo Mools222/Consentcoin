@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -62,5 +63,5 @@ public class ProcessRequestActivity extends AppCompatActivity {
     }
 
     public void readMore(View view) {
-    }
+        Toast.makeText(this, this.getString(R.string.informationText),Toast.LENGTH_LONG).show();}
 }

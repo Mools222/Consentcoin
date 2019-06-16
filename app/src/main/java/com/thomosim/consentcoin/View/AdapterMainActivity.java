@@ -35,19 +35,10 @@ public class AdapterMainActivity extends RecyclerView.Adapter<AdapterMainActivit
             tvActivity = v.findViewById(R.id.tv_cardView_activity);
             tvActivityText = v.findViewById(R.id.tv_cardView_activity_text);
             mbReadMore = v.findViewById(R.id.mb_cardView_read_more);
-
             mbReadMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new MaterialAlertDialogBuilder(context)
-                            .setTitle("Information")
-                            .setView(v)
-                            .setPositiveButton((R.string.stringOK), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                .show();
+                    Toast.makeText(context, context.getString(R.string.informationText),Toast.LENGTH_LONG).show();
                 }
             });
 

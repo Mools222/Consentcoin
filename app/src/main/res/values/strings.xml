@@ -176,7 +176,7 @@
 
     <!-- Strings for invite dialog -->
     <string name="invite_add_member_btn_txt">add</string>
-    <string name="stringOK">OK</string>
+    <string name="informationText">Information will come in the future</string>
 
 
 </resources>
