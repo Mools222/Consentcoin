@@ -57,7 +57,7 @@ public class AdapterProcessInvite extends RecyclerView.Adapter<AdapterProcessInv
     @Override
     public void onBindViewHolder(@NonNull AdapterProcessInvite.ViewHolderProcessInvite holder, int position) {
         InviteRequest inviteRequest = pendingInviteRequests.get(position);
-        String text = context.getString(R.string.text_sender) + inviteRequest.getOrganization();
+        String text = context.getString(R.string.text_sender) + inviteRequest.getOrganizationName();
 
         holder.textView.setText(text);
     }

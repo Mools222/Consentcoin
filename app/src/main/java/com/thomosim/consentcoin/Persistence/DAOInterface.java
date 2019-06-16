@@ -14,6 +14,7 @@ import com.thomosim.consentcoin.Persistence.ModelClass.User;
 
 import java.util.ArrayList;
 import java.util.Date;
+
 /**
  * The DAOinterface is made to make it easy to change from one Database to another,
  * and to ensure all databases have same methods
@@ -178,7 +179,7 @@ public interface DAOInterface {
     /**
      * This method creates an InviteRequest and stores it in the database
      */
-    void addInviteRequest(ArrayList<String> members, final String organization);
+    void addInviteRequest(ArrayList<String> members, final String organizationName, final String organizationUID);
 
     /**
      * This method removes a InviteRequest from the database.
