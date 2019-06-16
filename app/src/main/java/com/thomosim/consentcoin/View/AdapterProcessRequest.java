@@ -38,7 +38,6 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
 
                     Intent intent = new Intent(context, ProcessRequestActivity.class);
                     intent.putExtra("PR", permissionRequest);
-                    intent.putExtra("POS", getAdapterPosition());
                     ((MainActivity) context).startActivityForResult(intent, REQUEST_CODE_PROCESS_REQUEST);
                 }
             });

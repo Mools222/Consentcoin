@@ -3,7 +3,6 @@ package com.thomosim.consentcoin.Persistence.ModelClass;
 import java.io.Serializable;
 
 public class InviteRequest implements Serializable {
-
     private String id;
     private String organizationName;
     private String organizationUID;

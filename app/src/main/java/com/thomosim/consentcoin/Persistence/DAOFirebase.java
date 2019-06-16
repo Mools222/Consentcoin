@@ -153,7 +153,7 @@ public class DAOFirebase implements DAOInterface {
     public void addUser(String userType, String uid, String userEmail, String userDisplayName, String organizationName) {
         User user = new User(uid, userEmail, userType, "FirstName", null, "LastName", organizationName.length() == 0 ? null : organizationName, null, null);
         if (userDisplayName != null) {
-            String[] userNameSplit = userDisplayName.split("\\s");
+            String[] userNameSplit = userDisplayName.trim().split("\\s");
             if (userNameSplit.length == 2)
                 user = new User(uid, userEmail, userType, userNameSplit[0], null, userNameSplit[1], organizationName.length() == 0 ? null : organizationName, null, null);
             else if (userNameSplit.length == 3)
@@ -239,21 +239,20 @@ public class DAOFirebase implements DAOInterface {
     /**
      * This method:
      * 1) Creates a new instance of the Consentcoin class
-     * 2) Creates a new file in the phone's internal storage called "contract.dat". The getFilesDir method returns the appropriate internal directory for the app
-     * 3) Opens a new ObjectOutputStream object and writes the Consentcoin object to the file. The ObjectOutputStream is then closed.
+     * 2) Creates a new File object pointing to the phone's internal storage with the file name "consentcoin". The getFilesDir method returns the appropriate internal directory for the app
+     * 3) Opens a new ObjectOutputStream object, creates the file and writes the Consentcoin object to the file. The ObjectOutputStream is then closed.
      * The openFileOutput method opens a private file associated with this Context's application package for writing. By passing the argument Context.MODE_PRIVATE, the created file can only be accessed by the calling application.
-     * 4) A new StorageReference object is created. The ensures that the file is saved in the "consentcoins" folder in Firebase Storage under the file name "[contractId].dat"
+     * 4) A new StorageReference object is created. The ensures that the file is saved in the "consentcoins" folder in Firebase Storage under the file name "[contractId]"
      * 5) The file is persisted via the putFile method, which requires a URI object. The static fromFile method from the Uri class creates a URI from the File object.
-     * 6) The putFile method returns a UploadTask object. Using the addOnSuccessListener method, an OnSuccessListener is added to the UploadTask object.
+     * 6) The putFile method returns an UploadTask object. Using the addOnSuccessListener method, an OnSuccessListener is added to the UploadTask object.
      * This is accomplished by creating an anonymous inner class, which implements the onSuccess method. Since OnSuccessListener is a generic class, the formal generic type
      * "TResult" is replaced by the inner class TaskSnapshot, which is found in the UploadTask class.
      * 7) A new Task object is created. The formal generic type "TResult" is replaced by the Uri class. Since TaskSnapshot extends the StorageTask class, it inherits the getStorage method.
-     * The method returns a StorageReference object upon which the getDownloadUrl method is called. This method returns a Task<Uri> object. The getDownloadUrl method is called on the
-     * Task<Uri> object. This method returns a Task<Uri> containing the the download URL for the persisted file.
+     * The getStorage method returns a StorageReference object upon which the getDownloadUrl method is called. This method returns a Task<Uri> containing the the download URL for the persisted file.
      * 8) A while loop with an empty body is created to keep the thread waiting until the getDownloadUrl method is successful.
      * 9) A new Uri object is created by calling the getResult method on the Task<Uri> object.
      * 10) A new ConsentcoinReference object is created using the contract ID, member ID and organization ID of the Consentcoin object and the download URL.
-     * 11) The ConsentcoinReference object is persisted to the Firebase Realtime Database using the push and setValue methods.
+     * 11) The ConsentcoinReference object is persisted to the Firebase Realtime Database via the addConsentcoinReference method.
      * 12) Finally the file is deleted from the storage of the phone.
      */
 
@@ -264,7 +263,7 @@ public class DAOFirebase implements DAOInterface {
         final Consentcoin consentcoin = new Consentcoin(contractId, permissionType, organizationUid, memberUid, creationDate, permissionStartDate, permissionEndDate, personsIncluded);
 
         String fileName = "consentcoin";
-        final File file = new File(context.getFilesDir(), fileName);
+        final File FILE = new File(context.getFilesDir(), fileName);
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(context.openFileOutput(fileName, Context.MODE_PRIVATE));
             objectOutputStream.writeObject(consentcoin);
@@ -274,14 +273,14 @@ public class DAOFirebase implements DAOInterface {
         }
 
         StorageReference storageReferenceChild = storageReference.child(contractId);
-        storageReferenceChild.putFile(Uri.fromFile(file)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        storageReferenceChild.putFile(Uri.fromFile(FILE)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
                 while (!urlTask.isSuccessful()) ;
                 Uri downloadUrl = urlTask.getResult();
                 addConsentcoinReference(consentcoin.getContractId(), consentcoin.getMemberUid(), consentcoin.getOrganizationUid(), downloadUrl.toString());
-                file.delete();
+                FILE.delete();
             }
         });
     }

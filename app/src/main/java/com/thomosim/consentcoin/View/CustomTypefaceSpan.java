@@ -6,7 +6,6 @@ import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
 
 public class CustomTypefaceSpan extends TypefaceSpan {
-
     private final Typeface newType;
 
     public CustomTypefaceSpan(String family, Typeface type) {

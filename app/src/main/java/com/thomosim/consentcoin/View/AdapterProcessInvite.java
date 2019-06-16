@@ -16,7 +16,6 @@ import com.thomosim.consentcoin.R;
 import java.util.ArrayList;
 
 public class AdapterProcessInvite extends RecyclerView.Adapter<AdapterProcessInvite.ViewHolderProcessInvite> {
-
     private ArrayList<InviteRequest> pendingInviteRequests;
     private Context context;
     private static final int REQUEST_CODE_PROCESS_INVITE = 4;

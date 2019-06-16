@@ -4,10 +4,10 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
-import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
-import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
 import com.thomosim.consentcoin.Persistence.DAOInterface;
+import com.thomosim.consentcoin.Persistence.ModelClass.Consentcoin;
+import com.thomosim.consentcoin.Persistence.ModelClass.ConsentcoinReference;
 import com.thomosim.consentcoin.Persistence.ModelClass.InviteRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.Persistence.ModelClass.User;

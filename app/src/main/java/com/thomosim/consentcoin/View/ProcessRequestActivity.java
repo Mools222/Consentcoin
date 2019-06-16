@@ -13,9 +13,8 @@ import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.R;
 
 public class ProcessRequestActivity extends AppCompatActivity {
-
     private Intent returnIntent;
-    private int position;
+    private PermissionRequest permissionRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,16 +25,14 @@ public class ProcessRequestActivity extends AppCompatActivity {
 
         // The getIntent method returns the intent that started this activity. This intent was created in the constructor of the ViewHolderProcessRequest class found in the AdapterProcessRequest. The processRequest method of the MainActivity class creates an instance of the AdapterProcessRequest class
         Intent startIntent = getIntent();
-        if (startIntent.hasExtra("PR") && startIntent.hasExtra("POS")) {
-            PermissionRequest permissionRequest = (PermissionRequest) startIntent.getSerializableExtra("PR");
-            position = startIntent.getIntExtra("POS", -1);
+        if (startIntent.hasExtra("PR")) {
+            permissionRequest = (PermissionRequest) startIntent.getSerializableExtra("PR");
 
             SpannableStringBuilder contract = new SpannableContractBuilder(this).displayPermissionRequest(permissionRequest);
-
             tvShowContract.setText(contract);
         }
         returnIntent = new Intent();
-        returnIntent.putExtra("POS", position);
+        returnIntent.putExtra("PR", permissionRequest);
     }
 
     /**

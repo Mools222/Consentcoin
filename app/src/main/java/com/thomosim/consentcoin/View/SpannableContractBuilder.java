@@ -31,7 +31,7 @@ public class SpannableContractBuilder {
      * @param pr A PermissionRequest Object
      * @return A SpannableStringBuilder Object
      */
-    public SpannableStringBuilder displayPermissionRequest(PermissionRequest pr){
+    public SpannableStringBuilder displayPermissionRequest(PermissionRequest pr) {
         ArrayList<Object> contractElements = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -58,7 +58,7 @@ public class SpannableContractBuilder {
      * @param orgName A String representation of the name of an organisation
      * @return A SpannableStringBuilder Object
      */
-    public SpannableStringBuilder displayInviteRequest(String orgName){
+    public SpannableStringBuilder displayInviteRequest(String orgName) {
         ArrayList<Object> inviteElements = new ArrayList<>();
 
         inviteElements.add(new SpannableStringBuilder(orgName));
@@ -72,13 +72,13 @@ public class SpannableContractBuilder {
      * The parameters will be shown with Bitter Lemon color.
      * This method is called from the MyConsentcoinActivity class, when a user selects a Consentcoin.
      *
-     * @param id A String with the ID of a Consentcoin
-     * @param mem A string with the name of af Member
-     * @param org A String with the name of an organization
+     * @param id   A String with the ID of a Consentcoin
+     * @param mem  A string with the name of af Member
+     * @param org  A String with the name of an organization
      * @param type A String with the type of contract
      * @return A SpannableStringBuilder Object
      */
-    public SpannableStringBuilder displayConsentcoin(String id, String mem, String org, String type){
+    public SpannableStringBuilder displayConsentcoin(String id, String mem, String org, String type) {
         ArrayList<Object> coinElements = new ArrayList<>();
 
         coinElements.add(context.getString(R.string.consentcoin_value_id));
@@ -101,21 +101,21 @@ public class SpannableContractBuilder {
      * will set its color to the color specified in the parameters.
      * After the color is changed all Objects is set to the specified font from the parameters, and
      * then added to new SpannableStringBuilder, which is returned when the foreach loop is done
-     *
+     * <p>
      * NOTE: The color will only change if the device running the app is running API 23 or higher
      *
      * @param contractElements An ArrayList of Objects, either Strings or SpannableStringBuilders
-     * @param color The int representation of a color from the colors.xml file
-     * @param font The int representation of a font from the res/font folder
+     * @param color            The int representation of a color from the colors.xml file
+     * @param font             The int representation of a font from the res/font folder
      * @return A SpannableStringBuilder Object
      */
-    public SpannableStringBuilder createContractText(ArrayList<Object> contractElements, int color, int font){
+    public SpannableStringBuilder createContractText(ArrayList<Object> contractElements, int color, int font) {
         SpannableStringBuilder completeContract = new SpannableStringBuilder();
         Typeface typeface = ResourcesCompat.getFont(context, font);
 
-        for (Object o: contractElements) {
+        for (Object o : contractElements) {
             SpannableStringBuilder element = null;
-            if(Build.VERSION.SDK_INT > 22) {
+            if (Build.VERSION.SDK_INT > 22) {
                 if (o instanceof SpannableStringBuilder) {
                     element = (SpannableStringBuilder) o;
                     element = setColorOfElement(element, color);
@@ -125,7 +125,7 @@ public class SpannableContractBuilder {
                     element = setColorOfElement(element, R.color.colorRichBlack);
                 }
             }
-            element.setSpan(new CustomTypefaceSpan("", typeface), 0 , element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            element.setSpan(new CustomTypefaceSpan("", typeface), 0, element.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             completeContract.append(element);
         }
 
@@ -134,15 +134,15 @@ public class SpannableContractBuilder {
 
     /**
      * Returns a SpannableStringBuilder in the color specified from the parameter.
-     *
+     * <p>
      * NOTE: This method will only be used if the device running the app is running API 23 or higher
      *
-     * @param e A SpannableStringBuilder Object
+     * @param e     A SpannableStringBuilder Object
      * @param color The int representation of a color from colors.xml
      * @return A SpannableStringBuilder
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public SpannableStringBuilder setColorOfElement(SpannableStringBuilder e, int color){
+    public SpannableStringBuilder setColorOfElement(SpannableStringBuilder e, int color) {
         e.setSpan(new ForegroundColorSpan(context.getColor(color)), 0, e.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return e;

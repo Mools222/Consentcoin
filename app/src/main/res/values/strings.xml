@@ -73,7 +73,7 @@
     <!-- AlertDialog titles -->
 
     <string name="title_specify_user_details">Specify user details</string>
-    <string name="title_process_request">pending request(s)</string>
+    <string name="title_process_request">Pending request(s)</string>
     <string name="title_requests_sent">Sent permission requests</string>
     <string name="title_my_consentcoins">My Consentcoins</string>
     <string name="title_add_with_space">"Add "</string>
@@ -147,7 +147,10 @@
     <string name="consentcoin_value_id">"Coin-ID: "</string>
     <string name="consentcoin_value_contract_type">"\nContractType: "</string>
     <string name="consentcoin_value_mem">"\nMember: "</string>
-    <string name="consentcoin_value_org">"\nOrganization: " </string>
+    <string name="consentcoin_value_org">"\nOrganization: "</string>
+    <string name="consentcoin_value_confirm">"Are you sure that you want to withdraw your permission?"</string>
+    <string name="consentcoin_value_y">"Yes"</string>
+    <string name="consentcoin_value_n">"No"</string>
 
     <!-- ContractTypeEnum -->
 

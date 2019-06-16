@@ -170,9 +170,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * This method sets up the view model.
      * 1) It creates a new MyViewModel object and assigns it to myViewModel instance variable.
      * 2) It gets an instance of every ObservableData[Name] class, all of which are subclasses of MyObservable, which contains the observe and setValue methods.
-     * 3) It calls the observe method found in these classes and passes an anonymous inner class of the interface MyObserver as a parameter to each of them. This
-     * combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver objects inside the
-     * various instances of ObservableData[Name].
+     * 3) It calls the observe method found in these classes and passes an anonymous inner class, which implements the interface MyObserver, as a parameter to
+     * each of them. This combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver
+     * objects inside the various instances of ObservableData[Name].
      * 4) When creating the anonymous inner classes, we implement the onChange method found in the interface. The onChanged method is used to initialize and
      * update various data fields and to create and manipulate certain views.
      * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. In most cases the setValue method is called by the
@@ -270,9 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
                 pendingPermissionRequests = new ArrayList<>();
                 for (PermissionRequest permissionRequest : permissionRequests) {
-                    if (user.getType().equals("Member") && permissionRequest.getMemberUid().equals(uid))
-                        pendingPermissionRequests.add(permissionRequest);
-                    else if (user.getType().equals("Organization") && permissionRequest.getOrganizationUid().equals(uid))
+                    if (permissionRequest.getMemberUid().equals(uid) || permissionRequest.getOrganizationUid().equals(uid))
                         pendingPermissionRequests.add(permissionRequest);
                 }
                 tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
@@ -288,9 +286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
                 for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
-                        consentcoinReferences.add(consentcoinReference);
-                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
+                    if ((consentcoinReference.getMemberUid().equals(uid) || consentcoinReference.getOrganizationUid().equals(uid)) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
                 }
             }
@@ -473,66 +469,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (resultCode == RESULT_OK) {
                     if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
                         InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
-
                         boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
 
-                        User organization = null;
-                        for (User user : users) {
-
-                            if (user.getUid().equals(inviteRequest.getOrganizationUID())) {
-                                organization = user;
-                                break;
-                            }
-
-                        }
-
-                        if (inviteAccepted) {
-                            Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
-
-
-                            ArrayList<String> associatedUsersUids = organization.getAssociatedUsersUids();
-                            if (associatedUsersUids == null)
-                                associatedUsersUids = new ArrayList<>();
-                            if (!associatedUsersUids.contains(uid))
-                                associatedUsersUids.add(uid);
-
-                            organization.setAssociatedUsersUids(associatedUsersUids);
-
-                            Toast.makeText(this, organization.getEmail(), Toast.LENGTH_SHORT).show();
-
-                            myViewModel.getDao().updateUser(organization.getUid(), organization);
-
-                            if (organization.getUserActivities() != null) {
-                                organization.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                                myViewModel.getDao().updateUser(organization.getUid(), organization);
-                            }
-
-
-                            if (user.getUserActivities() != null) {
-                                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                                myViewModel.getDao().updateUser(user.getUid(), user);
-                            }
-
-                        } else {
-                            if (user.getUserActivities() != null) {
-                                user.getUserActivities().add(0, new UserActivity("DIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                                myViewModel.getDao().updateUser(user.getUid(), user);
-
-                            }
-
-                            if (organization.getUserActivities() != null) {
-                                organization.getUserActivities().add(0, new UserActivity("RDIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                                myViewModel.getDao().updateUser(organization.getUid(), organization);
-                                Toast.makeText(this, "user activity updated", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(this, "there are no userActivities for this user", Toast.LENGTH_SHORT).show();
-                            }
-
-
-                            Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
-                        }
-
-                        myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+                        acceptOrDenyInviteRequest(inviteRequest, inviteAccepted);
                     }
                 }
                 break;
@@ -547,9 +486,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void createOrDenyConsentcoin(Intent data) {
-        if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+        if (data.hasExtra("BOOLEAN") && data.hasExtra("PR")) {
             boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
-            PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
+            PermissionRequest permissionRequest = (PermissionRequest) data.getSerializableExtra("PR");
             Date date = new Date();
 
             User organization = null;
@@ -564,41 +503,86 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
                         date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded().getScope()); // If the user chooses to give permission, create a Consentcoin
 
-                ArrayList<UserActivity> userActivities = user.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("APR", userDisplayName, organization.getOrganizationName(), date)); // "APR" = Accept Permission Request
-                user.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(uid, user);
-
-                userActivities = organization.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("RAPR", userDisplayName, organization.getOrganizationName(), date)); // "RAPR" = Receive Accepted Permission Request
-                organization.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
+                addUserActivity(user, uid, user.getUserActivities(), "APR", userDisplayName, organization.getOrganizationName(), date); // "APR" = Accept Permission Request
+                addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RAPR", userDisplayName, organization.getOrganizationName(), date); // "RAPR" = Receive Accepted Permission Request
 
                 Toast.makeText(this, getString(R.string.toast_permission_given), Toast.LENGTH_SHORT).show();
             } else {
-                ArrayList<UserActivity> userActivities = user.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("DPR", userDisplayName, organization.getOrganizationName(), date)); // "DPR" = Deny Permission Request
-                user.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(uid, user);
-
-                userActivities = organization.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("RDPR", userDisplayName, organization.getOrganizationName(), date)); // "RDPR" = Receive Denied Permission Request
-                organization.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
+                addUserActivity(user, uid, user.getUserActivities(), "DPR", userDisplayName, organization.getOrganizationName(), date); // "DPR" = Deny Permission Request
+                addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RDPR", userDisplayName, organization.getOrganizationName(), date); // "RDPR" = Receive Denied Permission Request
 
                 Toast.makeText(this, R.string.toast_permission_denied, Toast.LENGTH_SHORT).show();
             }
 
             myViewModel.getDao().removePermissionRequest(permissionRequest.getId()); // Remove the permission request from the database
         }
+    }
+
+    public void acceptOrDenyInviteRequest(InviteRequest inviteRequest, boolean inviteAccepted) {
+
+        User organization = null;
+        for (User user : users) {
+
+            if (user.getUid().equals(inviteRequest.getOrganizationUID())) {
+                organization = user;
+                break;
+            }
+
+        }
+
+
+        if (inviteAccepted) {
+            Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
+
+
+            ArrayList<String> associatedUsersUids = organization.getAssociatedUsersUids();
+            if (associatedUsersUids == null)
+                associatedUsersUids = new ArrayList<>();
+            if (!associatedUsersUids.contains(uid))
+                associatedUsersUids.add(uid);
+
+            organization.setAssociatedUsersUids(associatedUsersUids);
+
+            myViewModel.getDao().updateUser(organization.getUid(), organization);
+
+            if (organization.getUserActivities() != null) {
+                organization.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(organization.getUid(), organization);
+            }
+
+
+            if (user.getUserActivities() != null) {
+                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(user.getUid(), user);
+            }
+
+        } else {
+            if (user.getUserActivities() != null) {
+                user.getUserActivities().add(0, new UserActivity("DIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(user.getUid(), user);
+
+            }
+
+            if (organization.getUserActivities() != null) {
+                organization.getUserActivities().add(0, new UserActivity("RDIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
+                myViewModel.getDao().updateUser(organization.getUid(), organization);
+
+            }
+
+
+            Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
+        }
+
+        myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
+
+    }
+
+    public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
+        if (userActivities == null)
+            userActivities = new ArrayList<>();
+        userActivities.add(0, new UserActivity(activityCode, memberName, organizationName, date));
+        user.setUserActivities(userActivities);
+        myViewModel.getDao().updateUser(uid, user);
     }
 
     public void addUser() {
@@ -721,19 +705,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
                 if (user.getType().equals("Member"))
                     for (User u : users) {
-                        if (u.getUid().equals(consentcoinReference.getOrganizationUid())) {
+                        if (u.getUid().equals(consentcoinReference.getOrganizationUid()))
                             array[i] = getString(R.string.array_org) + u.getOrganizationName();
-                        }
                     }
                 else
                     for (User u : users) {
-                        if (u.getUid().equals(consentcoinReference.getMemberUid())) {
+                        if (u.getUid().equals(consentcoinReference.getMemberUid()))
                             array[i] = getString(R.string.array_member) + u.getFirstName() + " " + u.getLastName();
-                        }
                     }
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
             final Context CONTEXT = this;
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.title_my_consentcoins))
