@@ -10,8 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.thomosim.consentcoin.Persistence.ModelClass.PermissionRequest;
 import com.thomosim.consentcoin.R;
 
@@ -65,5 +63,6 @@ public class ProcessRequestActivity extends AppCompatActivity {
     }
 
     public void readMore(View view) {
-        Toast.makeText(this, this.getString(R.string.informationText),Toast.LENGTH_LONG).show();}
+        Toast.makeText(this, this.getString(R.string.informationText), Toast.LENGTH_LONG).show();
+    }
 }

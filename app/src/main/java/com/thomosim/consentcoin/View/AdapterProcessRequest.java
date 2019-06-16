@@ -65,7 +65,7 @@ public class AdapterProcessRequest extends RecyclerView.Adapter<AdapterProcessRe
         String text = context.getString(R.string.text_sender) + permissionRequest.getOrganizationName();
         holder.tvSender.setText(text);
         text = context.getString(R.string.text_received) + simpleDateFormat.format(date);
-        //holder.tvDate.setText(text);
+        holder.tvDate.setText(text);
     }
 
     @Override

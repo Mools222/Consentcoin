@@ -25,7 +25,6 @@
                 android:orientation="horizontal"
                 android:layout_below="@id/tv_show_contract">
 
-
                 <com.google.android.material.button.MaterialButton
                     style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:id="@+id/request_button_read_more"
@@ -56,7 +55,6 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:layout_weight="1"
                     />
-
             </LinearLayout>
 
             <LinearLayout
@@ -96,9 +94,6 @@
                     android:backgroundTint="@color/colorRed"
                     android:layout_weight="1"
                     />
-
             </LinearLayout>
-
         </RelativeLayout>
-
 </ScrollView>

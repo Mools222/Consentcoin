@@ -3,11 +3,8 @@
     style="@style/SelectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
     android:background="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
-    android:gravity="center">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tv_process_request_sender"
@@ -16,9 +13,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:fontFamily="@font/vollkorn"
-        android:textSize="20sp"/>
+        android:layout_marginRight="10dp" />
 
     <TextView
         android:id="@+id/tv_process_request_date"
@@ -27,8 +22,6 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:fontFamily="@font/vollkorn"
-        android:textSize="20sp"/>
+        android:layout_marginRight="10dp" />
 
 </LinearLayout>

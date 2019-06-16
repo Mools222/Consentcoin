@@ -26,7 +26,12 @@
 
     <!-- TextView, ImageView and TextFields -->
 
-    <string name="tv_create_request">Create Request</string>
+    <string name="tv_create_request1">Create Request</string>
+    <string name="tv_create_request2">"We at "</string>
+    <string name="tv_create_request3">would like to use pictures of the following person(s):</string>
+    <string name="tv_create_request4">for the following purpose(s):</string>
+    <string name="tv_create_request5">for the following duration:</string>
+
     <string name="tf_start_date">Start Date</string>
     <string name="tf_end_date">End Date</string>
     <string name="tv_send_request_to">"Send this request to: "</string>
@@ -104,8 +109,11 @@
 
     <string name="array_id">"ID: "</string>
     <string name="array_member">" Member: "</string>
+    <string name="array_receiver">" Receiver: "</string>
+    <string name="array_date">" Date: "</string>
     <string name="array_org">" Organization: "</string>
     <string name="array_end_date">" End Date: "</string>
+    <string name="array_party">" Other party: "</string>
 
     <!-- AdapterMainActivity -->
 
@@ -186,7 +194,7 @@
 
     <!-- Strings for ProcessInviteActivity -->
 
-    <string name="invite_message">" has invited you to become a memeber of their organization</string>
+    <string name="invite_message">" has invited you to become a member of their organization</string>
 
     <!-- Strings for invite dialog -->
     <string name="invite_add_member_btn_txt">add</string>

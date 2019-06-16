@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".View.CreateRequestActivity">
 
     <!--A ScrollView can only have 1 child-->
@@ -15,9 +16,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:fontFamily="@font/vollkorn"
-            android:text="@string/tv_create_request"
-            android:textSize="20sp" />
+            android:text="@string/tv_create_request1"
+            android:textColor="@color/colorGreen"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,13 +33,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/noto_sans"
-                android:text="We at " />
+                android:text="@string/tv_create_request2" />
 
             <TextView
                 android:id="@+id/tv_create_request_organization_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/noto_sans" />
+                android:fontFamily="@font/noto_sans"
+                android:textColor="@color/colorBitterLemon"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
@@ -43,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
-            android:text="would like to use pictures of the following person(s):" />
+            android:text="@string/tv_create_request3" />
 
         <RadioGroup
             android:id="@+id/rg_create_request_persons"
@@ -70,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
-            android:text="for the following purpose(s): " />
+            android:text="@string/tv_create_request4" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cb_create_request_commercial"
@@ -89,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
-            android:text="for the following duration: " />
+            android:text="@string/tv_create_request5" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
@@ -128,7 +134,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
-            android:text="@string/tv_send_request_to" />
+            android:text="@string/tv_send_request_to"
+            android:layout_marginTop="10dp"/>
 
         <RadioGroup
             android:id="@+id/rg_create_request_receiver"
@@ -171,12 +178,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.3"
                 android:onClick="send"
                 android:text="@string/button_send"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
@@ -185,6 +196,9 @@
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.3"
                 android:onClick="cancel"
                 android:text="@string/button_cancel"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />

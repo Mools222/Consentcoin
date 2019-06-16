@@ -49,11 +49,7 @@ import com.thomosim.consentcoin.ViewModel.MyViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO Add a nice UI for "Active Request(s)"
-// TODO Add a nice UI for "My Consentcoins"
-// TODO Add a nice UI for "My Members"
 // TODO Add "Settings"
-// TODO Denying an invite request doesn't seem to produce a UserActivity
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail, tvNavigationDrawerCounter, tvNavigationDrawerPendingPermissionsCounter, tvNavigationDrawerPendingInviteCounter;
     private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemSentRequests, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
@@ -273,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (permissionRequest.getMemberUid().equals(uid) || permissionRequest.getOrganizationUid().equals(uid))
                         pendingPermissionRequests.add(permissionRequest);
                 }
-                tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
+                tvNavigationDrawerCounter.setText(String.valueOf(calculatePending()));
                 tvNavigationDrawerPendingPermissionsCounter.setText(String.valueOf(pendingPermissionRequests.size()));
 
                 if (adapterProcessRequest != null)
@@ -301,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         pendingInviteRequests.add(inviteRequest);
                     }
                 }
+                tvNavigationDrawerCounter.setText(String.valueOf(calculatePending()));
                 tvNavigationDrawerPendingInviteCounter.setText(String.valueOf(pendingInviteRequests.size()));
 
                 if (adapterProcessInvite != null)
@@ -376,6 +373,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * This method calculates how many pending PermissionRequests and InviteRequests a user has
+     */
+
+    public int calculatePending() {
+        int pendingThings = 0;
+        if (pendingPermissionRequests != null)
+            pendingThings += pendingPermissionRequests.size();
+        if (pendingInviteRequests != null)
+            pendingThings += pendingInviteRequests.size();
+        return pendingThings;
     }
 
     /**
@@ -489,7 +499,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (data.hasExtra("BOOLEAN") && data.hasExtra("PR")) {
             boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
             PermissionRequest permissionRequest = (PermissionRequest) data.getSerializableExtra("PR");
-            Date date = new Date();
 
             User organization = null;
             for (User user : users) {
@@ -499,6 +508,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
 
+            Date date = new Date();
             if (permissionGranted) {
                 myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
                         date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded().getScope()); // If the user chooses to give permission, create a Consentcoin
@@ -519,51 +529,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void acceptOrDenyInviteRequest(InviteRequest inviteRequest, boolean inviteAccepted) {
-
         User organization = null;
         for (User user : users) {
-
             if (user.getUid().equals(inviteRequest.getOrganizationUID())) {
                 organization = user;
                 break;
             }
-
         }
+
         Date date = new Date();
-
-
         if (inviteAccepted) {
             Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
-
 
             ArrayList<String> associatedUsersUids = organization.getAssociatedUsersUids();
             if (associatedUsersUids == null)
                 associatedUsersUids = new ArrayList<>();
             if (!associatedUsersUids.contains(uid))
                 associatedUsersUids.add(uid);
-
             organization.setAssociatedUsersUids(associatedUsersUids);
-
             myViewModel.getDao().updateUser(organization.getUid(), organization);
 
-
             addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RAIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
-
             addUserActivity(user, user.getUid(), user.getUserActivities(), "AIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
-
-
         } else {
-
             addUserActivity(user, user.getUid(), user.getUserActivities(), "DIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
-
             addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RDIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
-
 
             Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
         }
 
         myViewModel.getDao().removeInviteRequest(inviteRequest.getId());
-
     }
 
     public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
@@ -659,8 +654,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String[] array = new String[pendingPermissionRequests.size()];
             for (int i = 0; i < pendingPermissionRequests.size(); i++) {
                 PermissionRequest permissionRequest = pendingPermissionRequests.get(i);
-                array[i] = getString(R.string.array_member) + permissionRequest.getMemberName();
+                array[i] = "#" + (i + 1) + "  " + getString(R.string.array_receiver) + permissionRequest.getMemberName();
             }
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
             final Context CONTEXT = this;
@@ -681,7 +677,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             ListView listView = alertDialog.getListView();
             listView.setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.colorOuterSpace)));
-            listView.setDividerHeight(5);
+            listView.setDividerHeight(2);
             alertDialog.show();
         } else
             Toast.makeText(this, getString(R.string.toast_no_active_requests), Toast.LENGTH_SHORT).show();
@@ -695,12 +691,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (user.getType().equals("Member"))
                     for (User u : users) {
                         if (u.getUid().equals(consentcoinReference.getOrganizationUid()))
-                            array[i] = getString(R.string.array_org) + u.getOrganizationName();
+                            array[i] = "#" + (i + 1) + ":  " + getString(R.string.array_party) + u.getOrganizationName();
                     }
                 else
                     for (User u : users) {
                         if (u.getUid().equals(consentcoinReference.getMemberUid()))
-                            array[i] = getString(R.string.array_member) + u.getFirstName() + " " + u.getLastName();
+                            array[i] = "#" + (i + 1) + ":  " + getString(R.string.array_party) + u.getFirstName() + " " + u.getLastName();
                     }
             }
 
@@ -724,7 +720,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             ListView listView = alertDialog.getListView();
             listView.setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.colorOuterSpace)));
-            listView.setDividerHeight(5);
+            listView.setDividerHeight(2);
             alertDialog.show();
         } else
             Toast.makeText(this, getString(R.string.toast_no_consentcoins), Toast.LENGTH_SHORT).show();
@@ -831,8 +827,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             for (int i = 0; i < array.length; i++) {
                 for (User u : users) {
                     if (u.getUid().equals(associatedUsersUids.get(i))) {
-                        array[i] = userType.equals("member") ? (u.getMiddleName() == null ? u.getFirstName() + getString(R.string.space) + u.getLastName() : u.getFirstName() +
-                                getString(R.string.space) + u.getMiddleName() + getString(R.string.space) + u.getLastName()) : u.getOrganizationName();
+                        array[i] = "#" + (i + 1) + ":  " + (userType.equals("member") ? (u.getMiddleName() == null ? u.getFirstName() + getString(R.string.space) + u.getLastName() : u.getFirstName() +
+                                getString(R.string.space) + u.getMiddleName() + getString(R.string.space) + u.getLastName()) : u.getOrganizationName());
                     }
                 }
             }
@@ -854,7 +850,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             ListView listView = alertDialog.getListView();
             listView.setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.colorOuterSpace)));
-            listView.setDividerHeight(5);
+            listView.setDividerHeight(2);
             alertDialog.show();
         } else
             Toast.makeText(this, getString(R.string.toast_you_have_no) + userType, Toast.LENGTH_SHORT).show();
