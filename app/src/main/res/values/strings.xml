@@ -27,11 +27,12 @@
     <!-- TextView, ImageView and TextFields -->
 
     <string name="tv_create_request">Create Request</string>
-    <string name="tf_start_date">End Date</string>
-    <string name="tf_end_date">Start Date</string>
+    <string name="tf_start_date">Start Date</string>
+    <string name="tf_end_date">End Date</string>
     <string name="tv_send_request_to">"Send this request to: "</string>
     <string name="tf_search_users">Search for specific user</string>
-    <string name="tf_enter_organisation_mail">Entern  e-mail</string>
+    <string name="tf_enter_organisation_mail">Enter organization e-mail</string>
+    <string name="tf_enter_member_mail">Enter member e-mail</string>
     <string name="tf_enter_organization">Enter organization name</string>
 
     <string name="text_navigation_header">Navigation header</string>
@@ -72,7 +73,7 @@
     <!-- AlertDialog titles -->
 
     <string name="title_specify_user_details">Specify user details</string>
-    <string name="title_process_request">pending request(s)</string>
+    <string name="title_process_request">Pending request(s)</string>
     <string name="title_requests_sent">Sent permission requests</string>
     <string name="title_my_consentcoins">My Consentcoins</string>
     <string name="title_add_with_space">"Add "</string>
@@ -146,7 +147,10 @@
     <string name="consentcoin_value_id">"Coin-ID: "</string>
     <string name="consentcoin_value_contract_type">"\nContractType: "</string>
     <string name="consentcoin_value_mem">"\nMember: "</string>
-    <string name="consentcoin_value_org">"\nOrganization: " </string>
+    <string name="consentcoin_value_org">"\nOrganization: "</string>
+    <string name="consentcoin_value_confirm">"Are you sure that you want to withdraw your permission?"</string>
+    <string name="consentcoin_value_y">"Yes"</string>
+    <string name="consentcoin_value_n">"No"</string>
 
     <!-- ContractTypeEnum -->
 
@@ -172,6 +176,7 @@
 
     <!-- Strings for invite dialog -->
     <string name="invite_add_member_btn_txt">add</string>
+    <string name="stringOK">OK</string>
 
 
 </resources>

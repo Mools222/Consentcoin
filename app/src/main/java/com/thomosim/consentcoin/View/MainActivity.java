@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.thomosim.consentcoin.ObserverPattern.MyObserver;
@@ -48,12 +49,11 @@ import com.thomosim.consentcoin.ViewModel.MyViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO Find ud af hvorfor der står "uses or overrides a deprecated API" når den bygger MainActivity.java. Hvilken API taler den om?
-// TODO Make all named constants (keyword final) uppercase
 // TODO Add a nice UI for "Active Request(s)"
 // TODO Add a nice UI for "My Consentcoins"
 // TODO Add a nice UI for "My Members"
 // TODO Add "Settings"
+// TODO Denying an invite request doesn't seem to produce a UserActivity
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextView tvNavigationHeaderName, tvNavigationHeaderEmail, tvNavigationDrawerCounter, tvNavigationDrawerPendingPermissionsCounter, tvNavigationDrawerPendingInviteCounter;
     private MenuItem menuItemPendingRequests, menuItemCreateRequest, menuItemSentRequests, menuItemMyPermissions, menuItemPendingInvites, menuItemInvite, menuItemAddOrganization, menuItemAddMember, menuItemMyOrganizations, menuItemMyMembers;
@@ -64,23 +64,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private View navigationDrawerHeader;
     private NavigationView navigationView;
     private RecyclerView recyclerView;
-
     private ArrayList<String> inviteMemberList;
     private ArrayAdapter<String> inviteMemberAdapter;
     private String userDisplayName, userEmail, uid;
     private User user;
     private int chosenUserType; // int default value = 0
-    private static final int REQUEST_CODE_SIGN_IN = 1;
-    private static final int REQUEST_CODE_PROCESS_REQUEST = 2;
-    private static final int REQUEST_CODE_MY_CONSENTCOINS = 3;
-    private static final int REQUEST_CODE_PROCESS_INVITE = 4;
-    private static final int REQUEST_CODE_CREATE_REQUEST = 5;
-
+    private static final int REQUEST_CODE_SIGN_IN = 1, REQUEST_CODE_PROCESS_REQUEST = 2, REQUEST_CODE_MY_CONSENTCOINS = 3, REQUEST_CODE_PROCESS_INVITE = 4, REQUEST_CODE_CREATE_REQUEST = 5;
     private ArrayList<User> users;
     private ArrayList<ConsentcoinReference> consentcoinReferences;
     private ArrayList<PermissionRequest> pendingPermissionRequests;
     private ArrayList<InviteRequest> pendingInviteRequests;
-
     private MyViewModel myViewModel;
 
     @Override
@@ -177,9 +170,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * This method sets up the view model.
      * 1) It creates a new MyViewModel object and assigns it to myViewModel instance variable.
      * 2) It gets an instance of every ObservableData[Name] class, all of which are subclasses of MyObservable, which contains the observe and setValue methods.
-     * 3) It calls the observe method found in these classes and passes an anonymous inner class of the interface MyObserver as a parameter to each of them. This
-     * combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver objects inside the
-     * various instances of ObservableData[Name].
+     * 3) It calls the observe method found in these classes and passes an anonymous inner class, which implements the interface MyObserver, as a parameter to
+     * each of them. This combines defining an inner class and creating an instance of it into one step. The MyObserver object created is added as the MyObserver
+     * objects inside the various instances of ObservableData[Name].
      * 4) When creating the anonymous inner classes, we implement the onChange method found in the interface. The onChanged method is used to initialize and
      * update various data fields and to create and manipulate certain views.
      * 5) The onChange method is called by the setValue method found in the subclasses of MyObservable. In most cases the setValue method is called by the
@@ -225,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 user = currentUser;
 
                 if (user == null) {
-                        addUser();
+                    addUser();
                 } else {
                     myViewModel.getDao().addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
                     Log.i("ZZZ", "addDatabaseListener ");
@@ -277,9 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<PermissionRequest> permissionRequests) {
                 pendingPermissionRequests = new ArrayList<>();
                 for (PermissionRequest permissionRequest : permissionRequests) {
-                    if (user.getType().equals("Member") && permissionRequest.getMemberUid().equals(uid))
-                        pendingPermissionRequests.add(permissionRequest);
-                    else if (user.getType().equals("Organization") && permissionRequest.getOrganizationUid().equals(uid))
+                    if (permissionRequest.getMemberUid().equals(uid) || permissionRequest.getOrganizationUid().equals(uid))
                         pendingPermissionRequests.add(permissionRequest);
                 }
                 tvNavigationDrawerCounter.setText(String.valueOf(pendingPermissionRequests.size()));
@@ -295,9 +286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(ArrayList<ConsentcoinReference> newConsentcoinReferences) {
                 consentcoinReferences = new ArrayList<>();
                 for (ConsentcoinReference consentcoinReference : newConsentcoinReferences) {
-                    if (user.getType().equals("Member") && consentcoinReference.getMemberUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
-                        consentcoinReferences.add(consentcoinReference);
-                    else if (user.getType().equals("Organization") && consentcoinReference.getOrganizationUid().equals(uid) && consentcoinReference.getRevokedDate() == null)
+                    if ((consentcoinReference.getMemberUid().equals(uid) || consentcoinReference.getOrganizationUid().equals(uid)) && consentcoinReference.getRevokedDate() == null)
                         consentcoinReferences.add(consentcoinReference);
                 }
             }
@@ -480,40 +469,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (resultCode == RESULT_OK) {
                     if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
                         InviteRequest inviteRequest = pendingInviteRequests.get(data.getIntExtra("POS", -1));
-
                         boolean inviteAccepted = data.getBooleanExtra("BOOLEAN", false);
 
                         if (inviteAccepted) {
                             Toast.makeText(this, getString(R.string.toast_invite_accepted), Toast.LENGTH_SHORT).show();
+                            Date date = new Date();
 
                             for (User user : users) {
-                                if (user.getUid().equals(inviteRequest.getOrganization())) {
-                                    ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
-                                    if (associatedUsersUids == null)
-                                        associatedUsersUids = new ArrayList<>();
-                                    if (!associatedUsersUids.contains(uid))
-                                        associatedUsersUids.add(uid);
-
-                                    user.setAssociatedUsersUids(associatedUsersUids);
-
-                                    Toast.makeText(this, user.getEmail(), Toast.LENGTH_SHORT).show();
-
-                                    myViewModel.getDao().updateUser(inviteRequest.getOrganization(), user);
-
-                                    if (user.getUserActivities() != null) {
-                                        user.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
+                                if (user.getOrganizationName() != null)
+                                    if (user.getOrganizationName().equals(inviteRequest.getOrganization())) {
+                                        ArrayList<String> associatedUsersUids = user.getAssociatedUsersUids();
+                                        if (associatedUsersUids == null)
+                                            associatedUsersUids = new ArrayList<>();
+                                        if (!associatedUsersUids.contains(uid))
+                                            associatedUsersUids.add(uid);
+                                        user.setAssociatedUsersUids(associatedUsersUids);
                                         myViewModel.getDao().updateUser(user.getUid(), user);
+
+                                        addUserActivity(user, user.getUid(), user.getUserActivities(), "RAIR", userDisplayName, user.getOrganizationName(), date);
+                                        addUserActivity(this.user, uid, this.user.getUserActivities(), "AIR", userDisplayName, user.getOrganizationName(), date);
+
+                                        break;
                                     }
-
-                                    break;
-                                }
                             }
-
-                            if (user.getUserActivities() != null) {
-                                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganization(), new Date()));
-                                myViewModel.getDao().updateUser(user.getUid(), user);
-                            }
-
                         } else {
                             Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
                         }
@@ -533,9 +511,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void createOrDenyConsentcoin(Intent data) {
-        if (data.hasExtra("BOOLEAN") && data.hasExtra("POS")) {
+        if (data.hasExtra("BOOLEAN") && data.hasExtra("PR")) {
             boolean permissionGranted = data.getBooleanExtra("BOOLEAN", false);
-            PermissionRequest permissionRequest = pendingPermissionRequests.get(data.getIntExtra("POS", -1)); // Get the position from the returned intent
+            PermissionRequest permissionRequest = (PermissionRequest) data.getSerializableExtra("PR");
             Date date = new Date();
 
             User organization = null;
@@ -550,35 +528,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 myViewModel.getDao().addConsentcoin(this, permissionRequest.getId(), permissionRequest.getPermissionType(), permissionRequest.getOrganizationUid(), permissionRequest.getMemberUid(),
                         date, permissionRequest.getPermissionStartDate(), permissionRequest.getPermissionEndDate(), permissionRequest.getPersonsIncluded().getScope()); // If the user chooses to give permission, create a Consentcoin
 
-                ArrayList<UserActivity> userActivities = user.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("APR", userDisplayName, organization.getOrganizationName(), date)); // "APR" = Accept Permission Request
-                user.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(uid, user);
-
-                userActivities = organization.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("RAPR", userDisplayName, organization.getOrganizationName(), date)); // "RAPR" = Receive Accepted Permission Request
-                organization.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
+                addUserActivity(user, uid, user.getUserActivities(), "APR", userDisplayName, organization.getOrganizationName(), date); // "APR" = Accept Permission Request
+                addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RAPR", userDisplayName, organization.getOrganizationName(), date); // "RAPR" = Receive Accepted Permission Request
 
                 Toast.makeText(this, getString(R.string.toast_permission_given), Toast.LENGTH_SHORT).show();
             } else {
-                ArrayList<UserActivity> userActivities = user.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("DPR", userDisplayName, organization.getOrganizationName(), date)); // "DPR" = Deny Permission Request
-                user.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(uid, user);
-
-                userActivities = organization.getUserActivities();
-                if (userActivities == null)
-                    userActivities = new ArrayList<>();
-                userActivities.add(0, new UserActivity("RDPR", userDisplayName, organization.getOrganizationName(), date)); // "RDPR" = Receive Denied Permission Request
-                organization.setUserActivities(userActivities);
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
+                addUserActivity(user, uid, user.getUserActivities(), "DPR", userDisplayName, organization.getOrganizationName(), date); // "DPR" = Deny Permission Request
+                addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RDPR", userDisplayName, organization.getOrganizationName(), date); // "RDPR" = Receive Denied Permission Request
 
                 Toast.makeText(this, R.string.toast_permission_denied, Toast.LENGTH_SHORT).show();
             }
@@ -587,21 +543,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
+        if (userActivities == null)
+            userActivities = new ArrayList<>();
+        userActivities.add(0, new UserActivity(activityCode, memberName, organizationName, date));
+        user.setUserActivities(userActivities);
+        myViewModel.getDao().updateUser(uid, user);
+    }
+
     public void addUser() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_create_user, null);
 
-        final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_create_request);
-        textInputEditText.setVisibility(View.GONE);
+        final TextInputEditText TEXT_INPUT_EDIT_TEXT = dialogView.findViewById(R.id.et_create_request);
+        TEXT_INPUT_EDIT_TEXT.setVisibility(View.GONE);
 
         RadioGroup radioGroup = dialogView.findViewById(R.id.rg_create_user);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rb_create_user_member) {
-                    textInputEditText.setVisibility(View.GONE);
+                    TEXT_INPUT_EDIT_TEXT.setVisibility(View.GONE);
                     chosenUserType = 0;
                 } else if (checkedId == R.id.rb_create_user_organization) {
-                    textInputEditText.setVisibility(View.VISIBLE);
+                    TEXT_INPUT_EDIT_TEXT.setVisibility(View.VISIBLE);
                     chosenUserType = 1;
                 }
             }
@@ -615,9 +579,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String userType = chosenUserType == 0 ? getString(R.string.member) : getString(R.string.organization);
-                        String organizationName = textInputEditText.getText().toString();
-                        myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName.toLowerCase().matches("asshole|shit") ? "BadOrg" : organizationName);
-                        Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();}
+                        String organizationName = TEXT_INPUT_EDIT_TEXT.getText().toString();
+                        myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName.toLowerCase().matches(".*asshole.*|.*shit.*") ? "BadOrg" : organizationName);
+                        Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .setCancelable(false)
                 .show();
@@ -706,19 +671,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ConsentcoinReference consentcoinReference = consentcoinReferences.get(i);
                 if (user.getType().equals("Member"))
                     for (User u : users) {
-                        if (u.getUid().equals(consentcoinReference.getOrganizationUid())) {
+                        if (u.getUid().equals(consentcoinReference.getOrganizationUid()))
                             array[i] = getString(R.string.array_org) + u.getOrganizationName();
-                        }
                     }
                 else
                     for (User u : users) {
-                        if (u.getUid().equals(consentcoinReference.getMemberUid())) {
+                        if (u.getUid().equals(consentcoinReference.getMemberUid()))
                             array[i] = getString(R.string.array_member) + u.getFirstName() + " " + u.getLastName();
-                        }
                     }
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
 
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
             final Context CONTEXT = this;
             AlertDialog alertDialog = new MaterialAlertDialogBuilder(this)
                     .setTitle(getString(R.string.title_my_consentcoins))
@@ -769,33 +732,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return null;
     }
 
-    public void addOrganizationOrMember(final String userType) {
+    public void addOrganizationOrMember(final String USER_TYPE) {
         final ArrayList<User> organizations = new ArrayList<>();
         final ArrayList<User> members = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
-            if (user.getType().equals("Organization") && userType.equals("organization"))
+            if (user.getType().equals("Organization") && USER_TYPE.equals("organization"))
                 organizations.add(user);
-            else if (user.getType().equals("Member") && userType.equals("member"))
+            else if (user.getType().equals("Member") && USER_TYPE.equals("member"))
                 members.add(user);
         }
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_organization, null);
-        final TextInputEditText textInputEditText = dialogView.findViewById(R.id.et_dialog_add_organization);
+        final TextInputEditText TEXT_INPUT_EDIT_TEXT = dialogView.findViewById(R.id.et_dialog_add);
+        TextInputLayout textInputLayout = dialogView.findViewById(R.id.til_dialog_add);
+        if (USER_TYPE.equals("organization"))
+            textInputLayout.setHint(getString(R.string.tf_enter_organisation_mail));
+        else
+            textInputLayout.setHint(getString(R.string.tf_enter_member_mail));
         final Context CONTEXT = this;
         new MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.title_add_with_space) + userType)
+                .setTitle(getString(R.string.title_add_with_space) + USER_TYPE)
                 .setView(dialogView)
                 .setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         boolean existingOrganizationOrMember = false;
 //                        if (textInputEditText.getText().length() > 0)
-                        String email = textInputEditText.getText().toString();
+                        String email = TEXT_INPUT_EDIT_TEXT.getText().toString();
                         User organizationOrMember = null;
 
-                        if (userType.equals("organization")) // If a member is trying to add an organization, check if the organization exists
+                        if (USER_TYPE.equals("organization")) // If a member is trying to add an organization, check if the organization exists
                             for (int i = 0; i < organizations.size(); i++) {
                                 organizationOrMember = organizations.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -803,7 +771,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     break;
                                 }
                             }
-                        else if (userType.equals("member")) // If an organization is trying to add a member, check if the member exists
+                        else if (USER_TYPE.equals("member")) // If an organization is trying to add a member, check if the member exists
                             for (int i = 0; i < members.size(); i++) {
                                 organizationOrMember = members.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
@@ -820,9 +788,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 associatedUsersUids.add(organizationOrMember.getUid());
                             user.setAssociatedUsersUids(associatedUsersUids);
                             myViewModel.getDao().updateUser(uid, user);
-                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, USER_TYPE.substring(0, 1).toUpperCase() + USER_TYPE.substring(1) + " added", Toast.LENGTH_SHORT).show();
                         } else // If the organization or member does not exist, display a toast
-                            Toast.makeText(CONTEXT, userType.substring(0, 1).toUpperCase() + userType.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CONTEXT, USER_TYPE.substring(0, 1).toUpperCase() + USER_TYPE.substring(1) + " does not exist", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {

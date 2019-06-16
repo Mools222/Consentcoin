@@ -14,6 +14,7 @@ import com.thomosim.consentcoin.Persistence.ModelClass.User;
 
 import java.util.ArrayList;
 import java.util.Date;
+
 /**
  * The DAOinterface is made to make it easy to change from one Database to another,
  * and to ensure all databases have same methods

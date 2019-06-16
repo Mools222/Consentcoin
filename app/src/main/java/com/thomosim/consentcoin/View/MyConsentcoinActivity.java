@@ -21,16 +21,14 @@ import com.thomosim.consentcoin.ViewModel.MyViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO This whole activity
 public class MyConsentcoinActivity extends AppCompatActivity {
     private Intent returnIntent;
     private Consentcoin consentcoin;
     private ConsentcoinReference consentcoinReference;
     private MyViewModel myViewModel;
-    private User currentUser;
-    private User otherUser;
     private User member;
     private User organization;
+    private String memberName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +42,8 @@ public class MyConsentcoinActivity extends AppCompatActivity {
         Intent startIntent = getIntent();
         consentcoin = (Consentcoin) startIntent.getSerializableExtra("CC");
         consentcoinReference = (ConsentcoinReference) startIntent.getSerializableExtra("CR");
-        currentUser = (User) startIntent.getSerializableExtra("CU");
-        otherUser = (User) startIntent.getSerializableExtra("OU");
+        User currentUser = (User) startIntent.getSerializableExtra("CU");
+        User otherUser = (User) startIntent.getSerializableExtra("OU");
 
         if (currentUser.getType().equals("Member")) {
             member = currentUser;
@@ -55,7 +53,7 @@ public class MyConsentcoinActivity extends AppCompatActivity {
             organization = currentUser;
         }
 
-        String memberName = member.getFirstName() + " " + (member.getMiddleName() == null ? " " : member.getMiddleName()) + member.getLastName();
+        memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
 
         SpannableStringBuilder text = new SpannableContractBuilder(this).displayConsentcoin(consentcoin.getContractId(),
                 memberName, organization.getOrganizationName(), consentcoin.getPermissionType().getType());
@@ -67,14 +65,14 @@ public class MyConsentcoinActivity extends AppCompatActivity {
 
     public void confirm(View view) {
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Are you sure that you want to withdraw your permission?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.consentcoin_value_confirm))
+                .setPositiveButton(getString(R.string.consentcoin_value_y), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         delete();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.consentcoin_value_n), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -85,29 +83,25 @@ public class MyConsentcoinActivity extends AppCompatActivity {
 
     public void delete() {
         setResult(Activity.RESULT_OK, returnIntent);
+
         myViewModel.getDao().removeConsentcoin(consentcoin); // Delete Consentcoin
-        consentcoinReference.setRevokedDate(new Date()); // Set rekovedDate for ConsentcoinReference
+
+        Date date = new Date();
+        consentcoinReference.setRevokedDate(date); // Set revokedDate for ConsentcoinReference
         myViewModel.getDao().updateConsentcoinReference(consentcoinReference.getId(), consentcoinReference);
-        addUserActivity();
+
+        addUserActivity(member, member.getUid(), member.getUserActivities(), "DC", memberName, organization.getOrganizationName(), date); // "DC" = Delete Consentcoin
+        addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RDC", memberName, organization.getOrganizationName(), date); // "RDC" = Receive Delete Consentcoin
+
         finish();
     }
 
-    public void addUserActivity() {
-        Date date = new Date();
-        String memberName = member.getFirstName() + " " + member.getMiddleName() + (member.getMiddleName().length() > 0 ? " " : "") + member.getLastName();
-        ArrayList<UserActivity> userActivities = organization.getUserActivities();
+    public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
         if (userActivities == null)
             userActivities = new ArrayList<>();
-        userActivities.add(0, new UserActivity("RDC", memberName, organization.getOrganizationName(), date)); // "RDC" = Receive Delete Consentcoin
-        organization.setUserActivities(userActivities);
-        myViewModel.getDao().updateUser(organization.getUid(), organization); // Add the UserActivity for the organization to Firebase
-
-        userActivities = member.getUserActivities();
-        if (userActivities == null)
-            userActivities = new ArrayList<>();
-        userActivities.add(0, new UserActivity("DC", memberName, organization.getOrganizationName(), date)); // "DC" = Delete Consentcoin
-        member.setUserActivities(userActivities);
-        myViewModel.getDao().updateUser(member.getUid(), member); // Add the UserActivity for the member to Firebase
+        userActivities.add(0, new UserActivity(activityCode, memberName, organizationName, date));
+        user.setUserActivities(userActivities);
+        myViewModel.getDao().updateUser(uid, user);
     }
 
     public void cancel(View view) {

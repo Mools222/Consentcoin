@@ -67,8 +67,8 @@ public class User implements Serializable {
         return middleName;
     }
 
-    public void setMiddleName(String middleName){
-            this.middleName = middleName;
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
     public String getLastName() {
@@ -84,7 +84,7 @@ public class User implements Serializable {
     }
 
     public void setOrganizationName(String organizationName) throws ProfanityException {
-        if (organizationName.matches("asshole|shit"))
+        if (organizationName.toLowerCase().matches(".*asshole.*|.*shit.*"))
             throw new ProfanityException("Naughty.");
         else
             this.organizationName = organizationName;
