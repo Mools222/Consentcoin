@@ -529,6 +529,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
         }
+        Date date = new Date();
 
 
         if (inviteAccepted) {
@@ -545,29 +546,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             myViewModel.getDao().updateUser(organization.getUid(), organization);
 
-            if (organization.getUserActivities() != null) {
-                organization.getUserActivities().add(0, new UserActivity("RAIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
-            }
 
+            addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RAIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
 
-            if (user.getUserActivities() != null) {
-                user.getUserActivities().add(0, new UserActivity("AIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                myViewModel.getDao().updateUser(user.getUid(), user);
-            }
+            addUserActivity(user, user.getUid(), user.getUserActivities(), "AIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
+
 
         } else {
-            if (user.getUserActivities() != null) {
-                user.getUserActivities().add(0, new UserActivity("DIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                myViewModel.getDao().updateUser(user.getUid(), user);
 
-            }
+            addUserActivity(user, user.getUid(), user.getUserActivities(), "DIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
 
-            if (organization.getUserActivities() != null) {
-                organization.getUserActivities().add(0, new UserActivity("RDIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), new Date()));
-                myViewModel.getDao().updateUser(organization.getUid(), organization);
-
-            }
+            addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "RDIR", inviteRequest.getMember(), inviteRequest.getOrganizationName(), date);
 
 
             Toast.makeText(this, getString(R.string.toast_invite_declined), Toast.LENGTH_SHORT).show();
@@ -899,16 +888,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 organization = "testOrg";
                             }
                             myViewModel.getDao().addInviteRequest(inviteMemberList, organization, user.getUid());
+                            Date date = new Date();
                             if (user.getUserActivities() != null) {
                                 for (String member : inviteMemberList) {
-                                    user.getUserActivities().add(0, new UserActivity("CIR", member, user.getOrganizationName(), new Date()));
-                                    myViewModel.getDao().updateUser(user.getUid(), user);
+                                    addUserActivity(user, user.getUid(), user.getUserActivities(), "CIR", member, user.getOrganizationName(), date);
                                     for (User inviteMember : users) {
                                         if (inviteMemberList.contains(inviteMember.getEmail())) {
-                                            if (inviteMember.getUserActivities() != null) {
-                                                inviteMember.getUserActivities().add(0, new UserActivity("RIR", inviteMember.getFirstName() + " " + inviteMember.getLastName(), user.getOrganizationName(), new Date()));
-                                                myViewModel.getDao().updateUser(inviteMember.getUid(), inviteMember);
-                                            }
+                                            addUserActivity(inviteMember, inviteMember.getUid(), inviteMember.getUserActivities(), "RIR", inviteMember.getFirstName() + " " + inviteMember.getLastName(), user.getOrganizationName(), date);
                                         }
                                     }
 
