@@ -209,11 +209,15 @@ public class CreateRequestActivity extends AppCompatActivity {
     public void sendRequests(ArrayList<User> memberList) {
         Date date = new Date();
         for (User member : memberList) {
-            String memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
-            myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
+            String memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() 
+                : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
+            myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), 
+                organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
-            addUserActivity(member, member.getUid(), member.getUserActivities(), "RPR", memberName, organization.getOrganizationName(), date); // "RPR" = Receive Permission Request
-            addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "CPR", memberName, organization.getOrganizationName(), date); // "CPR" = Create Permission Request
+            addUserActivity(member, member.getUid(), member.getUserActivities(), "RPR", memberName,
+                organization.getOrganizationName(), date); // "RPR" = Receive Permission Request
+            addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "CPR",
+                memberName, organization.getOrganizationName(), date); // "CPR" = Create Permission Request
         }
     }
 
