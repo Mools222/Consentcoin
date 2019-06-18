@@ -28,18 +28,18 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
     // Material Design for Android
-    implementation 'com.google.android.material:material:1.1.0-alpha06'
+    implementation 'com.google.android.material:material:1.1.0-alpha07'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:16.0.9' // Analytics
-    implementation 'com.google.firebase:firebase-database:17.0.0' // Realtime Database
-    implementation 'com.google.firebase:firebase-storage:17.0.0' // Cloud Storage
-    implementation 'com.google.firebase:firebase-auth:17.0.0' // Authentication
+    implementation 'com.google.firebase:firebase-core:17.0.0' // Analytics
+    implementation 'com.google.firebase:firebase-database:18.0.0' // Realtime Database
+    implementation 'com.google.firebase:firebase-storage:18.0.0' // Cloud Storage
+    implementation 'com.google.firebase:firebase-auth:18.0.0' // Authentication
     implementation 'com.firebaseui:firebase-ui-auth:4.3.2' // FirebaseUI (https://firebase.google.com/docs/auth)
 
 }

@@ -1,7 +1,5 @@
 package com.thomosim.consentcoin.ViewModel;
 
-import android.util.Log;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.thomosim.consentcoin.ObserverPattern.MyObservable;
 import com.thomosim.consentcoin.Persistence.DAOFirebase;
@@ -34,12 +32,11 @@ public class MyViewModel {
                 instance = new MyViewModel();
             }
         }
-        Log.i("ZZZ", "getInstance VM " + instance);
         return instance;
     }
 
     public MyViewModel() {
-        dao = DAOFirebase.getInstance(); // By changing this line (e.g. to "dao = DAOMySQL.getInstance();"), it is possible to change the data persistence of the app
+        dao = new DAOFirebase(); // By changing this line (e.g. to "dao = new DAOMySQL();"), it is possible to change the data persistence of the app
         authentication = dao.getAuthentication();
         user = dao.getUser();
         users = dao.getUsers();

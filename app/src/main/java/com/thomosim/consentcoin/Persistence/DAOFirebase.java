@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,19 +46,6 @@ public class DAOFirebase implements DAOInterface {
     private ObservableDataConsentcoinReferences observableDataConsentcoinReferences;
     private ObservableDataInviteRequests observableDataInviteRequests;
     private ObservableDataConsentcoin observableDataConsentcoin;
-
-    private static final Object LOCK = new Object();
-    private static DAOFirebase instance;
-
-    // Singleton pattern
-    public static DAOFirebase getInstance() {
-        if (instance == null) {
-            synchronized (LOCK) {
-                instance = new DAOFirebase();
-            }
-        }
-        return instance;
-    }
 
     public DAOFirebase() {
         authUI = AuthUI.getInstance();
@@ -126,7 +112,6 @@ public class DAOFirebase implements DAOInterface {
                 .build();
     }
 
-    // TODO Problem: The signOut method takes a Context parameter, which means the DAO knows the View?
     @Override
     public void signOut(Context context) {
         authUI.signOut(context);
@@ -256,7 +241,6 @@ public class DAOFirebase implements DAOInterface {
      * 12) Finally the file is deleted from the storage of the phone.
      */
 
-    // TODO Problem: The addConsentcoin method takes a Context parameter, which means the DAO knows the View?
     @Override
     public void addConsentcoin(Context context, String contractId, ContractTypeEnum permissionType, String organizationUid, String memberUid, Date creationDate, Date permissionStartDate, Date permissionEndDate, String personsIncluded) {
         // TODO Encrypt the Consentcoin object

@@ -41,23 +41,35 @@
             android:id="@+id/nav_add_member"
             android:icon="@drawable/icon_add"
             android:title="@string/item_add_member" />
+        <item
+            android:id="@+id/nav_my_organizations"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/item_my_organizations" />
+        <item
+            android:id="@+id/nav_my_members"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/item_my_members" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/item_settings" />
     </group>
 
-    <item android:title="@string/title_communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_my_organizations"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/item_my_organizations" />
-            <item
-                android:id="@+id/nav_my_members"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/item_my_members" />
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/item_settings" />
-        </menu>
-    </item>
+    <!--<item android:title="@string/title_communicate">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_my_organizations"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="@string/item_my_organizations" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_my_members"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="@string/item_my_members" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_settings"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="@string/item_settings" />-->
+        <!--</menu>-->
+    <!--</item>-->
 
 </menu>

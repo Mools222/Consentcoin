@@ -5,5 +5,4 @@
         android:id="@+id/sign_out_menu"
         android:title="@string/item_log_out"
         app:showAsAction="ifRoom"/>
-
 </menu>

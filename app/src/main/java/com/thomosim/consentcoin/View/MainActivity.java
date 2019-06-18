@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -76,21 +75,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setupNavigationView();
         setupRecyclerView();
-
         createSwipeFunction();
-
         assignTextViews();
         assignMenuItems();
-
         setupViewModel();
     }
 
-    public void setupNavigationView() {
-        // Setting up the Navigation View
-        // https://material.io/develop/android/components/navigation-view/
+    /**
+     * This method sets up the NavigationView
+     */
+
+    public void setupNavigationView() { // Setting up the Navigation View (https://material.io/develop/android/components/navigation-view/)
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -102,20 +99,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void setupRecyclerView() {
-        // Initialize references to views
+    /**
+     * This method sets up the RecyclerView, which displays UserActivity cards
+     */
+
+    public void setupRecyclerView() { // Initialize references to views
         recyclerView = findViewById(R.id.rv_main_activity);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
-//        recyclerView.addItemDecoration(dividerItemDecoration);
         adapterMainActivity = new AdapterMainActivity(this);
         recyclerView.setAdapter(adapterMainActivity);
     }
 
+    /**
+     * This method creates the swipe function, which allows the user to delete UserActivity objects by swiping them left or right
+     */
+
     public void createSwipeFunction() {
-        // This ItemTouchHelper allows the user to delete UserActivity objects by swiping left or right
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) { // This ItemTouchHelper allows the user to delete UserActivity objects by swiping them left or right
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -132,8 +133,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }).attachToRecyclerView(recyclerView);
     }
 
+    /**
+     * This method initializes different TextViews related to the Navigation Drawer
+     */
+
     public void assignTextViews() {
-        tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of button that opens the Navigation Drawer
+        tvNavigationDrawerCounter = findViewById(R.id.tv_navigation_drawer_count); // This is the counter in the app bar on top of the button that opens the Navigation Drawer
         tvNavigationDrawerPendingPermissionsCounter = (TextView) navigationView.getMenu().findItem(R.id.nav_pending_requests).getActionView(); // This is the counter inside the Navigation Drawer menu next to the "Pending requests" button
         tvNavigationDrawerPendingPermissionsCounter.setGravity(Gravity.CENTER_VERTICAL);
         tvNavigationDrawerPendingPermissionsCounter.setTypeface(null, Typeface.BOLD);
@@ -148,6 +153,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvNavigationDrawerPendingInviteCounter.setTextColor(ContextCompat.getColor(this, R.color.colorRed));
         tvNavigationDrawerPendingInviteCounter.setText("0");
     }
+
+    /**
+     * This method initializes the different Navigation Drawer menu items
+     */
 
     public void assignMenuItems() {
         menuItemPendingRequests = navigationView.getMenu().findItem(R.id.nav_pending_requests);
@@ -185,8 +194,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 if (firebaseUser != null) { // User is signed in
-                    Log.i("ZZZ", "logged in " + firebaseUser.getUid() + " + addDatabaseListenerUser");
-
                     userDisplayName = firebaseUser.getDisplayName();
                     userEmail = firebaseUser.getEmail();
                     uid = firebaseUser.getUid();
@@ -196,8 +203,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     myViewModel.getDao().setDatabaseReferenceCurrentUser(); // Since the construction of this DatabaseReference depends on which user is logged in, it must be changed every time a new user logs in.
                     myViewModel.getDao().addDatabaseListenerUser(); // Starting off, only the database listener for the current user is added, since the user type (which is only known when the User object connected to the logged in user is retrieved) is needed to determine whether the user has any PermissionRequests or ConsentcoinReferences
                 } else { // User is signed out
-                    Log.i("ZZZ", "logged out + startActivityForResult");
-
                     userEmail = null;
                     uid = null;
                     userDisplayName = null;
@@ -217,7 +222,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     addUser();
                 } else {
                     myViewModel.getDao().addDatabaseListener(); // Added the remaining listeners here ensures that the User object named user is not null when the remaining listeners are added. This allows the program to sort through PermissionRequests and ConsentcoinReferences and determine which ones regard the current user
-                    Log.i("ZZZ", "addDatabaseListener ");
 
                     ArrayList<UserActivity> userActivity = user.getUserActivities();
                     if (userActivity != null)
@@ -228,9 +232,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         menuItemCreateRequest.setVisible(false);
                         menuItemSentRequests.setVisible(false);
                         tvNavigationDrawerCounter.setVisibility(View.VISIBLE);
-                        menuItemAddOrganization.setVisible(true); // Members can only add and view their organizations
+                        menuItemAddOrganization.setVisible(false); // Members can only add and view their organizations
                         menuItemAddMember.setVisible(false);
-                        menuItemMyOrganizations.setVisible(true);
+                        menuItemMyOrganizations.setVisible(false);
                         menuItemMyMembers.setVisible(false);
                         menuItemInvite.setVisible(false);
                         menuItemPendingInvites.setVisible(true);
@@ -241,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         menuItemSentRequests.setVisible(true);
                         tvNavigationDrawerCounter.setVisibility(View.GONE);
                         menuItemAddOrganization.setVisible(false); // Organizations can only add and view their members
-                        menuItemAddMember.setVisible(true);
+                        menuItemAddMember.setVisible(false);
                         menuItemMyOrganizations.setVisible(false);
                         menuItemMyMembers.setVisible(true);
                         menuItemInvite.setVisible(true);
@@ -439,9 +443,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void test() { // Method for testing new stuff
-//        PermissionRequest2 permissionRequest2 = new PermissionRequest2("123", "org", "mem", Enums.P1, new Date());
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("test2");
-//        databaseReference.push().setValue(permissionRequest2);
+        Toast.makeText(this, getString(R.string.item_settings), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -596,7 +598,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setPositiveButton(getString(R.string.create), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String userType = chosenUserType == 0 ? getString(R.string.member) : getString(R.string.organization);
+                        String userType = chosenUserType == 0 ? "Member" : "Organization"; // DO NOT USE TRANSLATABLE STRINGS HERE
                         String organizationName = TEXT_INPUT_EDIT_TEXT.getText().toString();
                         myViewModel.getDao().addUser(userType, uid, userEmail, userDisplayName, organizationName.toLowerCase().matches(".*asshole.*|.*shit.*") ? "BadOrg" : organizationName);
                         Toast.makeText(CONTEXT, getString(R.string.toast_user_details_saved), Toast.LENGTH_SHORT).show();
@@ -752,15 +754,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void addOrganizationOrMember(final String USER_TYPE) {
-        final ArrayList<User> organizations = new ArrayList<>();
-        final ArrayList<User> members = new ArrayList<>();
+        final ArrayList<User> ORGANIZATIONS = new ArrayList<>();
+        final ArrayList<User> MEMBERS = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
             if (user.getType().equals("Organization") && USER_TYPE.equals("organization"))
-                organizations.add(user);
+                ORGANIZATIONS.add(user);
             else if (user.getType().equals("Member") && USER_TYPE.equals("member"))
-                members.add(user);
+                MEMBERS.add(user);
         }
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_organization, null);
@@ -783,16 +785,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         User organizationOrMember = null;
 
                         if (USER_TYPE.equals("organization")) // If a member is trying to add an organization, check if the organization exists
-                            for (int i = 0; i < organizations.size(); i++) {
-                                organizationOrMember = organizations.get(i);
+                            for (int i = 0; i < ORGANIZATIONS.size(); i++) {
+                                organizationOrMember = ORGANIZATIONS.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
                                     existingOrganizationOrMember = true;
                                     break;
                                 }
                             }
                         else if (USER_TYPE.equals("member")) // If an organization is trying to add a member, check if the member exists
-                            for (int i = 0; i < members.size(); i++) {
-                                organizationOrMember = members.get(i);
+                            for (int i = 0; i < MEMBERS.size(); i++) {
+                                organizationOrMember = MEMBERS.get(i);
                                 if (organizationOrMember.getEmail().equals(email)) {
                                     existingOrganizationOrMember = true;
                                     break;
@@ -856,8 +858,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, getString(R.string.toast_you_have_no) + userType, Toast.LENGTH_SHORT).show();
     }
 
-    // TODO Maybe add a list of active invites for the organization (like the "Active Request(s)" in the menu)
-    // TODO Add 1) the sending of invites to the UserActivity of the sender and receiver and 2) the accepting / denying of the createInvite to the UserActivity of the sender and receiver
     public void createInvite() {
         View inviteDialogView = getLayoutInflater().inflate(R.layout.dialog_create_invite, null);
 
@@ -910,7 +910,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void addInviteMember(View view) {
-
         if (!tietInviteMember.getText().toString().equals("") || tietInviteMember.getText() == null) {
             inviteMemberAdapter.add(tietInviteMember.getText().toString());
             tietInviteMember.setText("");
