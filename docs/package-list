@@ -2,5 +2,6 @@ com.thomosim.consentcoin
 com.thomosim.consentcoin.ObserverPattern
 com.thomosim.consentcoin.Persistence
 com.thomosim.consentcoin.Persistence.ModelClass
+com.thomosim.consentcoin.Persistence.ModelClass.Exceptions
 com.thomosim.consentcoin.View
 com.thomosim.consentcoin.ViewModel
