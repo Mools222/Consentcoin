@@ -138,17 +138,17 @@
     <string name="text_revoked_part_one">"Your Consentcoin agreement with "</string>
     <string name="text_revoked_part_two">" was revoked."</string>
     <string name="text_invite_sent">Invite request sent</string>
-    <string name="text_your_invite_sent">You sent an invite request to </string>
+    <string name="text_your_invite_sent">"You sent an invite request to "</string>
     <string name="text_invite_received">Invite request received</string>
-    <string name="text_you_received_invite">You received an invite request from </string>
+    <string name="text_you_received_invite">"You received an invite request from "</string>
     <string name="text_invite_accepted">Invite request accepted</string>
-    <string name="text_you_accepted_invite">You have accepted an invite request from </string>
-    <string name="text_org_accepted_invite_part_one">Your invite request to </string>
-    <string name="text_org_accepted_invite_part_two"> has been accepted.</string>
+    <string name="text_you_accepted_invite">"You have accepted an invite request from "</string>
+    <string name="text_org_accepted_invite_part_one">"Your invite request to "</string>
+    <string name="text_org_accepted_invite_part_two">" has been accepted."</string>
     <string name="text_invite_decnied">Invite request denied</string>
-    <string name="text_you_denied_invite">You have denied an invite request from </string>
-    <string name="text_org_denied_invite_part_one">Your invite request to </string>
-    <string name="text_org_denied_invite_part_two"> has been denied.</string>
+    <string name="text_you_denied_invite">"You have denied an invite request from "</string>
+    <string name="text_org_denied_invite_part_one">"Your invite request to "</string>
+    <string name="text_org_denied_invite_part_two">" has been denied."</string>
 
 
 
