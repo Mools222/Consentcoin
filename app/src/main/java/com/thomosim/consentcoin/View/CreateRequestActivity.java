@@ -47,6 +47,10 @@ public class CreateRequestActivity extends AppCompatActivity {
     private Intent returnIntent;
     private MyViewModel myViewModel;
 
+    /**
+     * This method defines the UI with the setContentView method and initializes data fields
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +76,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         returnIntent = new Intent();
     }
 
+    /**
+     * This method sets which persons are covered by the permission requests
+     */
+
     public void setPersonsIncluded() {
         RadioGroup radioGroupPersons = findViewById(R.id.rg_create_request_persons);
         radioGroupPersons.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -86,6 +94,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method sets up the dates used to pick the duration of the permission requests
+     */
+
     public void setDates() {
         startingDate = new GregorianCalendar();
         simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -94,6 +106,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         startDate = startingDate.getTime();
         endDate = startingDate.getTime();
     }
+
+    /**
+     * This method sets which members are to receive the permission requests
+     */
 
     public void setReceivers() {
         final RecyclerView RECYCLER_VIEW = findViewById(R.id.rv_create_request);
@@ -146,6 +162,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This method sets the starting date of the permission requests
+     */
+
     public void startDate(View view) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -157,6 +177,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         }, startingDate.get(Calendar.YEAR), startingDate.get(Calendar.MONTH), startingDate.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
+
+    /**
+     * This method sets the end date of the permission requests
+     */
 
     public void endDate(View view) {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -170,6 +194,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    /**
+     * This method sets the type of the permission requests
+     */
+
     public void findPermissionType() {
         if (materialCheckBoxCommercial.isChecked() && materialCheckBoxNoncommercial.isChecked())
             permissionType = ContractTypeEnum.NON_COMMERCIAL_AND_COMMERCIAL_USE; // Commercial + non-commercial
@@ -179,9 +207,13 @@ public class CreateRequestActivity extends AppCompatActivity {
             permissionType = ContractTypeEnum.NON_COMMERCIAL_USE; // Non-commercial
     }
 
+    /**
+     * This method verifies the info related to the permission requests and sends to the right receiver(s)
+     */
+
     public void send(View view) {
         findPermissionType();
-
+        
         if (permissionType == null) // Check if permission type has been chosen
             Toast.makeText(this, getString(R.string.toast_select_purpose), Toast.LENGTH_SHORT).show();
         else if (!sendRequestToAllMembers && adapterCreateRequest.getCheckedUsers().size() == 0) // Check if at least one receiver has been chosen
@@ -201,6 +233,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method persists the permission requests
+     */
+
     public void sendRequests(ArrayList<User> memberList) {
         Date creationDate = new Date();
         for (User member : memberList) {
@@ -212,6 +248,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method persists instances of UserActivity
+     */
+
     public void addUserActivity(User user, String uid, ArrayList<UserActivity> userActivities, String activityCode, String memberName, String organizationName, Date date) {
         if (userActivities == null)
             userActivities = new ArrayList<>();
@@ -219,6 +259,10 @@ public class CreateRequestActivity extends AppCompatActivity {
         user.setUserActivities(userActivities);
         myViewModel.getDao().updateUser(uid, user);
     }
+
+    /**
+     * This method finishes this activity and returns to the main activity
+     */
 
     public void cancel(View view) {
         setResult(Activity.RESULT_CANCELED, returnIntent);
