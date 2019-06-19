@@ -33,19 +33,15 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class CreateRequestActivity extends AppCompatActivity {
-    private MaterialCheckBox materialCheckBoxCommercial;
-    private MaterialCheckBox materialCheckBoxNoncommercial;
-    private TextInputEditText textInputEditTextStartDate;
-    private TextInputEditText textInputEditTextEndDate;
+    private MaterialCheckBox materialCheckBoxCommercial, materialCheckBoxNoncommercial;
+    private TextInputEditText textInputEditTextStartDate, textInputEditTextEndDate;
     private AdapterCreateRequest adapterCreateRequest;
-    private GregorianCalendar gregorianCalendar;
+    private GregorianCalendar startingDate;
     private SimpleDateFormat simpleDateFormat;
     private User organization;
     private ArrayList<User> members;
     private boolean sendRequestToAllMembers;
-    private boolean permissionRegardsMembersOnly;
-    private Date startDate;
-    private Date endDate;
+    private Date startDate, endDate;
     private ContractTypeEnum permissionType;
     private ContractScopeEnum personsIncluded;
     private Intent returnIntent;
@@ -58,64 +54,61 @@ public class CreateRequestActivity extends AppCompatActivity {
 
         myViewModel = MyViewModel.getInstance();
 
+        Intent startIntent = getIntent();
+        organization = (User) startIntent.getSerializableExtra("O");
+        members = (ArrayList<User>) startIntent.getSerializableExtra("M");
+
         TextView textViewOrganization = findViewById(R.id.tv_create_request_organization_name);
         materialCheckBoxCommercial = findViewById(R.id.cb_create_request_commercial);
         materialCheckBoxNoncommercial = findViewById(R.id.cb_create_request_noncommercial);
         textInputEditTextStartDate = findViewById(R.id.et_create_request_start_date);
         textInputEditTextEndDate = findViewById(R.id.et_create_request_end_date);
-
-        Intent startIntent = getIntent();
-        organization = (User) startIntent.getSerializableExtra("O");
-        members = (ArrayList<User>) startIntent.getSerializableExtra("M");
-
         textViewOrganization.setText(organization.getOrganizationName());
 
-        setPersons();
+        setPersonsIncluded();
         setDates();
         setReceivers();
 
         returnIntent = new Intent();
     }
 
-    public void setPersons() {
-        permissionRegardsMembersOnly = true;
+    public void setPersonsIncluded() {
         RadioGroup radioGroupPersons = findViewById(R.id.rg_create_request_persons);
         radioGroupPersons.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rb_create_request_members) {
-                    permissionRegardsMembersOnly = true;
+                    personsIncluded = ContractScopeEnum.MYSELF;
                 } else if (checkedId == R.id.rb_create_request_members_and_wards) {
-                    permissionRegardsMembersOnly = false;
+                    personsIncluded = ContractScopeEnum.MYSELF_AND_WARDS;
                 }
             }
         });
     }
 
     public void setDates() {
-        gregorianCalendar = new GregorianCalendar();
-        Date date = gregorianCalendar.getTime();
+        startingDate = new GregorianCalendar();
         simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        textInputEditTextStartDate.setText(simpleDateFormat.format(date));
-        textInputEditTextEndDate.setText(simpleDateFormat.format(date));
-        startDate = date;
-        endDate = date;
+        textInputEditTextStartDate.setText(simpleDateFormat.format(startingDate.getTime()));
+        textInputEditTextEndDate.setText(simpleDateFormat.format(startingDate.getTime()));
+        startDate = startingDate.getTime();
+        endDate = startingDate.getTime();
     }
 
     public void setReceivers() {
-        final RecyclerView recyclerView = findViewById(R.id.rv_create_request);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()); // Creates a divider between items
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        final RecyclerView RECYCLER_VIEW = findViewById(R.id.rv_create_request);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this); // The layout manager calls the adapter's onCreateViewHolder() method.
+        RECYCLER_VIEW.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(RECYCLER_VIEW.getContext(), layoutManager.getOrientation()); // Creates a divider between items
+        RECYCLER_VIEW.addItemDecoration(dividerItemDecoration);
         adapterCreateRequest = new AdapterCreateRequest(members);
-        recyclerView.setAdapter(adapterCreateRequest);
-        recyclerView.setVisibility(View.GONE);
+        RECYCLER_VIEW.setAdapter(adapterCreateRequest);
+        RECYCLER_VIEW.setVisibility(View.GONE);
 
-        final ArrayList<User> membersSearch = new ArrayList<>();
-        final TextInputEditText textInputEditText = findViewById(R.id.et_create_request);
-        textInputEditText.setVisibility(View.GONE);
-        textInputEditText.addTextChangedListener(new TextWatcher() {
+        final ArrayList<User> MEMBERS_SEARCH_LIST = new ArrayList<>();
+        final TextInputEditText SEARCH_FIELD = findViewById(R.id.et_create_request);
+        SEARCH_FIELD.setVisibility(View.GONE);
+        SEARCH_FIELD.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -126,12 +119,12 @@ public class CreateRequestActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                membersSearch.clear();
+                MEMBERS_SEARCH_LIST.clear();
                 for (User member : members) {
                     if (member.getEmail().contains(s))
-                        membersSearch.add(member);
+                        MEMBERS_SEARCH_LIST.add(member);
                 }
-                adapterCreateRequest.updateData(membersSearch);
+                adapterCreateRequest.updateData(MEMBERS_SEARCH_LIST);
             }
         });
 
@@ -141,12 +134,12 @@ public class CreateRequestActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rb_create_request_all) {
-                    recyclerView.setVisibility(View.GONE);
-                    textInputEditText.setVisibility(View.GONE);
+                    RECYCLER_VIEW.setVisibility(View.GONE);
+                    SEARCH_FIELD.setVisibility(View.GONE);
                     sendRequestToAllMembers = true;
                 } else if (checkedId == R.id.rb_create_request_select) {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    textInputEditText.setVisibility(View.VISIBLE);
+                    RECYCLER_VIEW.setVisibility(View.VISIBLE);
+                    SEARCH_FIELD.setVisibility(View.VISIBLE);
                     sendRequestToAllMembers = false;
                 }
             }
@@ -161,7 +154,7 @@ public class CreateRequestActivity extends AppCompatActivity {
                 startDate = gregorianCalendar.getTime();
                 textInputEditTextStartDate.setText(simpleDateFormat.format(startDate));
             }
-        }, gregorianCalendar.get(Calendar.YEAR), gregorianCalendar.get(Calendar.MONTH), gregorianCalendar.get(Calendar.DAY_OF_MONTH));
+        }, startingDate.get(Calendar.YEAR), startingDate.get(Calendar.MONTH), startingDate.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
@@ -173,19 +166,21 @@ public class CreateRequestActivity extends AppCompatActivity {
                 endDate = gregorianCalendar.getTime();
                 textInputEditTextEndDate.setText(simpleDateFormat.format(endDate));
             }
-        }, gregorianCalendar.get(Calendar.YEAR), gregorianCalendar.get(Calendar.MONTH), gregorianCalendar.get(Calendar.DAY_OF_MONTH));
+        }, startingDate.get(Calendar.YEAR), startingDate.get(Calendar.MONTH), startingDate.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
-    public void send(View view) {
+    public void findPermissionType() {
         if (materialCheckBoxCommercial.isChecked() && materialCheckBoxNoncommercial.isChecked())
             permissionType = ContractTypeEnum.NON_COMMERCIAL_AND_COMMERCIAL_USE; // Commercial + non-commercial
         else if (materialCheckBoxCommercial.isChecked())
             permissionType = ContractTypeEnum.COMMERCIAL_USE; // Commercial
         else if (materialCheckBoxNoncommercial.isChecked())
             permissionType = ContractTypeEnum.NON_COMMERCIAL_USE; // Non-commercial
+    }
 
-        personsIncluded = permissionRegardsMembersOnly ? ContractScopeEnum.MYSELF : ContractScopeEnum.MYSELF_AND_WARDS; // 1 = members only. 2 = members + wards
+    public void send(View view) {
+        findPermissionType();
 
         if (permissionType == null) // Check if permission type has been chosen
             Toast.makeText(this, getString(R.string.toast_select_purpose), Toast.LENGTH_SHORT).show();
@@ -207,13 +202,13 @@ public class CreateRequestActivity extends AppCompatActivity {
     }
 
     public void sendRequests(ArrayList<User> memberList) {
-        Date date = new Date();
+        Date creationDate = new Date();
         for (User member : memberList) {
             String memberName = member.getMiddleName() == null ? member.getFirstName() + " " + member.getLastName() : member.getFirstName() + " " + member.getMiddleName() + " " + member.getLastName();
-            myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, date, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
+            myViewModel.getDao().addPermissionRequest(organization.getOrganizationName(), organization.getUid(), memberName, member.getUid(), permissionType, creationDate, startDate, endDate, personsIncluded); // Add the PermissionRequest to Firebase
 
-            addUserActivity(member, member.getUid(), member.getUserActivities(), "RPR", memberName, organization.getOrganizationName(), date); // "RPR" = Receive Permission Request
-            addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "CPR", memberName, organization.getOrganizationName(), date); // "CPR" = Create Permission Request
+            addUserActivity(member, member.getUid(), member.getUserActivities(), "RPR", memberName, organization.getOrganizationName(), creationDate); // "RPR" = Receive Permission Request
+            addUserActivity(organization, organization.getUid(), organization.getUserActivities(), "CPR", memberName, organization.getOrganizationName(), creationDate); // "CPR" = Create Permission Request
         }
     }
 

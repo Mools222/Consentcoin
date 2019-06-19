@@ -56,6 +56,7 @@ public class AdapterCreateRequest extends RecyclerView.Adapter<AdapterCreateRequ
     @Override
     public void onBindViewHolder(@NonNull ViewHolderCreateRequest holder, int position) {
         User user = associatedUsers.get(position);
+
         if (checkedUsers.contains(user))
             holder.checkBox.setChecked(true);
         else
