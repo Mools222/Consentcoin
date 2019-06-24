@@ -53,6 +53,9 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_send"
             android:title="@string/item_settings" />
+        <item
+            android:id="@+id/nav_policy"
+            android:title="privacy policy"/>
     </group>
 
     <!--<item android:title="@string/title_communicate">-->
